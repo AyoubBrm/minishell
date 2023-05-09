@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 12:49:45 by abouram           #+#    #+#             */
-/*   Updated: 2023/04/27 21:44:18 by abouram          ###   ########.fr       */
+/*   Updated: 2023/05/06 23:10:04 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ char	**ft_split(char *s, char c);
 void	*ft_calloc(size_t count, size_t size);
 void	*ft_memset(void *b, int c, size_t len);
 void	*ft_memchr(void *s, int c, size_t n);
-char	*ft_strjoin(char *s1, char *s2);
+char	*ft_strjoin(char *s1, char *s2, int x, int j);
 char	*ft_strtrim(char *s1, char *set);
 void	*ft_memcpy(void *dst, void *src, size_t n);
 void	*ft_memmove(void *dst, void *src, size_t len);
@@ -60,6 +60,7 @@ char	*ft_substr(char *s, unsigned int start, size_t len);
 char	*ft_strnstr(char *haystack, char *needle, size_t len);
 t_list	*ft_lstnew(int x, int y);
 void	ft_lstadd_back(t_list **lst, t_list *new);
+char	**ft_split2(char *s, char c);
 t_list	*ft_lstlast(t_list *lst);
 
 #endif
