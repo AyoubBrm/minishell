@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/05/13 00:29:44 by abouram          ###   ########.fr       */
+/*   Updated: 2023/05/13 22:38:06 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include "./libft/libft.h"
 #include <readline/readline.h>
 
-void parser_arg(char *input)
+void parser_arg(char *input, char **env)
 {
 	size_t x;
 	size_t i = 0;
@@ -31,6 +31,9 @@ void parser_arg(char *input)
 	int a = 0;
 	int quote = 0;
 	int		star = 0;
+	(void)env;
+	// while (*env)
+	// 	printf("%s\n",*env++);
 	str = ft_split(input, '\"');
 	x = 0;
 	while (str[x])
@@ -123,16 +126,31 @@ void parser_arg(char *input)
 				star = i;
 				while (str[x][i] && str[x][i] != '"')
 				{	
-					if (!s[z])
-						s[z] = ft_calloc(1, 1);
-					while(str[x][i] && str[x][i] != '"' && str[x][i] != ' ')
-						i++;
-					s[z] = ft_strjoin(s[z], str[x], star, i - star);
-					if (str[x][i] == ' ' )
-						z++;
-					while (str[x][i] == ' ')
-						i++;
-					star = i;
+					if (str[x][i] && str[x + 1] && str[x][i] == '$' && str[x + 1][0] == '"')
+					{
+						x++;
+						i = 0;
+						printf("tis is i====%zu", i);
+						while(str[x][i] == '$')
+							i++;
+						i = star;
+						while(str[x][i] && str[x][i] != '"')
+							i++;
+						s[z] = ft_substr(str[x], star, i - star);
+					}
+					else
+					{
+						if (!s[z])
+							s[z] = ft_calloc(1, 1);
+						while(str[x][i] && str[x][i] != '"' && str[x][i] != ' ')
+							i++;
+						s[z] = ft_strjoin(s[z], str[x], star, i);
+						if (str[x][i] == ' ' )
+							z++;
+						while (str[x][i] == ' ')
+							i++;
+						star = i;
+					}
 				}
 			}
 		}
@@ -146,18 +164,21 @@ void parser_arg(char *input)
 			if (!s[z])
 				s[z] = ft_calloc(1, 1);
 		}
-		else if (str[x][i] == '"' && str[x][i + 1] != '"')
+		if (str[x][i] == '"' && str[x][i + 1] != '"')
 		{
 				i++;
 			star = i;
-			while (str[x][i] && str[x][i] != '>' && str[x][i] != '|' && str[x][i] != '<')
+			while (str[x][i] && str[x][i] != '"' && str[x][i] != '>' && str[x][i] != '|' && str[x][i] != '<')
 				i++;
 			if (str[x][i] == '>' || str[x][i] == '|' || str[x][i] == '<')
 			{
-				s[z] = ft_strdup("'");
+				if ((x == 0 ) || (str[x] && str[x - 1] && str[x - 1][0] == ' ')
+					|| (str[x] && str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ')
+					|| (str[x] && str[x + 1] && str[x + 1][0] == ' '))
+						s[z] = ft_strdup("'");
 				while (str[x][i] && str[x][i] != '"')    //this for "|" pipe inside quote
 					i++;
-				s[z] = ft_strjoin(s[z], str[x], star, i - star);
+				s[z] = ft_strjoin(s[z], str[x], star, i - 1);
 			}
 			else
 			{
@@ -169,22 +190,26 @@ void parser_arg(char *input)
 					s[z] = ft_substr(str[x], star, i - star); // this for first arg between ("asdasda")
 				else if ((str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ')) // this is for second string inside (space "asd") and before the string space that mean new strig have to allocted
 					s[z] = ft_substr(str[x], star, i - star);
-				else if (str[x - 1] && str[x][ft_strlen(str[x]) - 1] != ' ') // this is for second string inside (whitout space*"asd") and before the no space that mean new strig have to join it with first
-					s[z] = ft_strjoin(s[z], str[x], star, i - star);
+				else if (str[x - 1] && str[x][ft_strlen(str[x]) - 1] != ' ')
+				{
+					s[z] = ft_strjoin(s[z], str[x], star, i - 1);
+				}	
 			}
 		}
-		else if (str[x][i] == '\'' && str[x][i + 1] != '\'')
+		if (str[x][i] == '\'' && str[x][i + 1] != '\'')
 		{
 				i++;
 			star = i;
-			while (str[x][i] && str[x][i] != '>' && str[x][i] != '|' && str[x][i] != '<')
+		while (str[x][i] && str[x][i] != '\'' && str[x][i] != '>' && str[x][i] != '|' && str[x][i] != '<')
 				i++;
 			if (str[x][i] == '>' || str[x][i] == '|' || str[x][i] == '<')
 			{
-				s[z] = ft_strdup("'");
-				while (str[x][i] && str[x][i] != '\'')        // this for '|' pipe inside quote
+				if ((x == 0) || (str[x] && str[x - 1] && str[x - 1][0] == ' ')
+					|| (str[x] && str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' '))
+						s[z] = ft_strdup("'");
+				while (str[x][i] && str[x][i] != '\'')    //this for '|' pipe inside quote
 					i++;
-				s[z] = ft_strjoin(s[z], str[x], star, i - star);
+				s[z] = ft_strjoin(s[z], str[x], star, i - 1);
 			}
 			else
 			{
@@ -197,7 +222,7 @@ void parser_arg(char *input)
 				else if ((str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' '))
 					s[z] = ft_substr(str[x], star, i - star);
 				else if (str[x - 1] && str[x][ft_strlen(str[x]) - 1] != ' ')
-					s[z] = ft_strjoin(s[z], str[x], star, i - star);
+					s[z] = ft_strjoin(s[z], str[x], star, i - 1);
 			}
 		}
 		x++;
@@ -214,7 +239,7 @@ void parser_arg(char *input)
 		printf("----*s----*%s\n", s[i++]);
 }
 
-int	main(int ac, char **av)
+int	main(int ac, char **av, char **env)
 {
 	int		i;
 	char	*input;
@@ -227,7 +252,7 @@ int	main(int ac, char **av)
 	{
 		input = readline("minishell ~$ ");
 		add_history(input);
-		parser_arg(input);
+		parser_arg(input, env);
 		// printf("%s\n", input);
 	}
 	return (0);
