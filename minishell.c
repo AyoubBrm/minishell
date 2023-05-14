@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/05/13 22:38:06 by abouram          ###   ########.fr       */
+/*   Updated: 2023/05/14 22:42:10 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,25 +126,27 @@ void parser_arg(char *input, char **env)
 				star = i;
 				while (str[x][i] && str[x][i] != '"')
 				{	
-					if (str[x][i] && str[x + 1] && str[x][i] == '$' && str[x + 1][0] == '"')
+					if ((str[x] && str[x + 1] && str[x][i] == '$' && str[x][i + 1] == '\0' && str[x + 1][0] == '"')
+						|| (str[x] && str[x + 1] && str[x][i] == '$' && str[x][i + 1] == '\0' && str[x + 1][0] == '\''))
 					{
+						if (!s[z])
+							s[z] = ft_calloc(1, 1);
 						x++;
 						i = 0;
-						printf("tis is i====%zu", i);
-						while(str[x][i] == '$')
+						star = 0;
+						while(str[x][i] && str[x][i] != '\'' && str[x][i] != '"' && str[x][i] != ' ')
 							i++;
-						i = star;
-						while(str[x][i] && str[x][i] != '"')
-							i++;
-						s[z] = ft_substr(str[x], star, i - star);
+						s[z] = ft_strjoin(s[z], str[x], star, i - 1);
 					}
 					else
 					{
 						if (!s[z])
 							s[z] = ft_calloc(1, 1);
-						while(str[x][i] && str[x][i] != '"' && str[x][i] != ' ')
+						while(str[x][i] && str[x][i] != '"' && str[x][i] != ' ' && str[x][i] != '$')
 							i++;
-						s[z] = ft_strjoin(s[z], str[x], star, i);
+						if ((str[x][i] == '$' && str[x][i + 1]) || (str[x][i] == '$' && str[x][i + 1] == '\0' && !str[x + 1]))
+							i++;
+						s[z] = ft_strjoin(s[z], str[x], star, i - 1);
 						if (str[x][i] == ' ' )
 							z++;
 						while (str[x][i] == ' ')
@@ -191,9 +193,7 @@ void parser_arg(char *input, char **env)
 				else if ((str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ')) // this is for second string inside (space "asd") and before the string space that mean new strig have to allocted
 					s[z] = ft_substr(str[x], star, i - star);
 				else if (str[x - 1] && str[x][ft_strlen(str[x]) - 1] != ' ')
-				{
 					s[z] = ft_strjoin(s[z], str[x], star, i - 1);
-				}	
 			}
 		}
 		if (str[x][i] == '\'' && str[x][i + 1] != '\'')
