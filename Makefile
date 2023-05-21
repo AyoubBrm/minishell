@@ -1,6 +1,6 @@
 CC = cc
 FLAGS = -Wextra -Werror -Wall #-fsanitize=address -g
-SRC = minishell.c
+SRC = minishell.c builtins.c execute.c free.c
 LIBFT = make -C ./libft
 NAME = minishell
 OBJ = $(SRC:.c=.o)
@@ -8,7 +8,7 @@ OBJ = $(SRC:.c=.o)
 all : ${NAME}
 
 ${NAME} : ${SRC}
-	make -C ./libft
+	make bonus -C ./libft
 	${CC} ${FLAGS} ${SRC} -lreadline ./libft/libft.a -o ${NAME}
 
 clean : 

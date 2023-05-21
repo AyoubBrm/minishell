@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_strjoin_new.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/09 18:05:06 by abouram           #+#    #+#             */
-/*   Updated: 2023/05/01 19:46:34 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/05/20 23:12:14 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strjoin_new(char *s1, char *s2, int index, int x, int j)
 {
 	char	*p;
 	int		i;
@@ -25,17 +25,17 @@ char	*ft_strjoin(char *s1, char *s2)
 	p = (char *)malloc((ft_strlen(s2) + ft_strlen(s1) + 1) * sizeof(char));
 	if (!p)
 		return (NULL);
-	while (*s1)
+	while (*s1 && i < index)
 	{
 		p[i] = *s1++;
 		i++;
 	}
-	while (*s2)
+	while (s2[x] && x <= j)
 	{
-		p[i] = *s2++;
+		p[i] = s2[x++];
 		i++;
 	}
 	p[i] = '\0';
-	// free(tmp);
+	free(tmp);
 	return (p);
 }

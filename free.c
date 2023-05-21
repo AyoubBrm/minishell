@@ -1,46 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/02 22:08:19 by abouram           #+#    #+#             */
-/*   Updated: 2023/05/13 14:50:05 by shmimi           ###   ########.fr       */
+/*   Created: 2023/04/30 20:11:20 by shmimi            #+#    #+#             */
+/*   Updated: 2023/05/14 14:44:23 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-char	*ft_strchr(char *s, int c)
+void	free2d(char **arg)
 {
-	size_t	i;
+	int	i;
 
 	i = 0;
-	while (i <= ft_strlen(s))
+	while (arg[i])
 	{
-		if (s[i] == (char)c)
-		{
-			i++;
-			return ((char *)&s[i]);
-		}
+		free(arg[i]);
+		arg[i] = NULL;
 		i++;
 	}
-	return (0);
+	free(arg);
+	arg = NULL;
 }
 
-char	*ft_strchr_inc(char *s, int c)
+void	double_free2d(char **arg1, char **arg2)
 {
-	size_t	i;
-
-	i = 0;
-	while (i <= ft_strlen(s))
-	{
-		if (s[i] == (char)c)
-		{
-			return ((char *)&s[i]);
-		}
-		i++;
-	}
-	return (0);
+	free2d(arg1);
+	free2d(arg2);
 }

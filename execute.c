@@ -1,46 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/02 22:08:19 by abouram           #+#    #+#             */
-/*   Updated: 2023/05/13 14:50:05 by shmimi           ###   ########.fr       */
+/*   Created: 2023/05/15 15:58:39 by shmimi            #+#    #+#             */
+/*   Updated: 2023/05/15 18:13:17 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-char	*ft_strchr(char *s, int c)
+char **get_path(char **env)
 {
-	size_t	i;
+	char **path;
+	int i;
 
 	i = 0;
-	while (i <= ft_strlen(s))
+	path = NULL;
+	while (env[i])
 	{
-		if (s[i] == (char)c)
+		if (env[i] == ft_strnstr(env[i], "PATH=", ft_strlen(env[i])))
 		{
-			i++;
-			return ((char *)&s[i]);
+			path = ft_split(ft_strchr(env[i], '/'), ':');
+			return (path);
 		}
 		i++;
 	}
-	return (0);
-}
-
-char	*ft_strchr_inc(char *s, int c)
-{
-	size_t	i;
-
 	i = 0;
-	while (i <= ft_strlen(s))
+	while (env[i++])
 	{
-		if (s[i] == (char)c)
-		{
-			return ((char *)&s[i]);
-		}
-		i++;
+		path = ft_split(env[i], '=');
+		if (ft_strncmp(path[0], "PATH", 4) != 0)
+			return (path);
+		free2d(path);
 	}
-	return (0);
+	return (path);
 }
