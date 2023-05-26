@@ -6,32 +6,32 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/05/22 00:53:37 by abouram          ###   ########.fr       */
+/*   Updated: 2023/05/27 00:52:36 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 char* find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand, int flags)
 {
-	int x;
-	x = 0;
-	int i;
-	i = 0;
 	t_list *env;
 	env = my_env;
 	while(env != NULL)
 	{
 		if (ft_strncmp(&var[1], env->key,  ft_strlen(var) + 1) == 0)
 		{
-			if(flags == 4)
-				return(var);
+			if (flags == 4)
+				return(temp_expand = ft_strjoin_new(temp_expand, var, 0, ft_strlen(var)));
 			else
-				temp_expand = ft_strjoin_new(temp_expand, env->value, ft_strlen(temp_expand) - 1, 0, ft_strlen(env->value) -1);
+				return(temp_expand = ft_strjoin_new(temp_expand, env->value, 0, ft_strlen(env->value)));
 		}
 		env = env->next;
 	}
 	if(flags == 4)
-		return(ft_strdup("4"));
+		return(ft_strjoin(temp_expand, var));
+	else if (var[0] == '$' && var[1] >= '0' && var[1] <= '9')
+		return(ft_strjoin(temp_expand, &var[2]));
+	else if(ft_strchr(var, '$') && ft_strlen(var) == 1)
+		return(ft_strjoin(temp_expand, var));
 	return(temp_expand);
 }
 void expand(char **s, t_list *my_env)
@@ -50,30 +50,50 @@ void expand(char **s, t_list *my_env)
 		{
 			while (s[x][i] == '$' && s[x][i + 1] == '$')
 				i++;
-			if (s[x][i] == '$')
+			if (s[x][i] == '$' && s[x][i + 1] != '@')
+			{
+				if ((ft_strchr(s[x] ,'\3') || !ft_strchr(s[x] ,'\3')))
+				{
+					star = i;
+					i++;
+					while ((ft_isdigit(s[x][i]) || ft_isalpha(s[x][i]) ||  s[x][i] == '_') && !ft_strchr("\3\4\5\6$", s[x][i]))
+						i++;
+					var = ft_substr(s[x], star, i - star);
+					printf("%s\n", var);
+					if(s[x][i] == '\4')
+						temp_expand = find_in_env_and_alloced(my_env, var, temp_expand, 4);
+					else if (s[x][i] == '"' && s[x][i + 1] == '\4')
+						temp_expand = find_in_env_and_alloced(my_env, var, temp_expand, 4);
+					else
+						temp_expand = find_in_env_and_alloced(my_env, var, temp_expand, 0);
+				}
+				if (ft_strchr(s[x], '"'))
+				{
+					star = i;
+					while (s[x][i] != '"' && s[x][i])
+						i++;
+					temp_expand = ft_strjoin_new(temp_expand, s[x], star, i - 1);
+				}
+			}
+			else if (s[x][i] == '$' && s[x][i + 1] == '@' && !ft_strchr(&s[x][i], '\4'))
+				i += 2;
+			else if (s[x][i] == '$' && s[x][i + 1] == '@' && ft_strchr(&s[x][i], '\4'))
 			{
 				star = i;
-				i++;
-				while ((ft_isdigit(s[x][i]) || ft_isalpha(s[x][i]) ||  s[x][i] == '_' ) && s[x][i] != '3' && s[x][i] != '4' && s[x][i] != '2')
+				while (s[x][i] && s[x][i] != '\4')
 					i++;
-				var = ft_substr(s[x], star, i - star);
-				if (s[x][i] == '4')
-					temp_expand = find_in_env_and_alloced(my_env, var, temp_expand, 4);
-				else
-					temp_expand = find_in_env_and_alloced(my_env, var, temp_expand, 2);
+				temp_expand = ft_strjoin_new(temp_expand, s[x], star, i - 1);
 			}
 			else
 			{
 				star = i;
-				while ((s[x][i] && s[x][i] != '$') || (s[x][i] && s[x][i] != '4' && s[x][i - 1]))
+				while ((s[x][i] && s[x][i] != '$'))
 					i++;
-				temp_expand = ft_strjoin_new(temp_expand, s[x], ft_strlen(temp_expand), star, i - 1);
+				temp_expand = ft_strjoin_new(temp_expand, s[x], star, i - 1);
 			}
-			i++;
 		}
-		s[x] = ft_substr(temp_expand, 0, ft_strlen(temp_expand ));
+		s[x] = ft_substr(temp_expand, 0, ft_strlen(temp_expand));
 		temp_expand = ft_substr("", 0, 0);
-		printf("%s\n", s[x]);
 		x++;
 	}
 }
@@ -148,11 +168,6 @@ void parser_arg(char *input, char **env, t_list *my_env)
 			if (input[x] == '\'')
 				quote++;
 		}
-		if (quote % 2 == 1)
-		{
-			printf("%s\n", "minishell: syntax error near unexpected token `\"' or `\''");
-			exit(1);
-		}
 		x++;
 	}
 	x = 0;
@@ -163,14 +178,13 @@ void parser_arg(char *input, char **env, t_list *my_env)
 		{
 			while (input[x] == ' ' && input[x])
 					x++;
-			while (input[x] != ' ' && input[x] != '"' && input[x] != '\'' && input[x] != '>' && input[x] != '|' && input[x] != '<'
-				&& input[x + 1] != ' ' && input[x + 1] != '"' && input[x + 1] != '\'' && input[x])
+			while (input[x] && !ft_strchr2(" \"'><|", input[x], 6) && !ft_strchr2(" \"'", input[x + 1], 3))
 					x++;
-			if ((input[x] != '|' && input[x] != '<' && input[x] != '>' && input[x] != '"' && input[x] != ' ' && input[x] != '\'' && input[x + 1] == ' ')
-				|| (input[x] != '|' && input[x] != '<' && input[x] != '>' && input[x] != '"' && input[x] != '\'' && input[x] != ' ' && input[x + 1] == '\0')
-				|| (input[x] != '|' && input[x] != '<' && input[x] != '>' && input[x] != '"' && input[x] != '\'' && input[x] != ' ' && input[x + 1] == '"'))
+			if ((!ft_strchr2(" \"'><|", input[x], 6) && input[x + 1] == ' ')
+				|| (!ft_strchr2(" \"'><|", input[x], 6) && input[x + 1] == '\0')
+				|| (!ft_strchr2(" \"'><|", input[x], 6) && input[x + 1] == '"'))
 				a++;
-			while (input[x] != '|' && input[x] != '<' && input[x] != '>' && input[x] != ' ' && input[x] != '"' && input[x] != '\'' && input[x])
+			while (!ft_strchr2(" \"'><|", input[x], 6) && input[x])
 				x++;
 		}
 		if (input[x] == '>' || input[x] != '|' || input[x] != '<')
@@ -208,199 +222,216 @@ void parser_arg(char *input, char **env, t_list *my_env)
 		x++;
 	}
 	s = ft_calloc(sizeof(char *) , a + 2);
-	a = 0;
-	x = 0;
-	while (str[x])
+	if (quote % 2 == 1)
+			printf("%s\n", "minishell: syntax error near unexpected token `\"' or `\''");
+	else if (ft_strchr2("><|", input[0], 3) && ft_strlen(input) == 1)
+		printf("minishell: syntax error near unexpected token `%c'\n", input[0]);
+	else if ((input[0] == '|' && input[1] == '|' && ft_strlen(input) == 2) 
+			|| (input[0] == '<' && input[1] == '<' && ft_strlen(input) == 2)
+			|| (input[0] == '>' && input[1] == '>' && ft_strlen(input) == 2))
+		printf("minishell: syntax error near unexpected token `%c%c'\n", input[0],input[0]);
+	else
 	{
-		if (str[x][i] && str[x][i] != '"' && str[x][i] != '\'')
+		x = 0;
+		while (str[x])
 		{
-			while (str[x][i] == ' ')
-				i++;
-			if ((str[x][0] == ' ' && x > 0 && str[x][i] != '>')
-				|| (((str[x][i] == '>' || str[x][i] == '|' || str[x][i] == '<') && i > 0))) 
-				z++;
-			if (str[x][i] && str[x][i] != '"' && str[x][i] != '\'')
+			if (str[x][i] && !ft_strchr2("\'\"", str[x][i], 2))
 			{
-				star = i;
-				while (str[x][i] && str[x][i] != '"' && str[x][i] != '\'')
-				{	
-					if ((str[x] && str[x + 1] && str[x][i] == '$' && str[x][i + 1] == '\0' && str[x + 1][0] == '"')
-						|| (str[x] && str[x + 1] && str[x][i] == '$' && str[x][i + 1] == '\0' && str[x + 1][0] == '\''))
-					{
-						if (!s[z])
-							s[z] = ft_calloc(1, 1);
-						x++;
-						i = 0;
-						star = 0;
-						while(str[x][i] && str[x][i] != '\'' && str[x][i] != '"' && str[x][i] != ' ')
-							i++;
-						s[z] = ft_strjoin_new(s[z], str[x], ft_strlen(s[z]), star, i - 1);
-					}
-					else
-					{
-						if (!s[z])
-							s[z] = ft_calloc(1, 1);
-						while(str[x][i] && str[x][i] != '"' && str[x][i] != '\'' && str[x][i] != ' ' && str[x][i] != '$' && str[x][i] != '>' && str[x][i] != '|' && str[x][i] != '<')
-							i++;
-						if ((str[x] && str[x][i] == '$' && str[x][i + 1]) || (str[x] && str[x][i] == '$' && str[x][i + 1] == '\0' && !str[x + 1]))
+				while (str[x][i] == ' ')
+					i++;
+				if (i > 0 && x > 0 && str[x][i - 1] == ' ')
+					z++;
+				if (str[x][i] && !ft_strchr2("\'\"", str[x][i], 2))
+				{
+					star = i;
+					while (str[x][i] && !ft_strchr2("\'\"", str[x][i], 2))
+					{	
+						if ((str[x + 1] && str[x][i] == '$' && str[x][i + 1] == '\0' && str[x + 1][0] == '"')
+							|| (str[x + 1] && str[x][i] == '$' && str[x][i + 1] == '\0' && str[x + 1][0] == '\''))
 						{
-							i++;
-							while (str[x][i] && str[x][i] != '$' && str[x][i] != ' ' && str[x][i] != '>')
+							if (!s[z])
+								s[z] = ft_calloc(1, 1);
+							s[z] = ft_strjoin_new(s[z], str[x], star, i - 1);
+							x++;
+							i = 0;
+							star = 0;
+							while(str[x][i] && !ft_strchr2("\'\" ", str[x][i], 3))
 								i++;
-							s[z] = ft_strjoin_new(s[z], str[x], ft_strlen(s[z]),star, i - 1);
-							if (str[x + 1] && str[x][i] != '$' && str[x][i] != ' ' && str[x + 1][0] == '"' && str[x + 1][1] != '"')
-								s[z] = ft_strjoin_new(s[z], "2", ft_strlen(s[z]), 0, 0);
-							else if ((str[x][i] && str[x][i] != '$' && str[x][i] != ' ' && str[x - 1][i] && str[x - 1][0] == '"' && str[x - 1][1] == '"')
-							|| (str[x][i] && str[x][i] != '$' && str[x][i] != ' ' && str[x + 1][i] && str[x + 1][0] == '"' && str[x + 1][1] == '"'))
-								s[z] = ft_strjoin_new(s[z], "3", ft_strlen(s[z]), 0, 1);
+							s[z] = ft_strjoin_new(s[z], str[x], star, i - 1);
 						}
 						else
-							s[z] = ft_strjoin_new(s[z], str[x], ft_strlen(s[z]), star, i - 1);
-						if (str[x][i] == ' ')
-							z++;
-						while (str[x][i] == ' ')
-							i++;
-						if ((str[x][i] && str[x][i] == '>') || (str[x][i] && str[x][i] == '|')
-							|| (str[x][i] && str[x][i] == '<'))
 						{
-							star = i;
-							if ((i > 0 && str[x][i - 1] != ' ' && str[x][i - 1]) || (!ft_strchr(str[x], ' ') && str[x - 1]))
-								z++;
 							if (!s[z])
 								s[z] = ft_calloc(1, 1);
-							while ((str[x][i] && str[x][i] == '>') || (str[x][i] && str[x][i] == '|')
-								|| (str[x][i] && str[x][i] == '<'))
+							while(str[x][i] && !ft_strchr2("\'\" $><|", str[x][i], 7))
+								i++;
+							if ((str[x] && str[x][i] == '$' && str[x][i + 1]) || (str[x] && str[x][i] == '$' && str[x][i + 1] == '\0' && !str[x + 1]))
+							{
+								i++;
+								while ((str[x][i] && !ft_strchr2(" $><|", str[x][i], 5)))
 									i++;
-								s[z] = ft_strjoin_new(s[z], str[x], ft_strlen(s[z]), star, i - 1);
-							if ((str[x][i] != ' ' && str[x][i] && str[x][i + 1] != '>') || (str[x][ft_strlen(str[x]) - 1] != ' ' && str[x + 1] && str[x + 1][0]))
+								s[z] = ft_strjoin_new(s[z], str[x],star, i - 1);
+								if (str[x][i] && str[x][i] == '$' && str[x][i - 1])
+									s[z] = ft_strjoin_new(s[z], "\5", 0, 0);
+								else if ((str[x][i] && str[x][i] != ' ' && str[x + 1][0] && str[x + 1][0] == '"' && str[x + 1][1] == '"')
+									|| (str[x][i] && str[x][i] != ' ' &&  str[x - 1][0] && str[x - 1][0] == '"' && str[x - 1][1] == '"')
+									|| (str[x][i] && str[x][i] != ' ' && str[x + 1][0] && str[x + 1][0] == '\'' && str[x + 1][1] == '\'')
+									|| (str[x][i] && str[x][i] != ' ' && str[x - 1][0] && str[x - 1][0] == '\'' && str[x - 1][1] == '\''))
+										s[z] = ft_strjoin_new(s[z], "\5", 0, 0);
+								else
+									s[z] = ft_strjoin_new(s[z], "\6", 0, 0);
+							}
+							else
+								s[z] = ft_strjoin_new(s[z], str[x], star, i - 1);
+							if (str[x][i] == ' ')
 								z++;
-							if (!s[z])
-								s[z] = ft_calloc(1, 1);
+							while (str[x][i] == ' ')
+								i++;	
+							if (str[x][i] && ft_strchr2("<>|", str[x][i], 3))
+							{
+								if ((i > 0 && str[x][i - 1] && str[x][i - 1] != ' ')
+									|| (i > 0 && !ft_strchr2(&str[x][0], ' ', i)) || (x > 0 && i == 0))
+									z++;
+								star = i;
+								if (!s[z])
+									s[z] = ft_calloc(1, 1);
+								while (str[x][i] && ft_strchr2("<>|", str[x][i], 3))
+										i++;
+									s[z] = ft_strjoin_new(s[z], str[x], star, i - 1);
+								if (str[x][i] != ' ' && str[x][i])
+									z++;
+								else if ((!ft_strchr2(&str[x][i], ' ', ft_strlen(str[x]) - i) && str[x + 1]))
+									z++;
+								if (!s[z])
+									s[z] = ft_calloc(1, 1);
+							}
+							star = i;
 						}
-						star = i;
 					}
 				}
 			}
-		}
-		if ((str[x] && x > 0 && str[x][i] && str[x][0] == '"'  && str[x][1] == '"' && str[x + 1]// when string -1 and string +1 : is exist this code for this arg (ss "" ss "" ss) before string space and after it and inside string '\0' this for "" qoute index most be > 0
-			&& str[x + 1][0] == ' ' && str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ')
-			|| (str[x] && x > 0 && str[x][i] && str[x][0] == '\'' && str[x][1] == '\''// when string -1 and string +1 : is exist this code for this arg (ss '' ss '' ss) before string space and after it and inside string '\0' this for '' qoute index most be > 0
-			&& str[x + 1] && str[x + 1][0] == ' ' && str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ')
-			|| (x > 0 && str[x] && str[x][0] == '"' && str[x][1] == '"' && str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ' ) // when string -1 and string +1 : is exist this code for this arg (ss '' ss '' ss) before string space and after it and inside string '\0' this for '' qoute index most be > 0
-			|| (x > 0 && str[x] && str[x][0] == '\'' && str[x][1] == '\'' && str[x - 1]  && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ' ))
-		{
-			if (!s[z])
-				s[z] = ft_calloc(2, 1);
-		}
-		if (str[x][i] == '"' && str[x][i + 1] != '"')
-		{
-			i++;
-			star = i;
-			while (str[x][i] && str[x][i] != '"' && str[x][i] != '>' && str[x][i] != '|' && str[x][i] != '<' && str[x][i] != '$')
+			if ((str[x] && x > 0 && str[x][i] && str[x][0] == '"'  && str[x][1] == '"' && str[x + 1]// when string -1 and string +1 : is exist this code for this arg (ss "" ss "" ss) before string space and after it and inside string '0' this for "" qoute index most be > 0
+				&& str[x + 1][0] == ' ' && str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ')
+				|| (str[x] && x > 0 && str[x][i] && str[x][0] == '\'' && str[x][1] == '\''// when string -1 and string +1 : is exist this code for this arg (ss '' ss '' ss) before string space and after it and inside string '\0' this for '' qoute index most be > 0
+				&& str[x + 1] && str[x + 1][0] == ' ' && str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ')
+				|| (x > 0 && str[x] && str[x][0] == '"' && str[x][1] == '"' && str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ' ) // when string -1 and string +1 : is exist this code for this arg (ss '' ss '' ss) before string space and after it and inside string '\0' this for '' qoute index most be > 0
+				|| (x > 0 && str[x] && str[x][0] == '\'' && str[x][1] == '\'' && str[x - 1]  && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ' ))
+			{
+				if (!s[z])
+					s[z] = ft_calloc(2, 1);
+			}
+			if (str[x][i] == '"' && str[x][i + 1] != '"')
+			{
 				i++;
-			if (str[x][i] == '$')
-			{
-				while (str[x][i] == '$')
+				star = i;
+				while (str[x][i] && !ft_strchr2("$|><\"", str[x][i], 5))
 					i++;
-				while (str[x][i] && str[x][i] != '$' && str[x][i] != '"')
-					i++;
-				if (str[x][i] == '"')
+				if (str[x][i] == '$')
 				{
-					if (!s[z])
-						s[z] = ft_calloc(1, 1);
-					s[z] = ft_strjoin_new(s[z], str[x], ft_strlen(s[z]), star, i - 1);
-				}
-				s[z] = ft_strjoin_new(s[z], "3", ft_strlen(s[z]), 0, 0);
-			}
-			else if (str[x][i] == '>' || str[x][i] == '|' || str[x][i] == '<')
-			{
-				if ((x == 0 ) || (str[x] && str[x - 1] && str[x - 1][0] == ' ')
-					|| (str[x] && str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ')
-					|| (str[x] && str[x + 1] && str[x + 1][0] == ' '))
-						s[z] = ft_strdup("1");//this for "|" pipe inside quote or ">" or "<"
-				while (str[x][i] && str[x][i] != '"')
-					i++;
-				s[z] = ft_strjoin_new(s[z], str[x], ft_strlen(s[z]), star, i - 1);
-			}
-			else
-			{
-				i = star;
-				while(str[x][i] && str[x][i] != '"')
-					i++;
-				if ((x == 0) || (x > 0 && str[x - 1] && str[x - 1][0] == '"' && str[x - 1][1] == '"' && str[x][0] != ' ')
-				|| (x > 0 && str[x - 1] && str[x - 1][0] == '\'' && str[x - 1][1] == '\'' && str[x][0] == '"'))
-				{
-					if (!s[z])
+					while (str[x][i] == '$')
+						i++;
+					while (str[x][i] && str[x][i] != '"')
+						i++;
+					if (str[x][i] == '"')
+					{
+						if (!s[z])
 							s[z] = ft_calloc(1, 1);
-					s[z] = ft_strjoin_new(s[z], str[x], ft_strlen(s[z]), star, i - 1); // this for first arg between ("asdasda")
+						s[z] = ft_strjoin_new(s[z], str[x], star, i - 1);
+					}
+					s[z] = ft_strjoin_new(s[z], "\3", 0, 0);
 				}
-				else if ((str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ')) // this is for second string inside (space "asd") and before the string space that mean new strig have to allocted
-					s[z] = ft_substr(str[x], star, i - 1);
-				else if (str[x - 1] && str[x][ft_strlen(str[x]) - 1] != ' ')
-					s[z] = ft_strjoin_new(s[z], str[x], ft_strlen(s[z]), star, i - 1);
-			}
-		}
-		if (str[x][i] == '\'' && str[x][i + 1] != '\'')
-		{
-				i++;
-			star = i;
-			while (str[x][i] && str[x][i] != '\'' && str[x][i] != '>' && str[x][i] != '|' && str[x][i] != '<' && str[x][i] != '$')
-				i++;
-			if (str[x][i] == '$' && str[x][i - 1] != '"')
-			{
-				while (str[x][i] == '$')
-					i++;
-				while (str[x][i] && str[x][i] != '$' && str[x][i] != '\'')
-					i++;
-				if (str[x][i] == '\'')
+				else if (ft_strchr("<>|", 3))
 				{
-					if (!s[z])
-						s[z] = ft_calloc(1, 1);
-					s[z] = ft_strjoin_new(s[z], str[x], ft_strlen(s[z]), star, i - 1);
+					if ((x == 0 ) || (str[x] && str[x - 1] && str[x - 1][0] == ' ')
+						|| (str[x] && str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ')
+						|| (str[x] && str[x + 1] && str[x + 1][0] == ' '))
+							s[z] = ft_strdup("\1");//this for "|" pipe inside quote or ">" or "<"
+					while (str[x][i] && str[x][i] != '"')
+						i++;
+					s[z] = ft_strjoin_new(s[z], str[x], star, i - 1);
 				}
-				s[z] = ft_strjoin_new(s[z], "4", ft_strlen(s[z]), 0, 0);
-			}
-			else if (str[x][i] == '>' || str[x][i] == '|' || str[x][i] == '<')
-			{
-				if ((x == 0) || (str[x] && str[x - 1] && str[x - 1][0] == ' ')
-					|| (str[x] && str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' '))
-						s[z] = ft_strdup("1");//this for '|' pipe inside quote or ">" or "<"
-				while (str[x][i] && str[x][i] != '\'')
-					i++;
-				s[z] = ft_strjoin_new(s[z], str[x], ft_strlen(s[z]), star, i - 1);
-			}
-			else
-			{
-				i = star;
-				while(str[x][i] && str[x][i] != '\'')
-					i++;
-				if ((x == 0) || (x > 0 && str[x - 1] && str[x - 1][0] == '\'' && str[x - 1][1] == '\'' && str[x][0] != ' ')
-					|| (x > 0 && str[x - 1] && str[x - 1][0] == '"' && str[x - 1][1] == '"' && str[x][0] == '\''))
+				else
+				{
+					i = star;
+					while(str[x][i] && str[x][i] != '"')
+						i++;
+					if ((x == 0) || (x > 0 && str[x - 1] && str[x - 1][0] == '"' && str[x - 1][1] == '"' && str[x][0] != ' ')
+					|| (x > 0 && str[x - 1] && str[x - 1][0] == '\'' && str[x - 1][1] == '\'' && str[x][0] == '"'))
 					{
 						if (!s[z])
 								s[z] = ft_calloc(1, 1);
-						s[z] = ft_strjoin_new(s[z], str[x], ft_strlen(s[z]), star, i - 1);
+						s[z] = ft_strjoin_new(s[z], str[x], star, i - 1); // this for first arg between ("asdasda")
 					}
-				else if ((str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' '))
-					s[z] = ft_substr(str[x], star, i - star);
-				else if (str[x - 1] && str[x][ft_strlen(str[x]) - 1] != ' ')
-					s[z] = ft_strjoin_new(s[z], str[x], ft_strlen(s[z]), star, i - 1);
+					else if ((str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' ')) // this is for second string inside (space "asd") and before the string space that mean new strig have to allocted
+						s[z] = ft_substr(str[x], star, i - 1);
+					else if (str[x - 1] && str[x][ft_strlen(str[x]) - 1] != ' ')
+						s[z] = ft_strjoin_new(s[z], str[x], star, i - 1);
+				}
 			}
+			if (str[x][i] == '\'' && str[x][i + 1] != '\'')
+			{
+					i++;
+				star = i;
+				while (str[x][i] && !ft_strchr2("$|><'", str[x][i], 5))
+					i++;
+				if (str[x][i] == '$')
+				{
+					while (str[x][i] == '$')
+						i++;
+					while (str[x][i] && str[x][i] != '\'')
+						i++;
+					if (str[x][i] == '\'')
+					{
+						if (!s[z])
+							s[z] = ft_calloc(1, 1);
+						s[z] = ft_strjoin_new(s[z], str[x], star, i - 1);
+					}
+					s[z] = ft_strjoin_new(s[z], "\4", 0, 0);
+				}
+				else if (ft_strchr2("|><", str[x][i], 3))
+				{
+					if ((x == 0) || (str[x] && str[x - 1] && str[x - 1][0] == ' ')
+						|| (str[x] && str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' '))
+							s[z] = ft_strdup("\1");//this for '|' pipe inside quote or ">" or "<"
+					while (str[x][i] && str[x][i] != '\'')
+						i++;
+					s[z] = ft_strjoin_new(s[z], str[x], star, i - 1);
+				}
+				else
+				{
+					i = star;
+					while(str[x][i] && str[x][i] != '\'')
+						i++;
+					if ((x == 0) || (x > 0 && str[x - 1] && str[x - 1][0] == '\'' && str[x - 1][1] == '\'' && str[x][0] != ' ')
+						|| (x > 0 && str[x - 1] && str[x - 1][0] == '"' && str[x - 1][1] == '"' && str[x][0] == '\''))
+						{
+							if (!s[z])
+									s[z] = ft_calloc(1, 1);
+							s[z] = ft_strjoin_new(s[z], str[x], star, i - 1);
+						}
+					else if ((str[x - 1] && str[x - 1][ft_strlen(str[x - 1]) - 1] == ' '))
+						s[z] = ft_substr(str[x], star, i - star);
+					else if (str[x - 1] && str[x][ft_strlen(str[x]) - 1] != ' ')
+						s[z] = ft_strjoin_new(s[z], str[x], star, i - 1);
+				}
+			}
+			x++;
+			a = 0;
+			i = 0;
 		}
-		x++;
-		a = 0;
-		i = 0;
 	}
-	export(s, my_env, env);
+	(void)env;
+	// (void)my_env;
 	expand(s, my_env);
+	// export(s, my_env, env);
 	// printf("******************************\n");	
-	i = 0;
+	// i = 0;
 	// while (str[i])
 	// 	printf("------*str----*%s\n", str[i++]);
 	// printf("******************************\n");	
-	// i = 0;
-	// while (s[i])
-	// 	printf("----*s----*%s\n", s[i++]);
+	i = 0;
+	while (s[i])
+		printf("----*s----*%s\n", s[i++]);
 }
 
 int	main(int ac, char **av, char **env)

@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 12:49:45 by abouram           #+#    #+#             */
-/*   Updated: 2023/05/20 23:16:01 by abouram          ###   ########.fr       */
+/*   Updated: 2023/05/26 17:39:21 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void	ft_putchar_fd(char c, int fd);
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 char	*ft_strchr(char *s, int c);
+int		ft_strchr2(char *s, char c, int end);
 char	*ft_strchr_inc(char *s, int c);
 char	*ft_strrchr(char *s, int c);
 char	**ft_split(char *s, char c);
@@ -69,6 +70,6 @@ t_list	*ft_lstnew(void *content);
 void	ft_lstadd_back(t_list **lst, t_list *new);
 t_list	*ft_lstlast(t_list *lst);
 void	ft_lstdelone(t_list *lst, void (*del)(void *));
-char	*ft_strjoin_new(char *s1, char *s2, int index, int x, int j);
+char	*ft_strjoin_new(char *s1, char *s2, int x, int j);
 int 	ft_compare(char *dst, char *src);
 #endif
