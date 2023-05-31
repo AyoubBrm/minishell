@@ -1,6 +1,6 @@
 CC = cc
 FLAGS = -Wextra -Werror -Wall #-fsanitize=address -g
-SRC = minishell.c builtins.c execute.c free.c
+SRC = minishell.c builtins.c execute.c free.c account_the_quote.c clean_expand.c
 LIBFT = make -C ./libft
 NAME = minishell
 OBJ = $(SRC:.c=.o)

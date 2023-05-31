@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/05/20 22:25:10 by abouram          ###   ########.fr       */
+/*   Updated: 2023/05/31 01:38:16 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,5 +50,10 @@ void    my_unset(char **to_unset, t_list *my_env);
 void	free2d(char **arg);
 void    free_env(void *env);
 void    freenode(t_list **lst, t_list *node);
+
+//barssing
+int	account_quote(char *input);
+char **clean_expand(char **final_expand);
+
 
 #endif
