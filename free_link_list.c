@@ -1,44 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strncmp.c                                       :+:      :+:    :+:   */
+/*   free_link_list.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/03 21:28:09 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/03 20:20:39 by abouram          ###   ########.fr       */
+/*   Created: 2023/06/03 19:15:35 by abouram           #+#    #+#             */
+/*   Updated: 2023/06/03 19:18:34 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
-int	ft_strncmp(char *s1, char *s2, size_t n)
+#include"minishell.h"
+void free_list(t_table *head)
 {
-	size_t	i;
+	t_table *new_addition;
 
-	i = 0;
-	while (i < n - 1 && s1[i] == s2[i] && s1[i] && s2[i])
+	while (head)
 	{
-		i++;
+		puts("sss\n");
+		free(head->cmd);
+		free2d(head->redirection->type);
+		free2d(head->redirection->file);
+		free(head->redirection);
+		free2d(head->arg);
+		new_addition = head->next;
+		free(head);
+		head = new_addition;
 	}
-	if (i < n)
-		return (((unsigned char *)s1)[i] - ((unsigned char *)s2)[i]);
-	return (0);
-}
-
-int ft_compare(char *dst, char *src)
-{
-	int i = 0;
-
-	while(dst[i])
-	{
-		while(src[i])
-		{
-			if (src[i] == dst[i])
-				i++;
-			else
-				return 0;
-		}
-	}
-	return 1;
+	free(head);
 }

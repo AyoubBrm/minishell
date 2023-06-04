@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/05/31 01:38:16 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/03 23:50:02 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,29 @@ void    free_env(void *env);
 void    freenode(t_list **lst, t_list *node);
 
 //barssing
+
+typedef struct s_addition
+{
+	int how_many;
+	char **type;
+	char **file;
+	char *pipe;
+	
+}t_redirection;
+
+typedef struct s_tab
+{
+	int pip;
+	char *cmd;
+	t_redirection *redirection;
+	char **arg;
+	struct s_tab *next;
+	
+}t_table;
+
 int	account_quote(char *input);
 char **clean_expand(char **final_expand);
+void free_list(t_table *head);
 
 
 #endif

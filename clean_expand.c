@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 20:23:48 by abouram           #+#    #+#             */
-/*   Updated: 2023/05/29 22:34:30 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/03 08:20:13 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ char **clean_expand(char **final_expand)
 				temp = ft_strjoin_new(temp ,final_expand[x], i, i);
 				i++;
 			}
+			free(final_expand[x]);
 			final_expand[x] = ft_substr(temp, 0, ft_strlen(temp));
 			free(temp);
 		}

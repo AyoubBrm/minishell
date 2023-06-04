@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/05/20 16:42:24 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/03 08:51:19 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,9 +148,12 @@ void *my_realloc(char *ptr, int size)
 
 void free_env(void *env)
 {
-    t_list *env_var = (t_list *)env;
-    free(env_var->key);
-    free(env_var->value);
+	(void)env;
+    // t_list *env_var = (t_list *)env;
+	// free2d(env_var->all);
+	
+    // free(env_var->key);
+    // free(env_var->value);
     // free(env_var);
 }
 
@@ -163,19 +166,22 @@ t_list *get_env(char **env)
     t_list *current = NULL;
     t_list *new_env = NULL;
     t_list *head = NULL;
-    char **env_old;
-    char *key = NULL;
-    char *value;
+    char **env_old = NULL;
+    // char *key = NULL;
+    // char *value = NULL;
     while (env[i])
     {
+		// free (key);
+		// free2d (env_old);
+		// free (value);
+		// free_env(new_env);
         env_old = ft_split_origin(env[i], '=');
-        key = ft_strdup(env_old[0]);
-        value = ft_strdup(env_old[1]);
         new_env = malloc(sizeof(t_list));
-        new_env->key = key;
-        new_env->value = value;
-        new_env->all = malloc(ft_strlen(key) + ft_strlen(value) + 1);
-        new_env->all = ft_strjoin(key, ft_strchr_inc(env[i], '='));
+        new_env->key = ft_strdup(env_old[0]);
+        new_env->value = ft_strdup(env_old[1]);
+		free2d(env_old);
+        // new_env->all = malloc(ft_strlen(key) + ft_strlen(value) + 1);
+        new_env->all = ft_strjoin(new_env->key, ft_strchr_inc(env[i], '='));
         new_env->next = NULL;
 
         if (current == NULL)
@@ -189,12 +195,13 @@ t_list *get_env(char **env)
             current = current->next;
         }
         i++;
-
+		// new_env = new_env->next;
         // if (ft_strncmp(current->key, "OLDPWD", 6) == 0)
         // {
         //     freenode(&new_env, current);
         // }
     }
+	// new_env->next = NULL;
     return head;
 }
 

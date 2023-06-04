@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split_origin.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 00:15:26 by shmimi            #+#    #+#             */
-/*   Updated: 2023/05/12 15:04:02 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/06/03 05:57:34 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ static void	assign(char *s, char delimeter, char **tab, int word_counts)
 	tab[i] = 0;
 }
 
-char	**ft_split_origin(char const *s, char c)
+char	**ft_split_origin(char *s, char c)
 {
 	int		i;
 	char	**tab;
@@ -89,7 +89,7 @@ char	**ft_split_origin(char const *s, char c)
 			if (!s[i - 1])
 				return (0);
 		}
-		assign((char *)s, c, tab, cw);
+		assign(s, c, tab, cw);
 		return (tab);
 	}
 	return (0);

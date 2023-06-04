@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/09 18:05:06 by abouram           #+#    #+#             */
-/*   Updated: 2023/05/23 22:24:38 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/03 02:53:11 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ char	*ft_strjoin_new(char *s1, char *s2, int x, int j)
 	char	*p;
 	int		i;
 	char	*tmp;
-
 	if (!s1 && !s2)
 		return (NULL);
 	tmp = s1;

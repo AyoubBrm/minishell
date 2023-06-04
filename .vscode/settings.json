@@ -1,0 +1,7 @@
+{
+	"files.associations": {
+		"*.c": "c",
+		"__node_handle": "c",
+		"complex": "c"
+	}
+}

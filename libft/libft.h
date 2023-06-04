@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 12:49:45 by abouram           #+#    #+#             */
-/*   Updated: 2023/05/26 17:39:21 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/03 05:57:15 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int		ft_strchr2(char *s, char c, int end);
 char	*ft_strchr_inc(char *s, int c);
 char	*ft_strrchr(char *s, int c);
 char	**ft_split(char *s, char c);
-char	**ft_split_origin(char const *s, char c);
+char	**ft_split_origin(char *s, char c);
 void	*ft_calloc(size_t count, size_t size);
 void	*ft_memset(void *b, int c, size_t len);
 void	*ft_memchr(void *s, int c, size_t n);
