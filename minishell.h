@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/03 23:50:02 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/09 00:08:33 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,12 +69,16 @@ typedef struct s_tab
 	t_redirection *redirection;
 	char **arg;
 	struct s_tab *next;
-	
+	int		ambiguous;
+	int		no_file_dire;
 }t_table;
 
 int	account_quote(char *input);
 char **clean_expand(char **final_expand);
 void free_list(t_table *head);
+void free_list(t_table *head);
+t_table *error(t_table *list);
+void ambiguous_no_file(t_table *head);
 
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/04 01:54:05 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/09 00:56:08 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,10 @@ char	**ft_expand(char **str1, char **str2)
 	j = 0;
 	if (!str1 && !str2)
 		return (NULL);
-	while(str2[j])
-		j++;
 	while(str1[i])
 		i++;
+	while(str2[j])
+		j++;
 	new_expand = ft_calloc((i + j) + 1, sizeof(char *));
 	if (!new_expand)
 		return (NULL);
@@ -58,20 +58,21 @@ char	**ft_expand(char **str1, char **str2)
 	while(str1[++i])
 		new_expand[i] = ft_strdup(str1[i]);
 	while(str2[++j])
-		new_expand[i + j] = ft_strdup(str2[j]);
+		new_expand[i++] = ft_strdup(str2[j]);
 	free2d(str1);
 	return(new_expand);
 }
-void final_addition(char **str_new)
+t_table *final_addition(char **str_new)
 {
 	int i;
 	i = 0;
-	int x = 0;
 	t_table *new_addition;
 	t_table *head;
+	t_table *head2;
 
 	new_addition		= ft_calloc(1, sizeof(t_table));
  	head = new_addition;	
+	head2 = new_addition;
 	new_addition->redirection	 = ft_calloc(1, sizeof(t_redirection));
 	new_addition->redirection->how_many = 0;
 	new_addition->redirection->type = ft_calloc(1, sizeof(char *));
@@ -98,28 +99,52 @@ void final_addition(char **str_new)
 			new_addition->redirection->type = join2d_with_arr(new_addition->redirection->type, str_new[i++]);
 			new_addition->redirection->how_many++;
 			if (str_new[i] && str_new[i][0] != '|')
+			{
+				if (str_new[i][0] == '9')
+					ft_memmove(str_new[i], &str_new[i][1], ft_strlen(str_new[i]));
 				new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file, str_new[i++]);
+			}
+			else
+				new_addition->redirection->file = NULL;
 		}
 		else if (ft_strncmp(str_new[i], "<", 1) == 0)
 		{
 			new_addition->redirection->type = join2d_with_arr(new_addition->redirection->type, str_new[i++]);
 			new_addition->redirection->how_many++;
 			if (str_new[i] && str_new[i][0] != '|')
+			{
+				if (str_new[i][0] == '9')
+					ft_memmove(str_new[i], &str_new[i][1], ft_strlen(str_new[i]));
 				new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file, str_new[i++]);
+			}
+			else
+				new_addition->redirection->file = NULL;
 		}
 		else if (ft_strncmp(str_new[i], "<<", 2) == 0)
 		{
 			new_addition->redirection->type = join2d_with_arr(new_addition->redirection->type, str_new[i++]);
 			new_addition->redirection->how_many++;
 			if (str_new[i] && str_new[i][0] != '|')
+			{
+				if (str_new[i][0] == '9')
+					ft_memmove(str_new[i], &str_new[i][1], ft_strlen(str_new[i]));
 				new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file, str_new[i++]);
+			}
+			else
+				new_addition->redirection->file = NULL;
 		}
 		else if (ft_strncmp(str_new[i], ">>", 2) == 0)
 		{
 			new_addition->redirection->type = join2d_with_arr(new_addition->redirection->type, str_new[i++]);
 			new_addition->redirection->how_many++;
-			if (str_new[i] && str_new[i][0] != '|')
+			if ((str_new[i] && str_new[i][0] != '|'))
+			{
+				if (str_new[i][0] == '9')
+					ft_memmove(str_new[i], &str_new[i][1], ft_strlen(str_new[i]));
 				new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file, str_new[i++]);
+			}
+			else
+				new_addition->redirection->file = NULL;
 		}
 		else 
 		{
@@ -131,66 +156,21 @@ void final_addition(char **str_new)
 				new_addition->cmd = ft_strdup(&new_addition->cmd[1]);
 		}
 		if (str_new[i] && new_addition->cmd && !ft_strchr("<>|", str_new[i][0]))
+		{
+			if (str_new[i][0] == '9')
+				ft_memmove(str_new[i], &str_new[i][1], ft_strlen(str_new[i]));
 			new_addition->arg = join2d_with_arr(new_addition->arg, str_new[i++]);
+		}
 		else if (new_addition->cmd && str_new[i] && str_new[i][0] == '\0')
-			new_addition->arg = join2d_with_arr(new_addition->arg, str_new[i++]);
+			new_addition->arg = join2d_with_arr(new_addition->arg, str_new[i++]);		
 	}
 	new_addition->next = NULL;
 	free2d(str_new);
-	x = 0;
-	t_table *a;
-	a = head;
-	while (head)
-	{
-		printf("_____CMD_____=..%s\n\n", head->cmd);
-		x = 0;
-		while (head->arg[x])
-			printf("_____ARG_____=..%s\n\n", head->arg[x++]);
-			printf("_____PIPE_____=..%d\n\n", head->pip);
-			printf("_____manyred.._____=..%d\n\n", head->redirection->how_many);
-		x = 0;
-		while (head->redirection->type[x])
-		{
-			if 	(head->redirection->type[x] && ft_strncmp("<<", head->redirection->type[x], 3) && ft_strncmp(">>", head->redirection->type[x], 3)
-				&& ft_strncmp("<", head->redirection->type[x], 3) && ft_strncmp(">", head->redirection->type[x], 2)
-				&& ft_strncmp("|", head->redirection->type[x], 3))
-				{
-					if (!ft_strncmp(">>", head->redirection->type[x], 2) || !ft_strncmp("<<", head->redirection->type[x], 2))
-						printf("syntax error near unexpected token `%c%c'\n", head->redirection->type[x][2],head->redirection->type[x][3]);
-					free_list(head);
-					return ;
-				}
-			if (ft_strncmp(head->redirection->type[x], ">>" ,3) != 0)
-				{
-					printf("syntax error near unexpected token ,%c\n",  head->redirection->file[x][2]);
-					// free_list(head);
-					return;
-				}
-			if (head->redirection->type[x] && !head->redirection->file[x])
-				printf("syntax error near unexpected token `newline'\n");
-			printf("_____REDIRECTION_____=..%s\n\n", head->redirection->type[x]);
-			x++;
-		}
-		if((head->redirection->pipe && ft_strncmp("||", head->redirection->pipe, 2) == 0)
-			|| (!head->cmd && head->pip == 1))
-		{
-			if(ft_strlen(head->redirection->pipe) == 1 && !head->next->cmd)
-				printf("syntax error near unexpected token `|'\n");
-			else if(head->redirection->pipe && ft_strncmp("||", head->redirection->pipe, 2) == 0)
-				printf("syntax error near unexpected token `||'\n");
-			else if ((!head->cmd && head->pip == 1))
-				printf("syntax error near unexpected token `|'\n");
-			free_list(head);
-			return ;
-		}
-		x = 0;
-		while (head->redirection->file[x])
-			printf("_____FILE_____=..%s\n\n", head->redirection->file[x++]);
-		printf("_____PIPE_____=..%s\n\n", head->redirection->pipe);
-		head = head->next;
-	}
-	head = a;
-	// free_list(head);
+	ambiguous_no_file(head2);
+	head = error(head);
+	if (head == 0)
+		return (0);
+	return (head);
 }
 
 char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand, int flags)
@@ -202,7 +182,9 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand, int 
 		if (ft_strncmp(&var[1], env->key,  ft_strlen(var) + 1) == 0)
 		{
 			if (flags == 4)
-				return(temp_expand = ft_strjoin_new(temp_expand, var, 0, ft_strlen(var)));
+				return(temp_expand = ft_strjoin_new(temp_expand , var, 0, ft_strlen(var)));
+			else if (flags == 2)
+				return(temp_expand = ft_substr(var , 0, ft_strlen(var)));
 			else
 				temp_expand = ft_strjoin_new(temp_expand, env->value, 0, ft_strlen(env->value));
 		}
@@ -212,7 +194,7 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand, int 
 		return(ft_strjoin(temp_expand, var));
 	else if (var[0] == '$' && ft_isdigit(var[1]))
 		return(ft_strjoin(temp_expand, &var[2]));
-	else if(ft_strchr(var, '$') && ft_strlen(var) == 1)
+	else if((ft_strchr(var, '$') && ft_strlen(var) == 1))
 		return(ft_strjoin(temp_expand, var));
 	return(temp_expand);
 }
@@ -226,13 +208,13 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 	char 	**ex_env;
 	char	**str_new;
 	char	*temp_str;
-	int index;
+	int index = 0;
 	
 	str_new = ft_calloc(num_alloc + 1 , sizeof(char *));
 	x = 0;
+	temp_expand = ft_calloc(1, 1);
 	while (s[x])
 	{
-		temp_expand = ft_calloc(1, 1);
 		i = 0;
 		while (s[x][i])
 		{
@@ -247,7 +229,9 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 					while ((ft_isdigit(s[x][i]) || ft_isalpha(s[x][i]) || s[x][i] == '_') && !ft_strchr("3456", s[x][i]))
 						i++;
 					var = ft_substr(s[x], star, i - star);
-					if(s[x][i] == '4')
+					if (x > 0 && !ft_strcmp("<<", str_new[x - 1]))
+						temp_expand = find_in_env_and_alloced(my_env, var, temp_expand, 2);
+					else if(s[x][i] == '4')
 					{
 						temp_expand = find_in_env_and_alloced(my_env, var, temp_expand, 4);
 						i++;
@@ -261,7 +245,7 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 							temp_expand = find_in_env_and_alloced(my_env, var, temp_expand, 4);
 						temp_expand = ft_strjoin_new(temp_expand, s[x], star, i - 1);
 					}
-					else 
+					else
 						temp_expand = find_in_env_and_alloced(my_env, var, temp_expand, 0);
 					free(var);
 				}
@@ -288,7 +272,6 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 		{
 			if ((ft_strchr(temp_expand, ' ') || ft_strchr(temp_expand, '\t')))
 			{
-				index = 0;
 				if (!temp_str)
 					temp_str = ft_calloc (1 ,1);
 				while(temp_expand[index])
@@ -297,6 +280,7 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 						index++;
 					if (temp_expand[index] == ' ')
 					{
+						printf("%s\n", temp_expand);
 						temp_str = ft_strjoin_new(temp_str, temp_expand, index, index);
 						temp_str = ft_strjoin_new(temp_str, "9", 0, 0);
 					}
@@ -304,24 +288,21 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 						temp_str = ft_strjoin_new(temp_str, temp_expand, index, index);
 					index++;
 				}
-				temp_expand = ft_substr(temp_str, 0, ft_strlen(temp_str));
+				temp_expand = ft_strdup(temp_str);
 			}
 			ex_env = ft_split_origin(temp_expand, ' ');
 			str_new = ft_expand(str_new, ex_env);
 			free2d(ex_env);
-			free(temp_str);
 		}
 		else
-		{
-			while (str_new[x])
-				x++;
-			str_new[x] = ft_substr(temp_expand, 0, ft_strlen(temp_expand));
-		}
-		free(temp_expand);
-		temp_expand = NULL;
+			str_new = join2d_with_arr(str_new, temp_expand);
+		ft_bzero(temp_expand, ft_strlen(temp_expand));
 		x++;
 	}
+	x = 0;
+	free(temp_expand);
 	free2d(s);
+	free(temp_str);
 	return(str_new);
 }
 
@@ -365,6 +346,7 @@ void parser_arg(char *input, char **env, t_list *my_env)
 {
 	size_t	x;
 	size_t	i = 0;
+	t_table	*final_list;
 	char	**str;
 	char	**s;
 	int		index = 0;
@@ -379,24 +361,19 @@ void parser_arg(char *input, char **env, t_list *my_env)
 	{
 		if (input[x] != '"' && input[x] != '\'') // this for allocte the string **str
 		{
-			while (input[x] == ' ' && input[x])
+			while (ft_strchr2(" \t", input[x], 2) && input[x])
 					x++;
-			while (input[x] && !ft_strchr2(" \"'><|", input[x], 6) && !ft_strchr2(" \"'", input[x + 1], 3))
+			while (input[x] && !ft_strchr2(" \t\"'><|", input[x], 7))
 					x++;
-			if ((!ft_strchr2(" \"'><|", input[x], 6) && ft_strchr2(" 	", input[x], 2))
-				|| (!ft_strchr2(" \"'><|", input[x], 6) && input[x + 1] == '\0')
-				|| (!ft_strchr2(" \"'><|", input[x], 6) && input[x + 1] == '"'))
+			if (input[x - 1] && ft_strchr2(" ><|\t", input[x], 6))
 				num_alloc++;
-			while (!ft_strchr2(" \"'><|", input[x], 6) && input[x])
-				x++;
 		}
-		if (input[x] == '>' || input[x] != '|' || input[x] != '<')
+		if (ft_strchr("|<>", input[x]))
 		{
-			num_alloc++;
-			if((input[x] == '>' && input[x + 1] == '>') || (input[x] == '<' && input[x + 1] == '<'))
-				x += 2;
-			if (input[x] == '>' && input[x + 1])
-				num_alloc++;
+			while ((input[x] == '>' && input[x + 1] == '>')
+			|| (input[x] == '<' && input[x + 1] == '<')
+			|| (input[x] == '|' && input[x + 1] == '|'))
+				x++;
 			num_alloc++;
 		}
 		if (input[x] == '"')
@@ -405,24 +382,19 @@ void parser_arg(char *input, char **env, t_list *my_env)
 				x++;
 			while (input[x] != '"' && input[x])
 				x++;
-			if (input[x] == '"' )
-			{
+			if (input[x] == '"')
 				num_alloc++;
-				x++;
-			}	
 		}
-		if (input[x] == '\'')
+		else if (input[x] == '\'')
 		{
 			if (input[x] == '\'' && input[x])
 				x++;
 			while (input[x] != '\'' && input[x])
 				x++;
 			if (input[x] == '\'')
-			{
 				num_alloc++;
-				x++;
-			}	
 		}
+		// printf("%d\n", num_alloc);
 		x++;
 	}
 	if (quote % 2 == 1)
@@ -430,7 +402,7 @@ void parser_arg(char *input, char **env, t_list *my_env)
 	else
 	{
 		str = ft_split(input, '\"');
-		s = ft_calloc(sizeof(char *) , num_alloc + 1);
+		s = ft_calloc(sizeof(char *) , num_alloc + 2);
 		x = 0;
 		while (str[x])
 		{
@@ -631,15 +603,31 @@ void parser_arg(char *input, char **env, t_list *my_env)
 			i = 0;
 		}
 		free2d(str);
-	// (void)env;
-	// (void)my_env;
+	(void)env;
+	(void)my_env;
 	final_expand = expand(s, my_env, num_alloc);
 	final_expand = clean_expand(final_expand);
+	x = 0;
 	export(final_expand, my_env, env);
-	final_addition(final_expand);
-	// while(1);
+	final_list = final_addition(final_expand);
+	int x=0;
+	while(final_list)
+	{
+		printf("_____CMD_____=..%s\n\n", final_list->cmd);
+		x = 0;
+		while (final_list->arg[x])
+			printf("_____ARG_____=..%s\n\n", final_list->arg[x++]);
+		printf("_____PIPE_____=..%s\n\n", final_list->redirection->pipe);
+		x = 0;
+		while (final_list->redirection->type[x])
+			printf("_____TYPE_REDI_____=..%s\n\n", final_list->redirection->type[x++]);
+		x = 0;
+		while (final_list->redirection->file[x])
+			printf("_____FILE_____=..%s\n\n", final_list->redirection->file[x++]);
+		final_list = final_list->next;
 	}
-	// free2d(final_expand);
+	// free_list(final_list);
+	}
 }
 
 int	main(int ac, char **av, char **env)
@@ -657,6 +645,7 @@ int	main(int ac, char **av, char **env)
 	while (1)
 	{
 		input = readline("minishell ~$ ");
+		printf("%s\n", input);
 		add_history(input);
 		parser_arg(input, env, my_env);
 		free(input);
