@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 19:15:35 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/05 18:03:06 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/10 17:06:54 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,16 @@ void free_list(t_table *head)
 
 	while (head)
 	{
-		free(head->cmd);
-		free2d(head->redirection->type);
-		free2d(head->redirection->file);
-		free(head->redirection->pipe);
-		free(head->redirection);
-		free2d(head->arg);
+		// free(head->cmd);
+		// free2d(head->redirection->type);
+		// free(head->redirection->pipe);
+		// free2d(head->arg);
+		if (head->redirection->file && head->redirection->file[0])
+			free2d(head->redirection->file);
+		// free(head->redirection);
 		new_addition = head->next;
-		free(head);
+		// free(head);
 		head = new_addition;
 	}
-	free(head);
+	// free(head);
 }

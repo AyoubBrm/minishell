@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/09 00:56:08 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/11 01:01:28 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ t_table *final_addition(char **str_new)
 				new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file, str_new[i++]);
 			}
 			else
-				new_addition->redirection->file = NULL;
+				new_addition->redirection->file = NULL;	
 		}
 		else if (ft_strncmp(str_new[i], "<", 1) == 0)
 		{
@@ -166,10 +166,10 @@ t_table *final_addition(char **str_new)
 	}
 	new_addition->next = NULL;
 	free2d(str_new);
-	ambiguous_no_file(head2);
 	head = error(head);
 	if (head == 0)
 		return (0);
+	ambiguous_no_file(head2);
 	return (head);
 }
 
@@ -276,13 +276,14 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 					temp_str = ft_calloc (1 ,1);
 				while(temp_expand[index])
 				{
-					while (temp_expand[index] == ' ' && temp_expand[index + 1] == ' ')
+					while (ft_strchr(" \t", temp_expand[index])
+						&& ft_strchr(" \t", temp_expand[index + 1]))
 						index++;
-					if (temp_expand[index] == ' ')
+					if (ft_strchr(" \t", temp_expand[index]))
 					{
-						printf("%s\n", temp_expand);
 						temp_str = ft_strjoin_new(temp_str, temp_expand, index, index);
-						temp_str = ft_strjoin_new(temp_str, "9", 0, 0);
+						if (temp_expand[index - 1] && !ft_strchr(" \t", temp_expand[0]))
+							temp_str = ft_strjoin_new(temp_str, "9", 0, 0);
 					}
 					else
 						temp_str = ft_strjoin_new(temp_str, temp_expand, index, index);
@@ -290,6 +291,7 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 				}
 				temp_expand = ft_strdup(temp_str);
 			}
+			printf("%s\n\n", temp_expand);
 			ex_env = ft_split_origin(temp_expand, ' ');
 			str_new = ft_expand(str_new, ex_env);
 			free2d(ex_env);
@@ -365,7 +367,7 @@ void parser_arg(char *input, char **env, t_list *my_env)
 					x++;
 			while (input[x] && !ft_strchr2(" \t\"'><|", input[x], 7))
 					x++;
-			if (input[x - 1] && ft_strchr2(" ><|\t", input[x], 6))
+			if (x > 0 && input[x - 1] && ft_strchr2(" ><|\t", input[x], 6))
 				num_alloc++;
 		}
 		if (ft_strchr("|<>", input[x]))
@@ -645,7 +647,6 @@ int	main(int ac, char **av, char **env)
 	while (1)
 	{
 		input = readline("minishell ~$ ");
-		printf("%s\n", input);
 		add_history(input);
 		parser_arg(input, env, my_env);
 		free(input);

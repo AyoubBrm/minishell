@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:29:48 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/05 20:43:29 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/10 17:55:39 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,10 @@ int	file_error(t_table *free, char **temp_file)
 	return (0);
 }
 
-int	redirection_error(t_table *free, char *temp_red, char *temp_file)
+int	redirection_error(t_table *list, t_table *free, char *temp_red)
 {
-	if (temp_red[1] && temp_red && ((temp_red[0] == '>'
+	(void)free;
+	if (temp_red && temp_red[1] && ((temp_red[0] == '>'
 				&& temp_red[1] != '>')
 			|| (temp_red[0] == '<' && temp_red[1] != '<')))
 	{
@@ -69,9 +70,10 @@ int	redirection_error(t_table *free, char *temp_red, char *temp_file)
 		free_list(free);
 		return (1);
 	}
-	else if (temp_red && !temp_file)
+	else if (temp_red && !list->redirection->file && list->redirection->pipe)
 	{
-		printf("syntax error near unexpected token `newline'\n");
+		printf("syntax error near unexpected token `%c%c'\n",
+			list->redirection->pipe[0], list->redirection->pipe[1]);
 		free_list(free);
 		return (1);
 	}
@@ -88,16 +90,24 @@ t_table	*error(t_table *list)
 	head = list;
 	while (list)
 	{
-		if (pipe_error(list, free, list->redirection->pipe,
+		if (list->redirection->pipe && list->redirection->file&& pipe_error(list, free, list->redirection->pipe,
 				list->redirection->file))
 			return (0);
-		if (file_error(list, list->redirection->file))
+		else if (list->redirection->file && file_error(list, list->redirection->file))
 			return (0);
-		x = -1;
-		while (list->redirection->type[++x])
-			if (redirection_error(free, list->redirection->type[x],
-					list->redirection->file[x]))
+		x = 0;
+		while (list->redirection->type[x])
+		{
+			if (redirection_error(list, free, list->redirection->type[x]))
 				return (0);
+			else if (list->redirection->type[x] && !list->redirection->file)
+			{
+				printf("syntax error near unexpected token `newline'\n");
+				free_list(free);
+				return (0);
+			}
+			x++;
+		}
 		list = list->next;
 	}
 	return (head);

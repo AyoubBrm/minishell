@@ -4,7 +4,8 @@
 		"__node_handle": "c",
 		"complex": "c",
 		"algorithm": "c",
-		"sstream": "c"
+		"sstream": "c",
+		"chrono": "c"
 	},
 	"C_Cpp.errorSquiggles": "disabled"
 }
