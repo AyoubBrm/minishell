@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:29:48 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/10 17:55:39 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/11 22:57:00 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ int	file_error(t_table *free, char **temp_file)
 
 int	redirection_error(t_table *list, t_table *free, char *temp_red)
 {
-	(void)free;
 	if (temp_red && temp_red[1] && ((temp_red[0] == '>'
 				&& temp_red[1] != '>')
 			|| (temp_red[0] == '<' && temp_red[1] != '<')))

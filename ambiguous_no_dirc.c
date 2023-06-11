@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 22:40:14 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/11 01:47:22 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/11 23:35:01 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,20 @@ void ambiguous_no_file(t_table *head)
 				head->redirection->file[i][0] = '\0';
 			}
 			if (head->redirection->file[i][0] == '6')
-				head->ambiguous = 1;		
+				head->ambiguous = 1;
 		}
+		i = -1;
+		while (head->arg[++i])
+		{
+				if (head->arg[i][0] == '3'
+				|| head->arg[i][0] == '5'
+				|| !head->arg[i][0])
+			{
+				head->no_file_dire = 1;
+				head->arg[i][0] = '\0';
+			}
+		}
+			
 			printf("ambig--%d-----no_file-%d\n",head->ambiguous, head->no_file_dire);
 		head = head->next;
 	}

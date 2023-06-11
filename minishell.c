@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/11 01:01:28 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/11 23:19:28 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,7 @@ char	**join2d_with_arr(char **str1, char *str2)
 	i = -1;
 	while(str1[++i])
 		new_expand[i] = ft_strdup(str1[i]);
-	if (str2[0] == '1')
-		new_expand[i] = ft_strdup(&str2[1]);
-	else
-		new_expand[i] = ft_strdup(str2);
+	new_expand[i] = ft_strdup(str2);
 	free2d(str1);
 	return(new_expand);
 }
@@ -148,21 +145,23 @@ t_table *final_addition(char **str_new)
 		}
 		else 
 		{
-			if (!new_addition->cmd && str_new[i][0] == 0)
+			if (str_new[i][0] && str_new[i][0] == '1')
+				ft_memmove(str_new[i], &str_new[i][1], ft_strlen(str_new[i]));
+			if (str_new[i][0] && str_new[i][0] != '6' && !new_addition->cmd)
 				new_addition->cmd = ft_strdup(str_new[i++]);
-			if (!new_addition->cmd && !ft_strchr("<>|", str_new[i][0]))
+			else if (!str_new[i][0] && !new_addition->cmd)
 				new_addition->cmd = ft_strdup(str_new[i++]);
-			if (new_addition->cmd[0] == '1')
-				new_addition->cmd = ft_strdup(&new_addition->cmd[1]);
+			else
+				i++;
 		}
-		if (str_new[i] && new_addition->cmd && !ft_strchr("<>|", str_new[i][0]))
+		if (str_new[i] && new_addition->cmd && !ft_strchr("<>|", str_new[i][0]) && str_new[i][0] != '6')
 		{
-			if (str_new[i][0] == '9')
+			if (((str_new[i] && str_new[i][0]) && (str_new[i][0] == '9' || str_new[i][0] == '1')))
 				ft_memmove(str_new[i], &str_new[i][1], ft_strlen(str_new[i]));
 			new_addition->arg = join2d_with_arr(new_addition->arg, str_new[i++]);
-		}
+		}	
 		else if (new_addition->cmd && str_new[i] && str_new[i][0] == '\0')
-			new_addition->arg = join2d_with_arr(new_addition->arg, str_new[i++]);		
+			new_addition->arg = join2d_with_arr(new_addition->arg, str_new[i++]);
 	}
 	new_addition->next = NULL;
 	free2d(str_new);
@@ -291,7 +290,6 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 				}
 				temp_expand = ft_strdup(temp_str);
 			}
-			printf("%s\n\n", temp_expand);
 			ex_env = ft_split_origin(temp_expand, ' ');
 			str_new = ft_expand(str_new, ex_env);
 			free2d(ex_env);
