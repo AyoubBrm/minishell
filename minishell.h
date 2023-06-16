@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/09 00:08:33 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/14 01:58:04 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <readline/readline.h>
+#include <readline/history.h>
 #include <string.h>
+#include <signal.h>
 #include <sys/errno.h>
 
 typedef struct s_myenv
@@ -79,6 +81,7 @@ void free_list(t_table *head);
 void free_list(t_table *head);
 t_table *error(t_table *list);
 void ambiguous_no_file(t_table *head);
+int num_alloc_str(char *input);
 
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/11 23:19:28 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/16 18:04:49 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ t_table *final_addition(char **str_new)
 			new_addition->redirection->how_many++;
 			if (str_new[i] && str_new[i][0] != '|')
 			{
-				if (str_new[i][0] == '9')
+				if (str_new[i][0] == '9' || str_new[i][0] == '1')
 					ft_memmove(str_new[i], &str_new[i][1], ft_strlen(str_new[i]));
 				new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file, str_new[i++]);
 			}
@@ -110,7 +110,7 @@ t_table *final_addition(char **str_new)
 			new_addition->redirection->how_many++;
 			if (str_new[i] && str_new[i][0] != '|')
 			{
-				if (str_new[i][0] == '9')
+				if (str_new[i][0] == '9' || str_new[i][0] == '1')
 					ft_memmove(str_new[i], &str_new[i][1], ft_strlen(str_new[i]));
 				new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file, str_new[i++]);
 			}
@@ -123,7 +123,7 @@ t_table *final_addition(char **str_new)
 			new_addition->redirection->how_many++;
 			if (str_new[i] && str_new[i][0] != '|')
 			{
-				if (str_new[i][0] == '9')
+				if (str_new[i][0] == '9' || str_new[i][0] == '1')
 					ft_memmove(str_new[i], &str_new[i][1], ft_strlen(str_new[i]));
 				new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file, str_new[i++]);
 			}
@@ -136,7 +136,7 @@ t_table *final_addition(char **str_new)
 			new_addition->redirection->how_many++;
 			if ((str_new[i] && str_new[i][0] != '|'))
 			{
-				if (str_new[i][0] == '9')
+				if (str_new[i][0] == '9' || str_new[i][0] == '1')
 					ft_memmove(str_new[i], &str_new[i][1], ft_strlen(str_new[i]));
 				new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file, str_new[i++]);
 			}
@@ -145,13 +145,13 @@ t_table *final_addition(char **str_new)
 		}
 		else 
 		{
-			if (str_new[i][0] && str_new[i][0] == '1')
+			if (str_new[i] && str_new[i][0] && str_new[i][0] == '1')
 				ft_memmove(str_new[i], &str_new[i][1], ft_strlen(str_new[i]));
-			if (str_new[i][0] && str_new[i][0] != '6' && !new_addition->cmd)
+			if (str_new[i] && !new_addition->cmd)
 				new_addition->cmd = ft_strdup(str_new[i++]);
-			else if (!str_new[i][0] && !new_addition->cmd)
+			if (str_new[i] && str_new[i][0] && str_new[i][0] != '6' && !new_addition->cmd)
 				new_addition->cmd = ft_strdup(str_new[i++]);
-			else
+			if (str_new[i] && str_new[i][0] && str_new[i][0] == '6')
 				i++;
 		}
 		if (str_new[i] && new_addition->cmd && !ft_strchr("<>|", str_new[i][0]) && str_new[i][0] != '6')
@@ -184,6 +184,12 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand, int 
 				return(temp_expand = ft_strjoin_new(temp_expand , var, 0, ft_strlen(var)));
 			else if (flags == 2)
 				return(temp_expand = ft_substr(var , 0, ft_strlen(var)));
+			if (env->value && (ft_strchr(env->value, '>')
+				|| ft_strchr(env->value, '|') || ft_strchr(env->value, '<')))
+			{
+				temp_expand = ft_strjoin(temp_expand, "1");
+				temp_expand = ft_strjoin_new(temp_expand, env->value, 0, ft_strlen(env->value));
+			}
 			else
 				temp_expand = ft_strjoin_new(temp_expand, env->value, 0, ft_strlen(env->value));
 		}
@@ -230,6 +236,7 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 					var = ft_substr(s[x], star, i - star);
 					if (x > 0 && !ft_strcmp("<<", str_new[x - 1]))
 						temp_expand = find_in_env_and_alloced(my_env, var, temp_expand, 2);
+					// printf("%----s\n", temp_expand)
 					else if(s[x][i] == '4')
 					{
 						temp_expand = find_in_env_and_alloced(my_env, var, temp_expand, 4);
@@ -299,7 +306,6 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 		ft_bzero(temp_expand, ft_strlen(temp_expand));
 		x++;
 	}
-	x = 0;
 	free(temp_expand);
 	free2d(s);
 	free(temp_str);
@@ -351,66 +357,27 @@ void parser_arg(char *input, char **env, t_list *my_env)
 	char	**s;
 	int		index = 0;
 	int		num_alloc = 0;
-	int		quote;
+	int		quote = 0;
 	int		star = 0;
 	char	**final_expand;
-	quote = account_quote(input);
-	x = 0;
-	i = 0;
-	while (input[x])
-	{
-		if (input[x] != '"' && input[x] != '\'') // this for allocte the string **str
-		{
-			while (ft_strchr2(" \t", input[x], 2) && input[x])
-					x++;
-			while (input[x] && !ft_strchr2(" \t\"'><|", input[x], 7))
-					x++;
-			if (x > 0 && input[x - 1] && ft_strchr2(" ><|\t", input[x], 6))
-				num_alloc++;
-		}
-		if (ft_strchr("|<>", input[x]))
-		{
-			while ((input[x] == '>' && input[x + 1] == '>')
-			|| (input[x] == '<' && input[x + 1] == '<')
-			|| (input[x] == '|' && input[x + 1] == '|'))
-				x++;
-			num_alloc++;
-		}
-		if (input[x] == '"')
-		{
-			if (input[x] == '"' && input[x])
-				x++;
-			while (input[x] != '"' && input[x])
-				x++;
-			if (input[x] == '"')
-				num_alloc++;
-		}
-		else if (input[x] == '\'')
-		{
-			if (input[x] == '\'' && input[x])
-				x++;
-			while (input[x] != '\'' && input[x])
-				x++;
-			if (input[x] == '\'')
-				num_alloc++;
-		}
-		// printf("%d\n", num_alloc);
-		x++;
-	}
+	if (input)
+		quote = account_quote(input);
+	num_alloc = num_alloc_str(input);
 	if (quote % 2 == 1)
 			printf("%s\n", "minishell: syntax error near unexpected token `\"' or `\''");
 	else
 	{
 		str = ft_split(input, '\"');
-		s = ft_calloc(sizeof(char *) , num_alloc + 2);
+		s = ft_calloc(sizeof(char *) , num_alloc + 1);
 		x = 0;
+		i = 0;
 		while (str[x])
 		{
 			if (str[x][i] && !ft_strchr2("\'\"", str[x][i], 2))
 			{
 				while (str[x][i] && ft_strchr(" \t", str[x][i]))
 					i++;
-				if (i > 0 && x > 0 && ft_strchr2(" 	", str[x][i - 1], 2))
+				if (i > 0 && x > 0 && ft_strchr2(" \t", str[x][i - 1], 2))
 					index++;
 				if (str[x][i] && !ft_strchr2("\'\"", str[x][i], 2))
 				{
@@ -486,11 +453,11 @@ void parser_arg(char *input, char **env, t_list *my_env)
 				&& (x == 0 && str[x + 1])) && ft_strchr(" \t", str[x + 1][0])))
 					s[index] = ft_calloc(1,1);	
 			if (((((str[x][0] == '"' && str[x][1] == '"') || (str[x][0] == '\'' && str[x][1] == '\''))
-				&& (str[x + 1] && str[x - 1])) && ft_strchr(" \t", str[x + 1][0])
+				&& (x > 0 && str[x + 1] && str[x - 1])) && ft_strchr(" \t", str[x + 1][0])
 				&& ft_strchr(" \t", str[x - 1][ft_strlen(str[x - 1]) - 1])))
 					s[index] = ft_calloc(1,1);
 			if (((str[x][0] == '"' && str[x][1] == '"') || ((str[x][0] == '\'' && str[x][1] == '\'')))
-				&& !str[x + 1] && str[x - 1] && ft_strchr(" \t", str[x - 1][ft_strlen(str[x - 1]) - 1]))
+				&& x > 0 && !str[x + 1] && str[x - 1] && ft_strchr(" \t", str[x - 1][ft_strlen(str[x - 1]) - 1]))
 					s[index] = ft_calloc(1,1);
 			if (((str[0][0] == '"' && str[0][1] == '"') || ((str[0][0] == '\'' && str[0][1] == '\'')))
 				&& !str[1])
@@ -603,11 +570,8 @@ void parser_arg(char *input, char **env, t_list *my_env)
 			i = 0;
 		}
 		free2d(str);
-	(void)env;
-	(void)my_env;
 	final_expand = expand(s, my_env, num_alloc);
-	final_expand = clean_expand(final_expand);
-	x = 0;
+	// final_expand = clean_expand(final_expand);
 	export(final_expand, my_env, env);
 	final_list = final_addition(final_expand);
 	int x=0;
@@ -629,11 +593,18 @@ void parser_arg(char *input, char **env, t_list *my_env)
 	// free_list(final_list);
 	}
 }
-
+void sig_int()
+{	
+	rl_replace_line("", 0);
+	printf("\n");
+	rl_on_new_line();
+	rl_redisplay();
+	return;
+}
 int	main(int ac, char **av, char **env)
 {
 	int i;
-	char *input;
+	char *input = NULL;
 
 	i = 0;
 	(void)av;
@@ -644,9 +615,17 @@ int	main(int ac, char **av, char **env)
 		return (1);
 	while (1)
 	{
+		signal(SIGQUIT, SIG_IGN);
+		signal(SIGINT, &sig_int);
 		input = readline("minishell ~$ ");
 		add_history(input);
-		parser_arg(input, env, my_env);
+		if (input)
+			parser_arg(input, env, my_env);
+		if (!input)
+		{
+			free(input);
+			return (0);
+		}
 		free(input);
 	}
 	return (0);
