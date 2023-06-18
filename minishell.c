@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/16 18:04:49 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/18 15:58:14 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -350,12 +350,12 @@ void export(char **s, t_list *my_env, char **env)
 }
 void parser_arg(char *input, char **env, t_list *my_env)
 {
-	size_t	x;
-	size_t	i = 0;
+	// size_t	x;
+	// size_t	i = 0;
 	t_table	*final_list;
+	t_myarg *arg = malloc(1 * sizeof(t_myarg));
 	char	**str;
 	char	**s;
-	int		index = 0;
 	int		num_alloc = 0;
 	int		quote = 0;
 	int		star = 0;
@@ -369,205 +369,206 @@ void parser_arg(char *input, char **env, t_list *my_env)
 	{
 		str = ft_split(input, '\"');
 		s = ft_calloc(sizeof(char *) , num_alloc + 1);
-		x = 0;
-		i = 0;
-		while (str[x])
+		arg->x = 0;
+		arg->i = 0;
+		arg->index = 0;
+		while (str[arg->x])
 		{
-			if (str[x][i] && !ft_strchr2("\'\"", str[x][i], 2))
+			if (str[arg->x][arg->i] && !ft_strchr2("\'\"", str[arg->x][arg->i], 2))
 			{
-				while (str[x][i] && ft_strchr(" \t", str[x][i]))
-					i++;
-				if (i > 0 && x > 0 && ft_strchr2(" \t", str[x][i - 1], 2))
-					index++;
-				if (str[x][i] && !ft_strchr2("\'\"", str[x][i], 2))
+				while (str[arg->x][arg->i] && ft_strchr(" \t", str[arg->x][arg->i]))
+					arg->i++;
+				if (arg->i > 0 && arg->x > 0 && ft_strchr2(" \t", str[arg->x][arg->i - 1], 2))
+					arg->index++;
+				if (str[arg->x][arg->i] && !ft_strchr2("\'\"", str[arg->x][arg->i], 2))
 				{
-					star = i;
-					while (str[x][i] && !ft_strchr2("\'\"", str[x][i], 2))
+					star = arg->i;
+					while (str[arg->x][arg->i] && !ft_strchr2("\'\"", str[arg->x][arg->i], 2))
 					{	
-						if ((str[x + 1] && str[x][i] == '$' && str[x][i + 1] == '\0' && str[x + 1][0] == '"')
-							|| (str[x + 1] && str[x][i] == '$' && str[x][i + 1] == '\0' && str[x + 1][0] == '\''))
+						if ((str[arg->x + 1] && str[arg->x][arg->i] == '$' && str[arg->x][arg->i + 1] == '\0' && str[arg->x + 1][0] == '"')
+							|| (str[arg->x + 1] && str[arg->x][arg->i] == '$' && str[arg->x][arg->i + 1] == '\0' && str[arg->x + 1][0] == '\''))
 						{
-							if (!s[index])
-								s[index] = ft_calloc(1, 1);
-							s[index] = ft_strjoin_new(s[index], str[x], star, i - 1);
-							x++;
-							i = 0;
+							if (!s[arg->index])
+								s[arg->index] = ft_calloc(1, 1);
+							s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i - 1);
+							arg->x++;
+							arg->i = 0;
 							star = 0;
-							while(str[x][i] && !ft_strchr2("\'\" \t", str[x][i], 4))
-								i++;
-							s[index] = ft_strjoin_new(s[index], str[x], star, i - 1);
+							while(str[arg->x][arg->i] && !ft_strchr2("\'\" \t", str[arg->x][arg->i], 4))
+								arg->i++;
+							s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i - 1);
 						}
 						else
 						{
-							if (!s[index])
-								s[index] = ft_calloc(1, 1);
-							while(str[x][i] && !ft_strchr2("\'\" \t$><|", str[x][i], 8))
-								i++;
-							if ((str[x] && str[x][i] == '$' && str[x][i + 1]) || (str[x] && str[x][i] == '$' && str[x][i + 1] == '\0' && !str[x + 1]))
+							if (!s[arg->index])
+								s[arg->index] = ft_calloc(1, 1);
+							while(str[arg->x][arg->i] && !ft_strchr2("\'\" \t$><|", str[arg->x][arg->i], 8))
+								arg->i++;
+							if ((str[arg->x] && str[arg->x][arg->i] == '$' && str[arg->x][arg->i + 1]) || (str[arg->x] && str[arg->x][arg->i] == '$' && str[arg->x][arg->i + 1] == '\0' && !str[arg->x + 1]))
 							{
-								i++;
-								while ((str[x][i] && !ft_strchr2("\t $><|", str[x][i], 6)))
-									i++;
-								s[index] = ft_strjoin_new(s[index], str[x],star, i - 1);
-								if ((str[x + 1] && !ft_strchr2(" \t", str[x][i], 2) && str[x + 1][0] == '"' && str[x + 1][1] == '"')
-									|| (x > 0 && !ft_strchr2(" \t", str[x][i], 2) && str[x - 1][0] == '"' && str[x - 1][1] == '"')
-									|| (str[x + 1] && !ft_strchr2(" \t", str[x][i], 2) && str[x + 1][0] == '\'' && str[x + 1][1] == '\'')
-									|| (x > 0 && !ft_strchr2(" \t", str[x][i], 2) && str[x - 1][0] == '\'' && str[x - 1][1] == '\''))
-										s[index] = ft_strjoin_new(s[index], "5", 0, 1);
+								arg->i++;
+								while ((str[arg->x][arg->i] && !ft_strchr2("\t $><|", str[arg->x][arg->i], 6)))
+									arg->i++;
+								s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x],star, arg->i - 1);
+								if ((str[arg->x + 1] && !ft_strchr2(" \t", str[arg->x][arg->i], 2) && str[arg->x + 1][0] == '"' && str[arg->x + 1][1] == '"')
+									|| (arg->x > 0 && !ft_strchr2(" \t", str[arg->x][arg->i], 2) && str[arg->x - 1][0] == '"' && str[arg->x - 1][1] == '"')
+									|| (str[arg->x + 1] && !ft_strchr2(" \t", str[arg->x][arg->i], 2) && str[arg->x + 1][0] == '\'' && str[arg->x + 1][1] == '\'')
+									|| (arg->x > 0 && !ft_strchr2(" \t", str[arg->x][arg->i], 2) && str[arg->x - 1][0] == '\'' && str[arg->x - 1][1] == '\''))
+										s[arg->index] = ft_strjoin_new(s[arg->index], "5", 0, 1);
 								else
-									s[index] = ft_strjoin_new(s[index], "6", 0, 0);
+									s[arg->index] = ft_strjoin_new(s[arg->index], "6", 0, 0);
 							}
 							else
-								s[index] = ft_strjoin_new(s[index], str[x], star, i - 1);
-							if (ft_strchr2(" \t", str[x][i], 2))
-								index++;
-							while (ft_strchr2(" \t", str[x][i], 2))
-								i++;	
-							if (str[x][i] && ft_strchr2("<>|", str[x][i], 3))
+								s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i - 1);
+							if (ft_strchr2(" \t", str[arg->x][arg->i], 2))
+								arg->index++;
+							while (ft_strchr2(" \t", str[arg->x][arg->i], 2))
+								arg->i++;	
+							if (str[arg->x][arg->i] && ft_strchr2("<>|", str[arg->x][arg->i], 3))
 							{
-								if ((i > 0 && !ft_strchr2(&str[x][0], ' ', i) && !ft_strchr2(&str[x][0], '\t', i))
-									|| (x > 0 && i == 0 ))
-									index++;
-								else if (i > 0 && str[x][i - 1] && !ft_strchr2(" \t", str[x][i - 1], 2))
-									index++;
-								star = i;
-								if (!s[index])
-									s[index] = ft_calloc(1, 1);
-								while (str[x][i] && ft_strchr2("<>|", str[x][i], 3))
-										i++;
-									s[index] = ft_strjoin_new(s[index], str[x], star, i - 1);
-								if (!ft_strchr("\t ", str[x][i]) && str[x][i])
-									index++;
-								else if (!ft_strchr2(&str[x][i], ' ', ft_strlen(str[x]) - i)
-									&& (!ft_strchr2(&str[x][i], '\t', ft_strlen(str[x]) - i)) && str[x + 1])
-									index++;
-								if (!s[index])
-									s[index] = ft_calloc(1, 1);
+								if ((arg->i > 0 && !ft_strchr2(&str[arg->x][0], ' ', arg->i) && !ft_strchr2(&str[arg->x][0], '\t', arg->i))
+									|| (arg->x > 0 && arg->i == 0 ))
+									arg->index++;
+								else if (arg->i > 0 && str[arg->x][arg->i - 1] && !ft_strchr2(" \t", str[arg->x][arg->i - 1], 2))
+									arg->index++;
+								star = arg->i;
+								if (!s[arg->index])
+									s[arg->index] = ft_calloc(1, 1);
+								while (str[arg->x][arg->i] && ft_strchr2("<>|", str[arg->x][arg->i], 3))
+										arg->i++;
+									s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i - 1);
+								if (!ft_strchr("\t ", str[arg->x][arg->i]) && str[arg->x][arg->i])
+									arg->index++;
+								else if (!ft_strchr2(&str[arg->x][arg->i], ' ', ft_strlen(str[arg->x]) - arg->i)
+									&& (!ft_strchr2(&str[arg->x][arg->i], '\t', ft_strlen(str[arg->x]) - arg->i)) && str[arg->x + 1])
+									arg->index++;
+								if (!s[arg->index])
+									s[arg->index] = ft_calloc(1, 1);
 							}
-							star = i;
+							star = arg->i;
 						}
 					}
 				}
 			}
-			if (((((str[x][0] == '"' && str[x][1] == '"') || (str[x][0] == '\'' && str[x][1] == '\''))
-				&& (x == 0 && str[x + 1])) && ft_strchr(" \t", str[x + 1][0])))
-					s[index] = ft_calloc(1,1);	
-			if (((((str[x][0] == '"' && str[x][1] == '"') || (str[x][0] == '\'' && str[x][1] == '\''))
-				&& (x > 0 && str[x + 1] && str[x - 1])) && ft_strchr(" \t", str[x + 1][0])
-				&& ft_strchr(" \t", str[x - 1][ft_strlen(str[x - 1]) - 1])))
-					s[index] = ft_calloc(1,1);
-			if (((str[x][0] == '"' && str[x][1] == '"') || ((str[x][0] == '\'' && str[x][1] == '\'')))
-				&& x > 0 && !str[x + 1] && str[x - 1] && ft_strchr(" \t", str[x - 1][ft_strlen(str[x - 1]) - 1]))
-					s[index] = ft_calloc(1,1);
+			if (((((str[arg->x][0] == '"' && str[arg->x][1] == '"') || (str[arg->x][0] == '\'' && str[arg->x][1] == '\''))
+				&& (arg->x == 0 && str[arg->x + 1])) && ft_strchr(" \t", str[arg->x + 1][0])))
+					s[arg->index] = ft_calloc(1,1);	
+			if (((((str[arg->x][0] == '"' && str[arg->x][1] == '"') || (str[arg->x][0] == '\'' && str[arg->x][1] == '\''))
+				&& (arg->x > 0 && str[arg->x + 1] && str[arg->x - 1])) && ft_strchr(" \t", str[arg->x + 1][0])
+				&& ft_strchr(" \t", str[arg->x - 1][ft_strlen(str[arg->x - 1]) - 1])))
+					s[arg->index] = ft_calloc(1,1);
+			if (((str[arg->x][0] == '"' && str[arg->x][1] == '"') || ((str[arg->x][0] == '\'' && str[arg->x][1] == '\'')))
+				&& arg->x > 0 && !str[arg->x + 1] && str[arg->x - 1] && ft_strchr(" \t", str[arg->x - 1][ft_strlen(str[arg->x - 1]) - 1]))
+					s[arg->index] = ft_calloc(1,1);
 			if (((str[0][0] == '"' && str[0][1] == '"') || ((str[0][0] == '\'' && str[0][1] == '\'')))
 				&& !str[1])
-					s[index] = ft_calloc(1,1);
-			if (str[x][i] == '"' && str[x][i + 1] != '"')
+					s[arg->index] = ft_calloc(1,1);
+			if (str[arg->x][arg->i] == '"' && str[arg->x][arg->i + 1] != '"')
 			{
-				i++;
-				star = i;
-				while (str[x][i] && !ft_strchr2("$|><\"", str[x][i], 5))
-					i++;
-				if (str[x][i] == '$')
+				arg->i++;
+				star = arg->i;
+				while (str[arg->x][arg->i] && !ft_strchr2("$|><\"", str[arg->x][arg->i], 5))
+					arg->i++;
+				if (str[arg->x][arg->i] == '$')
 				{
-					while (str[x][i] == '$')
-						i++;
-					while (str[x][i] && str[x][i] != '"')
-						i++;
-					if (str[x][i] == '"')
+					while (str[arg->x][arg->i] == '$')
+						arg->i++;
+					while (str[arg->x][arg->i] && str[arg->x][arg->i] != '"')
+						arg->i++;
+					if (str[arg->x][arg->i] == '"')
 					{
-						if (!s[index])
-							s[index] = ft_calloc(1, 1);
-						s[index] = ft_strjoin_new(s[index], str[x], star, i - 1);
+						if (!s[arg->index])
+							s[arg->index] = ft_calloc(1, 1);
+						s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i - 1);
 					}
-					s[index] = ft_strjoin_new(s[index], "3", 0, 0);
+					s[arg->index] = ft_strjoin_new(s[arg->index], "3", 0, 0);
 				}
-				else if (ft_strchr2("|><", str[x][i], 3))
+				else if (ft_strchr2("|><", str[arg->x][arg->i], 3))
 				{
-					if ((x == 0) || (str[x] && str[x - 1] && ft_strchr2(" \t", str[x - 1][0], 2))
-						|| (str[x] && str[x - 1] && ft_strchr2(" \t", str[x - 1][ft_strlen(str[x - 1]) - 1], 2)))	
-							s[index] = ft_strdup("1");//this for "|" pipe inside quote or ">" or "<"
-					while (str[x][i] && str[x][i] != '"')
-						i++;
-					s[index] = ft_strjoin_new(s[index], str[x], star, i - 1);
+					if ((arg->x == 0) || (str[arg->x] && str[arg->x - 1] && ft_strchr2(" \t", str[arg->x - 1][0], 2))
+						|| (str[arg->x] && str[arg->x - 1] && ft_strchr2(" \t", str[arg->x - 1][ft_strlen(str[arg->x - 1]) - 1], 2)))	
+							s[arg->index] = ft_strdup("1");//this for "|" pipe inside quote or ">" or "<"
+					while (str[arg->x][arg->i] && str[arg->x][arg->i] != '"')
+						arg->i++;
+					s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i - 1);
 				}
 				else
 				{
-					i = star;
-					while(str[x][i] && str[x][i] != '"')
-						i++;
-					if ((x == 0) || (x > 0 && str[x - 1][0] == '"' && str[x - 1][1] == '"' && !ft_strchr2(" \t", str[x][0], 2))
-					|| (x > 0 && str[x - 1][0] == '\'' && str[x - 1][1] == '\'' && str[x][0] == '"'))
+					arg->i = star;
+					while(str[arg->x][arg->i] && str[arg->x][arg->i] != '"')
+						arg->i++;
+					if ((arg->x == 0) || (arg->x > 0 && str[arg->x - 1][0] == '"' && str[arg->x - 1][1] == '"' && !ft_strchr2(" \t", str[arg->x][0], 2))
+					|| (arg->x > 0 && str[arg->x - 1][0] == '\'' && str[arg->x - 1][1] == '\'' && str[arg->x][0] == '"'))
 					{
-						if (!s[index])
-								s[index] = ft_calloc(1, 1);
-						s[index] = ft_strjoin_new(s[index], str[x], star, i - 1); // this for first arg between ("asdasda")
+						if (!s[arg->index])
+								s[arg->index] = ft_calloc(1, 1);
+						s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i - 1); // this for first arg between ("asdasda")
 					}
-					else if ((str[x - 1][0] && ft_strchr2(" \t", str[x - 1][ft_strlen(str[x - 1]) - 1], 2))) // this is for second string inside (space "asd") and before the string space that mean new strig have to allocted
-						s[index] = ft_substr(str[x], star, i - 1);
-					else if (x > 0 && str[x - 1])
-						s[index] = ft_strjoin_new(s[index], str[x], star, i - 1);
+					else if ((str[arg->x - 1][0] && ft_strchr2(" \t", str[arg->x - 1][ft_strlen(str[arg->x - 1]) - 1], 2))) // this is for second string inside (space "asd") and before the string space that mean new strig have to allocted
+						s[arg->index] = ft_substr(str[arg->x], star, arg->i - 1);
+					else if (arg->x > 0 && str[arg->x - 1])
+						s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i - 1);
 				}
 			}
-			if (str[x][i] == '\'' && str[x][i + 1] != '\'')
+			if (str[arg->x][arg->i] == '\'' && str[arg->x][arg->i + 1] != '\'')
 			{
-					i++;
-				star = i;
-				while (str[x][i] && !ft_strchr2("$|><'", str[x][i], 5))
-					i++;
-				if (str[x][i] == '$')
+					arg->i++;
+				star = arg->i;
+				while (str[arg->x][arg->i] && !ft_strchr2("$|><'", str[arg->x][arg->i], 5))
+					arg->i++;
+				if (str[arg->x][arg->i] == '$')
 				{
-					while (str[x][i] == '$')
-						i++;
-					while (str[x][i] && str[x][i] != '\'')
+					while (str[arg->x][arg->i] == '$')
+						arg->i++;
+					while (str[arg->x][arg->i] && str[arg->x][arg->i] != '\'')
 					{
-						if (!s[index])
-							s[index] = ft_calloc(1, 1);
-						if (!ft_isalpha(str[x][i]))
+						if (!s[arg->index])
+							s[arg->index] = ft_calloc(1, 1);
+						if (!ft_isalpha(str[arg->x][arg->i]))
 						{
-							s[index] = ft_strjoin_new(s[index], str[x], star, i - 1);
-							s[index] = ft_strjoin_new(s[index], "4", 0, 0);
-							star = i;
+							s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i - 1);
+							s[arg->index] = ft_strjoin_new(s[arg->index], "4", 0, 0);
+							star = arg->i;
 						}
-						i++;
+						arg->i++;
 					}
-					if (str[x][i] == '\'')
+					if (str[arg->x][arg->i] == '\'')
 					{
-						if (!s[index])
-							s[index] = ft_calloc(1, 1);
-						s[index] = ft_strjoin_new(s[index], str[x], star, i - 1);
+						if (!s[arg->index])
+							s[arg->index] = ft_calloc(1, 1);
+						s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i - 1);
 					}
-					s[index] = ft_strjoin_new(s[index], "4", 0, 0);
+					s[arg->index] = ft_strjoin_new(s[arg->index], "4", 0, 0);
 				}
-				else if (ft_strchr2("|><", str[x][i], 3))
+				else if (ft_strchr2("|><", str[arg->x][arg->i], 3))
 				{
-					if ((x == 0) || (str[x] && str[x - 1] && ft_strchr2(" \t", str[x - 1][0], 2))
-						|| (str[x] && str[x - 1] && ft_strchr2(" \t", str[x - 1][ft_strlen(str[x - 1]) - 1], 2)))
-							s[index] = ft_strdup("1");//this for '|' pipe inside quote or ">" or "<"
-					while (str[x][i] && str[x][i] != '\'')
-						i++;
-					s[index] = ft_strjoin_new(s[index], str[x], star, i - 1);
+					if ((arg->x == 0) || (str[arg->x] && str[arg->x - 1] && ft_strchr2(" \t", str[arg->x - 1][0], 2))
+						|| (str[arg->x] && str[arg->x - 1] && ft_strchr2(" \t", str[arg->x - 1][ft_strlen(str[arg->x - 1]) - 1], 2)))
+							s[arg->index] = ft_strdup("1");//this for '|' pipe inside quote or ">" or "<"
+					while (str[arg->x][arg->i] && str[arg->x][arg->i] != '\'')
+						arg->i++;
+					s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i - 1);
 				}
 				else
 				{
-					i = star;
-					while(str[x][i] && str[x][i] != '\'')
-						i++;
-					if ((x == 0) || (x > 0 && str[x - 1][0] == '\'' && str[x - 1][1] == '\'' && !ft_strchr2(" \t", str[x][0], 2))
-						|| (x > 0 && str[x - 1][0] == '"' && str[x - 1][1] == '"' && str[x][0] == '\''))
+					arg->i = star;
+					while(str[arg->x][arg->i] && str[arg->x][arg->i] != '\'')
+						arg->i++;
+					if ((arg->x == 0) || (arg->x > 0 && str[arg->x - 1][0] == '\'' && str[arg->x - 1][1] == '\'' && !ft_strchr2(" \t", str[arg->x][0], 2))
+						|| (arg->x > 0 && str[arg->x - 1][0] == '"' && str[arg->x - 1][1] == '"' && str[arg->x][0] == '\''))
 						{
-							if (!s[index])
-									s[index] = ft_calloc(1, 1);
-							s[index] = ft_strjoin_new(s[index], str[x], star, i - 1);
+							if (!s[arg->index])
+									s[arg->index] = ft_calloc(1, 1);
+							s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i - 1);
 						}
-					else if ((str[x - 1] && ft_strchr2(" \t", str[x - 1][ft_strlen(str[x - 1]) - 1], 2)))
-						s[index] = ft_substr(str[x], star, i - star);
-					else if (x > 0 && str[x - 1])
-						s[index] = ft_strjoin_new(s[index], str[x], star, i - 1);
+					else if ((str[arg->x - 1] && ft_strchr2(" \t", str[arg->x - 1][ft_strlen(str[arg->x - 1]) - 1], 2)))
+						s[arg->index] = ft_substr(str[arg->x], star, arg->i - star);
+					else if (arg->x > 0 && str[arg->x - 1])
+						s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i - 1);
 				}
 			}
-			x++;
-			i = 0;
+			arg->x++;
+			arg->i = 0;
 		}
 		free2d(str);
 	final_expand = expand(s, my_env, num_alloc);
@@ -621,12 +622,9 @@ int	main(int ac, char **av, char **env)
 		add_history(input);
 		if (input)
 			parser_arg(input, env, my_env);
-		if (!input)
-		{
-			free(input);
-			return (0);
-		}
 		free(input);
+		if (!input)
+			return (0);
 	}
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/14 01:58:04 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/18 15:55:40 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,13 @@ typedef struct s_tab
 	int		ambiguous;
 	int		no_file_dire;
 }t_table;
+
+typedef struct s_my
+{
+	int x;
+	int i;
+	int index;
+}t_myarg;
 
 int	account_quote(char *input);
 char **clean_expand(char **final_expand);
