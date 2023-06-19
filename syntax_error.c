@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:29:48 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/11 22:57:00 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/19 01:59:36 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,12 @@
 
 int	pipe_error(t_table *list, t_table *free, char *temp_pipe, char **temp_file)
 {
-	if ((temp_pipe && !list->cmd && !temp_file[0])
-		|| (list->pip == 1 && !list->next->cmd
-			&& !list->next->redirection->file[0])
+	if ((temp_pipe && !list->cmd && !temp_file[0]) || (list->pip == 1
+			&& !list->next->cmd && !list->next->redirection->file[0])
 		|| (temp_pipe && temp_pipe[0] == '|' && temp_pipe[1] == '|'))
 	{
-		printf("syntax error near unexpected token `%c%c'\n",
-			temp_pipe[0], temp_pipe[1]);
+		printf("syntax error near unexpected token `%c%c'\n", temp_pipe[0],
+			temp_pipe[1]);
 		free_list(free);
 		return (1);
 	}
@@ -33,7 +32,7 @@ int	file_error(t_table *free, char **temp_file)
 
 	x = 0;
 	while (temp_file[x])
-	{	
+	{
 		if (temp_file[x] && (!ft_strncmp(temp_file[x], ">", 1)
 				|| !ft_strncmp(temp_file[x], "<", 1)
 				|| !ft_strncmp(temp_file[x], "<<", 2)
@@ -51,21 +50,19 @@ int	file_error(t_table *free, char **temp_file)
 
 int	redirection_error(t_table *list, t_table *free, char *temp_red)
 {
-	if (temp_red && temp_red[1] && ((temp_red[0] == '>'
-				&& temp_red[1] != '>')
+	if (temp_red && temp_red[1] && ((temp_red[0] == '>' && temp_red[1] != '>')
 			|| (temp_red[0] == '<' && temp_red[1] != '<')))
 	{
-		printf("syntax error near unexpected token `%c%c'\n",
-			temp_red[1], temp_red[2]);
+		printf("syntax error near unexpected token `%c%c'\n", temp_red[1],
+			temp_red[2]);
 		free_list(free);
 		return (1);
 	}
-	else if (temp_red && ft_strncmp(">>", temp_red, 3)
-		&& ft_strncmp("<<", temp_red, 3)
-		&& (ft_strlen(temp_red) - 1) > 1)
+	else if (temp_red && ft_strncmp(">>", temp_red, 3) && ft_strncmp("<<",
+			temp_red, 3) && (ft_strlen(temp_red) - 1) > 1)
 	{
-		printf("syntax error near unexpected token `%c%c'\n",
-			temp_red[2], temp_red[3]);
+		printf("syntax error near unexpected token `%c%c'\n", temp_red[2],
+			temp_red[3]);
 		free_list(free);
 		return (1);
 	}
@@ -89,10 +86,12 @@ t_table	*error(t_table *list)
 	head = list;
 	while (list)
 	{
-		if (list->redirection->pipe && list->redirection->file&& pipe_error(list, free, list->redirection->pipe,
+		if (list->redirection->pipe && list->redirection->file
+			&& pipe_error(list, free, list->redirection->pipe,
 				list->redirection->file))
 			return (0);
-		else if (list->redirection->file && file_error(list, list->redirection->file))
+		else if (list->redirection->file && file_error(list,
+				list->redirection->file))
 			return (0);
 		x = 0;
 		while (list->redirection->type[x])

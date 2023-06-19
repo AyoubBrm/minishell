@@ -1,45 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   account_the_quote.c                                :+:      :+:    :+:   */
+/*   token_v2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/29 19:08:36 by abouram           #+#    #+#             */
-/*   Updated: 2023/05/29 19:10:10 by abouram          ###   ########.fr       */
+/*   Created: 2023/06/18 19:57:49 by abouram           #+#    #+#             */
+/*   Updated: 2023/06/18 20:26:27 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	account_quote(char *input)
+void	token_v2(char **str, char **s, t_myarg *arg)
 {
-	int x;
-	int quote;
-
-	x = 0;
-	quote = 0;
-	while (input[x])
-	{
-		if (input[x] == '"')
-		{
-			x++;
-			quote++;
-			while (input[x] && input[x] != '"')
-				x++;
-			if (input[x] == '"')
-				quote++;
-		}
-		if (input[x] == '\'')
-		{
-			x++;
-			quote++;
-			while (input[x] && input[x] != '\'')
-				x++;
-			if (input[x] == '\'')
-				quote++;
-		}
-		x++;
-	}
-	return (quote);
+	if (!ft_strchr("\t ", str[arg->x][arg->i]) && str[arg->x][arg->i])
+		arg->index++;
+	else if (!ft_strchr2(&str[arg->x][arg->i], ' ', ft_strlen(str[arg->x])
+			- arg->i) && (!ft_strchr2(&str[arg->x][arg->i], '\t',
+				ft_strlen(str[arg->x]) - arg->i)) && str[arg->x + 1])
+		arg->index++;
+	if (!s[arg->index])
+		s[arg->index] = ft_calloc(1, 1);
 }

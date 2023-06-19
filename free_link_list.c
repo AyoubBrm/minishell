@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"minishell.h"
-void free_list(t_table *head)
+#include "minishell.h"
+
+void	free_list(t_table *head)
 {
 	t_table *new_addition;
 

@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int num_alloc_str2(int *x, char *input, int num_alloc)
+int	num_alloc_str2(int *x, char *input, int num_alloc)
 {
 	if (input[*x] == '"')
 	{
@@ -34,32 +34,32 @@ int num_alloc_str2(int *x, char *input, int num_alloc)
 	}
 	return (num_alloc);
 }
-int num_alloc_str1(int *x, char *input, int num_alloc)
+int	num_alloc_str1(int *x, char *input, int num_alloc)
 {
 	if (input[*x] != '"' && input[*x] != '\'')
 	{
 		while (ft_strchr2(" \t", input[*x], 2) && input[*x])
-				(*x)++;
+			(*x)++;
 		while (input[*x] && !ft_strchr2(" \t\"'><|", input[*x], 7))
-				(*x)++;
+			(*x)++;
 		if (*x > 0 && input[*x - 1] && ft_strchr2(" ><|\t", input[*x], 6))
 			num_alloc++;
 	}
 	if (ft_strchr("|<>", input[*x]))
 	{
-		while ((input[*x] == '>' && input[*x + 1] == '>')
-		|| (input[*x] == '<' && input[*x + 1] == '<')
-		|| (input[*x] == '|' && input[*x + 1] == '|'))
+		while ((input[*x] == '>' && input[*x + 1] == '>') || (input[*x] == '<'
+				&& input[*x + 1] == '<') || (input[*x] == '|' && input[*x
+				+ 1] == '|'))
 			(*x)++;
 		num_alloc++;
 	}
 	return (num_alloc);
 }
 
-int num_alloc_str(char *input)
+int	num_alloc_str(char *input)
 {
-	int	x;
-	int	num_alloc;
+	int x;
+	int num_alloc;
 
 	x = 0;
 	num_alloc = 0;

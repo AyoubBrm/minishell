@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/18 15:55:40 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/19 00:31:45 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,18 +77,28 @@ typedef struct s_tab
 
 typedef struct s_my
 {
-	int x;
-	int i;
-	int index;
+	int		x;
+	int		i;
+	int		index;
+	int		num_alloc;
+	int		quote;
+	char	**final_expand;
 }t_myarg;
 
-int	account_quote(char *input);
-char **clean_expand(char **final_expand);
-void free_list(t_table *head);
-void free_list(t_table *head);
-t_table *error(t_table *list);
-void ambiguous_no_file(t_table *head);
-int num_alloc_str(char *input);
+char	**get_token_from_str(char **str, char **s, t_myarg *arg);
+int		account_quote(char *input);
+char	**clean_expand(char **final_expand, char *str);
+void	token_v2(char **str, char **s, t_myarg *arg);
+void	free_list(t_table *head);
+void	str_and_dollar_with_out_quote(char **str, char**s, t_myarg *arg);
+char	**join2d_with_arr(char **str1, char *str2);
+void	free_list(t_table *head);
+t_table	*error(t_table *list);
+void	ambiguous_no_file(t_table *head);
+char	**join_2D_arr(char **str1, char **str2);
+int		num_alloc_str(char *input);
+void	str_inside_double_qoute(char **str, char **s, t_myarg *arg);
+void	str_inside_single_qoute(char **str, char **s, t_myarg *arg);
 
 
 #endif
