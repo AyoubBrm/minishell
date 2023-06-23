@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/22 22:51:53 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/23 17:02:57 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ t_table	*final_addition(char **str_new)
 			new_addition->redirection->how_many++;
 			if (str_new[i] && str_new[i][0] != '|')
 			{
-				if (str_new[i][0] == '9')
+				if (str_new[i][0] == '\7')
 					ft_memmove(str_new[i], &str_new[i][1],
 						ft_strlen(str_new[i]));
 				new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file,
@@ -67,7 +67,7 @@ t_table	*final_addition(char **str_new)
 			new_addition->redirection->how_many++;
 			if (str_new[i] && str_new[i][0] != '|')
 			{
-				if (str_new[i][0] == '9')
+				if (str_new[i][0] == '\7')
 					ft_memmove(str_new[i], &str_new[i][1],
 						ft_strlen(str_new[i]));
 				new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file,
@@ -83,7 +83,7 @@ t_table	*final_addition(char **str_new)
 			new_addition->redirection->how_many++;
 			if (str_new[i] && str_new[i][0] != '|')
 			{
-				if (str_new[i][0] == '9')
+				if (str_new[i][0] == '\7')
 					ft_memmove(str_new[i], &str_new[i][1],
 						ft_strlen(str_new[i]));
 				new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file,
@@ -99,7 +99,7 @@ t_table	*final_addition(char **str_new)
 			new_addition->redirection->how_many++;
 			if ((str_new[i] && str_new[i][0] != '|'))
 			{
-				if (str_new[i][0] == '9')
+				if (str_new[i][0] == '\7')
 					ft_memmove(str_new[i], &str_new[i][1],
 						ft_strlen(str_new[i]));
 				new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file,
@@ -112,17 +112,17 @@ t_table	*final_addition(char **str_new)
 		{
 			if (str_new[i] && !new_addition->cmd)
 				new_addition->cmd = ft_strdup(str_new[i++]);
-			if (str_new[i] && str_new[i][0] && str_new[i][0] != '6'
+			if (str_new[i] && str_new[i][0] && str_new[i][0] != '\6'
 				&& !new_addition->cmd)
 				new_addition->cmd = ft_strdup(str_new[i++]);
-			if (str_new[i] && str_new[i][0] && str_new[i][0] == '6')
+			if (str_new[i] && str_new[i][0] && str_new[i][0] == '\6')
 				i++;
 		}
 		if (str_new[i] && new_addition->cmd && !ft_strchr("<>|", str_new[i][0])
-			&& str_new[i][0] != '6')
+			&& str_new[i][0] != '\6')
 		{
-			if (((str_new[i] && str_new[i][0]) && (str_new[i][0] == '9'
-						|| str_new[i][0] == '1')))
+			if (((str_new[i] && str_new[i][0]) && (str_new[i][0] == '\7'
+						|| str_new[i][0] == '\1')))
 				ft_memmove(str_new[i], &str_new[i][1], ft_strlen(str_new[i]));
 			new_addition->arg = join2d_with_arr(new_addition->arg,
 				str_new[i++]);
@@ -152,25 +152,25 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
 		{
 			if (flags == 4)
 				return (temp_expand = ft_strjoin_new(temp_expand, var, 0,
-						ft_strlen(var)));
+						ft_strlen(var) - 1));
 			else if (flags == 2)
 				return (temp_expand = ft_substr(var, 0, ft_strlen(var)));
 			if (env->value && (ft_strchr(env->value, '>')
 					|| ft_strchr(env->value, '|') || ft_strchr(env->value,
 						'<')))
 			{
-				temp_expand = ft_strjoin(temp_expand, "1");
+				temp_expand = ft_strjoin(temp_expand, "\1");
 				temp_expand = ft_strjoin_new(temp_expand, env->value, 0,
-					ft_strlen(env->value));
+					ft_strlen(env->value) - 1);
 			}
 			else
 				temp_expand = ft_strjoin_new(temp_expand, env->value, 0,
-					ft_strlen(env->value));
+					ft_strlen(env->value) - 1);
 		}
 		env = env->next;
 	}
 	if (flags == 2)
-		return (temp_expand = ft_substr(var, 0, ft_strlen(var)));
+		return (temp_expand = ft_substr(var, 0, ft_strlen(var) - 1));
 	if (flags == 4)
 		return (ft_strjoin(temp_expand, var));
 	else if (var[0] == '$' && ft_isdigit(var[1]))
@@ -195,6 +195,7 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 	str_new = ft_calloc(num_alloc + 1, sizeof(char *));
 	x = 0;
 	temp_expand = ft_calloc(1, 1);
+	temp_str = ft_calloc(1, 1);
 	while (s[x])
 	{
 		i = 0;
@@ -204,29 +205,29 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 				i++;
 			if (s[x][i] == '$' && !ft_strchr2("@*", s[x][i + 1], 2))
 			{
-				if ((ft_strchr(s[x], '3') || !ft_strchr(s[x], '3')))
+				if ((ft_strchr(s[x], '\3') || !ft_strchr(s[x], '\3')))
 				{
 					star = i;
 					i++;
 					while ((ft_isdigit(s[x][i]) || ft_isalpha(s[x][i])
-							|| s[x][i] == '_') && !ft_strchr("3456", s[x][i]))
+							|| s[x][i] == '_') && !ft_strchr("\3\4\5\6", s[x][i]))
 						i++;
 					var = ft_substr(s[x], star, i - star);
-					if (x > 0 && !ft_strcmp("<<", str_new[x - 1]))
+					if (x > 0 && !ft_strncmp("<<", str_new[x - 1], 3))
 						temp_expand = find_in_env_and_alloced(my_env, var,
 							temp_expand, 2);
-					else if (s[x][i] == '4')
+					else if (s[x][i] == '\4')
 					{
 						temp_expand = find_in_env_and_alloced(my_env, var,
 							temp_expand, 4);
 						i++;
 					}
-					else if (s[x][i] && ft_strchr2("\"4", s[x][i + 1], 2))
+					else if (s[x][i] && ft_strchr2("\"\4", s[x][i + 1], 2))
 					{
 						star = i;
 						while (s[x][i] == '"')
 							i++;
-						if (s[x][i++] == '4')
+						if (s[x][i++] == '\4')
 							temp_expand = find_in_env_and_alloced(my_env, var,
 								temp_expand, 4);
 						temp_expand = ft_strjoin_new(temp_expand, s[x], star, i
@@ -239,13 +240,13 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 				}
 			}
 			else if ((s[x][i] == '$' && ft_strchr("@*", s[x][i + 1]))
-				&& (!ft_strchr2(s[x], '4', i)))
+				&& (!ft_strchr2(s[x], '\4', i)))
 				i += 2;
 			else if ((s[x][i] == '$' && ft_strchr("@*", s[x][i + 1]))
-				&& (ft_strchr2(s[x], '4', i)))
+				&& (ft_strchr2(s[x], '\4', i)))
 			{
 				star = i;
-				while (s[x][i] && s[x][i] != '4')
+				while (s[x][i] && s[x][i] != '\4')
 					i++;
 				temp_expand = ft_strjoin_new(temp_expand, s[x], star, i - 1);
 			}
@@ -257,14 +258,10 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 				temp_expand = ft_strjoin_new(temp_expand, s[x], star, i - 1);
 			}
 		}
-		if (((ft_strchr(temp_expand, '6') || ft_strchr(temp_expand, '5'))
-				&& (ft_strchr(temp_expand, ' ') || ft_strchr(temp_expand,
-						'\t'))))
+		if (temp_expand)
 		{
 			if ((ft_strchr(temp_expand, ' ') || ft_strchr(temp_expand, '\t')))
 			{
-				if (!temp_str)
-					temp_str = ft_calloc(1, 1);
 				while (ft_strchr(" \t", temp_expand[index]))
 					index++;
 				while (temp_expand[index])
@@ -278,7 +275,7 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 							index);
 						if (temp_expand[index - 1] && !ft_strchr(" \t",
 								temp_expand[0]))
-							temp_str = ft_strjoin_new(temp_str, "9", 0, 0);
+							temp_str = ft_strjoin_new(temp_str, "\7", 0, 0);
 					}
 					else
 						temp_str = ft_strjoin_new(temp_str, temp_expand, index,
@@ -286,10 +283,9 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 					index++;
 				}
 				temp_expand = ft_strdup(temp_str);
-				free(temp_str);
+				ft_bzero(temp_str, ft_strlen(temp_str));
 				temp_str = NULL;
 			}
-			// irintf("%s\n", temp_str);
 			ex_env = ft_split_origin(temp_expand, ' ');
 			str_new = join_2D_arr(str_new, ex_env);
 			free2d(ex_env);
@@ -299,6 +295,7 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 		ft_bzero(temp_expand, ft_strlen(temp_expand));
 		x++;
 	}
+	free(temp_str);
 	free(temp_expand);
 	free2d(s);
 	return (str_new);
@@ -352,7 +349,7 @@ void	parser_arg(char *input, char **env, t_list *my_env)
 	arg = malloc(1 * sizeof(t_myarg));
 	arg->quote = 0;
 	arg->num_alloc = 0;
-	// here_doc_expaand(input, arg);
+	here_doc_expaand(input, arg);
 	// printf("%d\n\n\n", arg->exp_heredoc);
 	arg->quote = account_quote(input);
 	arg->num_alloc = num_alloc_str(input);
@@ -370,7 +367,7 @@ void	parser_arg(char *input, char **env, t_list *my_env)
 		arg->final_expand = expand(s, my_env, arg->num_alloc);
 		// while(final_expand[x])
 		// 	printf("%s\n", final_expand[x++]);
-		arg->final_expand = clean_expand(arg->final_expand, "3456");
+		arg->final_expand = clean_expand(arg->final_expand, "\3\4\5\6");
 		export(arg->final_expand, my_env, env);
 		final_list = final_addition(arg->final_expand);
 		x = 0;

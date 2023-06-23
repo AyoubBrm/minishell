@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 21:54:57 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/19 18:28:50 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/23 13:21:24 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	pipe_rid_insde_qoute(char **str, char **s, t_myarg *arg, int star)
 				str[arg->x - 1][0], 2)) || (str[arg->x] && str[arg->x - 1]
 			&& ft_strchr2(" \t", str[arg->x - 1][ft_strlen(str[arg->x - 1])
 				- 1], 2)))
-		s[arg->index] = ft_strdup("1");
+		s[arg->index] = ft_strdup("\1");
 	while (str[arg->x][arg->i] && str[arg->x][arg->i] != '"')
 		arg->i++;
 	s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
@@ -62,7 +62,7 @@ void	dollar_inside_qoute(char **str, char **s, t_myarg *arg, int star)
 		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
 			- 1);
 	}
-	s[arg->index] = ft_strjoin_new(s[arg->index], "3", 0, 0);
+	s[arg->index] = ft_strjoin_new(s[arg->index], "\3", 0, 0);
 }
 
 void	str_inside_double_qoute(char **str, char **s, t_myarg *arg)

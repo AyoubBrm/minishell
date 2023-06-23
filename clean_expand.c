@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 20:23:48 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/19 18:27:50 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/23 16:47:14 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	**clean_expand(char **final_expand, char *str)
 	{
 		i = 0;
 		if ((x > 0 && (ft_strlen(final_expand[x]) > 1)) || (x == 0
-				&& !ft_strchr(final_expand[x], '9')))
+				&& !ft_strchr(final_expand[x], '\7')))
 		{
 			temp = ft_calloc(1, 1);
 			while (final_expand[x][i])

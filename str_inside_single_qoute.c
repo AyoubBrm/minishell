@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 23:16:19 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/19 18:28:59 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/23 13:22:24 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	pipe_rid_inside_str(char **str, char **s, t_myarg *arg, int star)
 				str[arg->x - 1][0], 2)) || (str[arg->x] && str[arg->x - 1]
 			&& ft_strchr2(" \t", str[arg->x - 1][ft_strlen(str[arg->x - 1])
 				- 1], 2)))
-		s[arg->index] = ft_strdup("1");
+		s[arg->index] = ft_strdup("\1");
 	// this for '|' pipe inside quote or ">" or "<"
 	while (str[arg->x][arg->i] && str[arg->x][arg->i] != '\'')
 		arg->i++;
@@ -61,7 +61,7 @@ void	dollar_inside_str(char **str, char **s, t_myarg *arg, int star)
 		{
 			s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star,
 				arg->i - 1);
-			s[arg->index] = ft_strjoin_new(s[arg->index], "4", 0, 0);
+			s[arg->index] = ft_strjoin_new(s[arg->index], "\4", 0, 0);
 			star = arg->i;
 		}
 		arg->i++;
@@ -73,7 +73,7 @@ void	dollar_inside_str(char **str, char **s, t_myarg *arg, int star)
 		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
 			- 1);
 	}
-	s[arg->index] = ft_strjoin_new(s[arg->index], "4", 0, 0);
+	s[arg->index] = ft_strjoin_new(s[arg->index], "\4", 0, 0);
 }
 
 void	str_inside_single_qoute(char **str, char **s, t_myarg *arg)

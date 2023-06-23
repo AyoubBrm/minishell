@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 17:00:18 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/19 19:08:27 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/23 13:48:55 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,18 +62,18 @@ void	for_5_6(char **str, char **s, t_myarg *arg)
 {
 	if (str[arg->x + 1] && !ft_strchr2(" \t", str[arg->x][arg->i], 2)
 		&& str[arg->x + 1][0] == '"' && str[arg->x + 1][1] == '"')
-		s[arg->index] = ft_strjoin_new(s[arg->index], "5", 0, 1);
+		s[arg->index] = ft_strjoin_new(s[arg->index], "\5", 0, 1);
 	else if (arg->x > 0 && !ft_strchr2(" \t", str[arg->x][arg->i], 2)
 		&& str[arg->x - 1][0] == '"' && str[arg->x - 1][1] == '"')
-		s[arg->index] = ft_strjoin_new(s[arg->index], "5", 0, 1);
+		s[arg->index] = ft_strjoin_new(s[arg->index], "\5", 0, 1);
 	else if (str[arg->x + 1] && !ft_strchr2(" \t", str[arg->x][arg->i], 2)
 		&& str[arg->x + 1][0] == '\'' && str[arg->x + 1][1] == '\'')
-		s[arg->index] = ft_strjoin_new(s[arg->index], "5", 0, 1);
+		s[arg->index] = ft_strjoin_new(s[arg->index], "\5", 0, 1);
 	else if (arg->x > 0 && !ft_strchr2(" \t", str[arg->x][arg->i], 2)
 		&& str[arg->x - 1][0] == '\'' && str[arg->x - 1][1] == '\'')
-		s[arg->index] = ft_strjoin_new(s[arg->index], "5", 0, 1);
+		s[arg->index] = ft_strjoin_new(s[arg->index], "\5", 0, 1);
 	else
-		s[arg->index] = ft_strjoin_new(s[arg->index], "6", 0, 0);
+		s[arg->index] = ft_strjoin_new(s[arg->index], "\6", 0, 0);
 }
 
 void	token(char **str, char **s, t_myarg *arg, int star)
