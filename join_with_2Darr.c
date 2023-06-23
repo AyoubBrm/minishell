@@ -11,11 +11,12 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 char	**join_2D_arr(char **str1, char **str2)
 {
-	int		i;
-	int		j;
-	char	**new_expand;
+	int i;
+	int j;
+	char **new_expand;
 
 	i = 0;
 	j = 0;

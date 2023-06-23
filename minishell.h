@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/19 00:31:45 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/22 15:01:39 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ typedef struct s_my
 	int		index;
 	int		num_alloc;
 	int		quote;
+	int		exp_heredoc;
 	char	**final_expand;
 }t_myarg;
 
@@ -95,8 +96,9 @@ char	**join2d_with_arr(char **str1, char *str2);
 void	free_list(t_table *head);
 t_table	*error(t_table *list);
 void	ambiguous_no_file(t_table *head);
-char	**join_2D_arr(char **str1, char **str2);
 int		num_alloc_str(char *input);
+char	**join_2D_arr(char **str1, char **str2);
+void	here_doc_expaand(char *input, t_myarg *arg);
 void	str_inside_double_qoute(char **str, char **s, t_myarg *arg);
 void	str_inside_single_qoute(char **str, char **s, t_myarg *arg);
 

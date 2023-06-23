@@ -6,12 +6,11 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/19 20:55:33 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/22 22:51:53 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 t_table	*final_addition(char **str_new)
 {
@@ -170,6 +169,8 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
 		}
 		env = env->next;
 	}
+	if (flags == 2)
+		return (temp_expand = ft_substr(var, 0, ft_strlen(var)));
 	if (flags == 4)
 		return (ft_strjoin(temp_expand, var));
 	else if (var[0] == '$' && ft_isdigit(var[1]))
@@ -288,7 +289,7 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 				free(temp_str);
 				temp_str = NULL;
 			}
-						printf("%s\n", temp_str);
+			// irintf("%s\n", temp_str);
 			ex_env = ft_split_origin(temp_expand, ' ');
 			str_new = join_2D_arr(str_new, ex_env);
 			free2d(ex_env);
@@ -339,65 +340,39 @@ void	export(char **s, t_list *my_env, char **env)
 	// if (s[0] && ft_strncmp(s[0], "exit", -1) == 0)
 	// myexit();
 }
-int here_doc_expaand(char *input)
-{
-	int i = 0;
-	while (input[i])
-	{
-		if(input[i] == '<' && input[i + 1] == '<' && (input[i + 2] == ' ' || input[i + 2] == '\t'))
-		{
-			i += 2;
-			while (input[i] == ' ')
-				i++;
-			while (input[i] && input[i] != '"' && input[i] != '\'')
-			{
-				if (input[i] && (input[i] == ' ' || input[i] == '\t'))
-					break;
-				i++;
-			}
-			if (input[i] == '"' || input[i] == '\'')
-				return (1);
-		}
-		i++;
-	}
-	return (0);
-}
+
 void	parser_arg(char *input, char **env, t_list *my_env)
 {
 	t_table	*final_list;
 	char	**str;
 	char	**s;
-	int		num_alloc;
-	int		quote;
-	char	**final_expand;
 	t_myarg	*arg;
-	int		x;
+	int x = 0;
 
-	num_alloc = 0;
-	quote = 0;
 	arg = malloc(1 * sizeof(t_myarg));
-	x = here_doc_expaand(input);
-	printf("%d\n\n\n", x);
-	quote = account_quote(input);
-	num_alloc = num_alloc_str(input);
-	if (quote % 2 == 1)
+	arg->quote = 0;
+	arg->num_alloc = 0;
+	// here_doc_expaand(input, arg);
+	// printf("%d\n\n\n", arg->exp_heredoc);
+	arg->quote = account_quote(input);
+	arg->num_alloc = num_alloc_str(input);
+	if (arg->quote % 2 == 1)
 		printf("%s\n",
 			"minishell: syntax error near unexpected token `\"' or `\''");
 	else
 	{
 		str = ft_split(input, '\"');
-		s = ft_calloc(sizeof(char *), num_alloc + 1);
+		s = ft_calloc(sizeof(char *), arg->num_alloc + 1);
 		arg->x = 0;
 		arg->i = 0;
 		arg->index = 0;
 		s = get_token_from_str(str, s, arg);
-		x = 0;
-		final_expand = expand(s, my_env, num_alloc);
+		arg->final_expand = expand(s, my_env, arg->num_alloc);
 		// while(final_expand[x])
 		// 	printf("%s\n", final_expand[x++]);
-		export(final_expand, my_env, env);
-		// final_expand = clean_expand(final_expand, "3456");
-		final_list = final_addition(final_expand);
+		arg->final_expand = clean_expand(arg->final_expand, "3456");
+		export(arg->final_expand, my_env, env);
+		final_list = final_addition(arg->final_expand);
 		x = 0;
 		while (final_list)
 		{
@@ -419,7 +394,8 @@ void	parser_arg(char *input, char **env, t_list *my_env)
 		free_list(final_list);
 	}
 }
-void	sig_int(void)
+
+void	sig_int()
 {
 	rl_replace_line("", 0);
 	printf("\n");
@@ -427,31 +403,28 @@ void	sig_int(void)
 	rl_redisplay();
 	return ;
 }
+
 int	main(int ac, char **av, char **env)
 {
-	int		i;
 	char	*input;
 	t_list	*my_env;
-
-	input = NULL;
-	i = 0;
 	(void)av;
-	i = 0;
 	my_env = NULL;
 	my_env = get_env(env);
 	if (ac != 1)
 		return (1);
 	while (1)
 	{
-		signal(SIGQUIT, SIG_IGN);
+		// signal(SIGQUIT, SIG_IGN);
 		// signal(SIGINT, &sig_int);
 		input = readline("minishell ~$ ");
 		add_history(input);
 		if (input)
 			parser_arg(input, env, my_env);
 		free(input);
-		if (!input)
-			return (0);
+		// if (!input)
+		// 	return (0);
 	}
 	return (0);
+
 }

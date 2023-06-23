@@ -22,7 +22,8 @@ char	**clean_expand(char **final_expand, char *str)
 	while (final_expand[x])
 	{
 		i = 0;
-		if ((x > 0 && (ft_strlen(final_expand[x]) > 1)) || (x == 0 && !ft_strchr(final_expand[x], '9')))
+		if ((x > 0 && (ft_strlen(final_expand[x]) > 1)) || (x == 0
+				&& !ft_strchr(final_expand[x], '9')))
 		{
 			temp = ft_calloc(1, 1);
 			while (final_expand[x][i])

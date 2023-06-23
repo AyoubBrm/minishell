@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 22:40:14 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/19 18:39:21 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/22 22:56:42 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ambiguous_no_file(t_table *head)
 {
-	int i;
+	int	i;
 
 	head->ambiguous = 0;
 	head->no_file_dire = 0;
@@ -22,8 +22,7 @@ void	ambiguous_no_file(t_table *head)
 	{
 		i = -1;
 		if (head->cmd && head->cmd[0] == '1')
-			ft_memmove(head->cmd, &head->cmd[1]
-				, ft_strlen(head->cmd));
+			ft_memmove(head->cmd, &head->cmd[1], ft_strlen(head->cmd));
 		else if (head->cmd && head->cmd[0] == '9')
 			head->ambiguous = 1;
 		else if (head->cmd && head->cmd[0] == '6')
@@ -43,19 +42,14 @@ void	ambiguous_no_file(t_table *head)
 				head->ambiguous = 1;
 				head->redirection->file[i][0] = '\0';
 			}
-			if (head->redirection->file[i][0] == '3'
+			else if (head->redirection->file[i][0] == '3'
 				|| head->redirection->file[i][0] == '5'
 				|| !head->redirection->file[i][0])
 			{
 				head->no_file_dire = 1;
 				head->redirection->file[i][0] = '\0';
 			}
-			if (head->redirection->file[i][0] == '1')
-			{
-				head->ambiguous = 1;
-				head->redirection->file[i][0] = '\0';
-			}
-			if (head->redirection->file[i][0] == '1')
+			else if (head->redirection->file[i][0] == '1')
 				ft_memmove(head->redirection->file[i],
 					&head->redirection->file[i][1],
 					ft_strlen(head->redirection->file[i]));

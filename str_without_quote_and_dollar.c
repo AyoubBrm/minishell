@@ -17,8 +17,8 @@ void	token2(char **str, char **s, t_myarg *arg, int star)
 	if (str[arg->x][arg->i] && ft_strchr2("<>|", str[arg->x][arg->i], 3))
 	{
 		if ((arg->i > 0 && !ft_strchr2(&str[arg->x][0], ' ', arg->i)
-			&& !ft_strchr2(&str[arg->x][0], '\t', arg->i)) || (arg->x > 0
-			&& arg->i == 0))
+				&& !ft_strchr2(&str[arg->x][0], '\t', arg->i)) || (arg->x > 0
+				&& arg->i == 0))
 			arg->index++;
 		else if (arg->i > 0 && str[arg->x][arg->i - 1] && !ft_strchr2(" \t",
 				str[arg->x][arg->i - 1], 2))

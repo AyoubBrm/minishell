@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/18 21:25:51 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/22 22:02:29 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,13 +192,13 @@ t_list	*get_env(char **env)
 		// free2d (env_old);
 		// free (value);
 		// free_env(new_env);
-		env_old = ft_split_origin(env[i], '=');
 		new_env = malloc(sizeof(t_list));
+		env_old = ft_split_origin(env[i], '=');
 		new_env->key = ft_strdup(env_old[0]);
 		new_env->value = ft_strdup(env_old[1]);
-		free2d(env_old);
+		// free2d(env_old);
 		// new_env->all = malloc(ft_strlen(key) + ft_strlen(value) + 1);
-		new_env->all = ft_strjoin(new_env->key, ft_strchr_inc(env[i], '='));
+		// new_env->all = ft_strjoin(new_env->key, ft_strchr_inc(env[i], '='));
 		new_env->next = NULL;
 		if (current == NULL)
 		{
