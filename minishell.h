@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/23 22:03:25 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/24 13:01:44 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ typedef struct s_my
 	int		exp_heredoc;
 	int		exp_exit;
 	char	**final_expand;
+	char	**str_new;
 }t_myarg;
 
 

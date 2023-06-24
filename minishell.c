@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/23 22:51:07 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/24 19:14:25 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,57 +193,54 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
 		return (ft_strjoin(temp_expand, var));
 	return (temp_expand);
 }
-char	**expand(char **s, t_list *my_env, int num_alloc)
+char	**expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg)
 {
-	int		i;
-	int		x;
 	int		star;
 	char	*var;
 	char	*temp_expand;
 	char	**ex_env;
-	char	**str_new;
 	char	*temp_str;
 	int		index;
 
 	index = 0;
-	str_new = ft_calloc(num_alloc + 1, sizeof(char *));
-	x = 0;
+	arg->str_new = ft_calloc(num_alloc + 1, sizeof(char *));
+	arg->x = 0;
 	temp_expand = ft_calloc(1, 1);
-	while (s[x])
+	while (s[arg->x])
 	{
-		i = 0;
-		while (s[x][i])
+		arg->i = 0;
+		while (s[arg->x][arg->i])
 		{
-			while (s[x][i] == '$' && s[x][i + 1] == '$')
-				i++;
-			if (s[x][i] == '$' && !ft_strchr2("@*", s[x][i + 1], 2))
+			while (s[arg->x][arg->i] == '$' && s[arg->x][arg->i + 1] == '$')
+				arg->i++;
+			if (s[arg->x][arg->i] == '$' && !ft_strchr2("@*", s[arg->x][arg->i + 1], 2))
 			{
-				if ((ft_strchr(s[x], '\3') || !ft_strchr(s[x], '\3')))
+				if ((ft_strchr(s[arg->x], '\3') || !ft_strchr(s[arg->x], '\3')))
 				{
-					star = i;
-					i++;
-					while ((ft_isdigit(s[x][i]) || ft_isalpha(s[x][i])
-							|| s[x][i] == '_') && !ft_strchr("\3\4\5\6", s[x][i]))
-						i++;
-					var = ft_substr(s[x], star, i - star);
-					if (x > 0 && !ft_strncmp("<<", str_new[x - 1], 3))
+					star = arg->i;
+					arg->i++;
+					while ((ft_isdigit(s[arg->x][arg->i]) || ft_isalpha(s[arg->x][arg->i])
+							|| s[arg->x][arg->i] == '_') && !ft_strchr("\3\4\5\6", s[arg->x][arg->i]))
+						arg->i++;
+					var = ft_substr(s[arg->x], star, arg->i - star);
+					if (arg->x > 0 && !ft_strncmp("<<", arg->str_new[arg->x - 1], 3))
 						temp_expand = find_in_env_and_alloced(my_env, var,
 							temp_expand, 2);
-					else if (s[x][i] == '\4')
+					else if (s[arg->x][arg->i] == '\4')
 					{
 						temp_expand = find_in_env_and_alloced(my_env, var,
 							temp_expand, 4);
-						i++;
+						arg->i++;
 					}
-					else if (s[x][i] && ft_strchr2("\"\4", s[x][i + 1], 2))
+					else if (s[arg->x][arg->i] && ft_strchr2("\"\4", s[arg->x][arg->i + 1], 2))
 					{
-						star = i;
-						while (s[x][i] == '"')
-							i++;
-						if (s[x][i++] == '\4')
+						star = arg->i;
+						while (s[arg->x][arg->i] == '"')
+							arg->i++;
+						if (s[arg->x][arg->i++] == '\4')
 							temp_expand = find_in_env_and_alloced(my_env, var,
 								temp_expand, 4);
-						temp_expand = ft_strjoin_new(temp_expand, s[x], star, i
+						temp_expand = ft_strjoin_new(temp_expand, s[arg->x], star, arg->i
 							- 1);
 					}
 					else
@@ -252,23 +249,23 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 					free(var);
 				}
 			}
-			else if ((s[x][i] == '$' && ft_strchr("@*", s[x][i + 1]))
-				&& (!ft_strchr2(s[x], '\4', i)))
-				i += 2;
-			else if ((s[x][i] == '$' && ft_strchr("@*", s[x][i + 1]))
-				&& (ft_strchr2(s[x], '\4', i)))
+			else if ((s[arg->x][arg->i] == '$' && ft_strchr("@*", s[arg->x][arg->i + 1]))
+				&& (!ft_strchr2(s[arg->x], '\4', arg->i)))
+				arg->i += 2;
+			else if ((s[arg->x][arg->i] == '$' && ft_strchr("@*", s[arg->x][arg->i + 1]))
+				&& (ft_strchr2(s[arg->x], '\4', arg->i)))
 			{
-				star = i;
-				while (s[x][i] && s[x][i] != '\4')
-					i++;
-				temp_expand = ft_strjoin_new(temp_expand, s[x], star, i - 1);
+				star = arg->i;
+				while (s[arg->x][arg->i] && s[arg->x][arg->i] != '\4')
+					arg->i++;
+				temp_expand = ft_strjoin_new(temp_expand, s[arg->x], star, arg->i - 1);
 			}
 			else
 			{
-				star = i;
-				while ((s[x][i] && s[x][i] != '$'))
-					i++;
-				temp_expand = ft_strjoin_new(temp_expand, s[x], star, i - 1);
+				star = arg->i;
+				while ((s[arg->x][arg->i] && s[arg->x][arg->i] != '$'))
+					arg->i++;
+				temp_expand = ft_strjoin_new(temp_expand, s[arg->x], star, arg->i - 1);
 			}
 		}
 		if (((ft_strchr(temp_expand, '\6') || ft_strchr(temp_expand, '\5')) 
@@ -303,17 +300,17 @@ char	**expand(char **s, t_list *my_env, int num_alloc)
 				temp_str = NULL;
 			}
 			ex_env = ft_split_origin(temp_expand, ' ');
-			str_new = join_2D_arr(str_new, ex_env);
+			arg->str_new = join_2D_arr(arg->str_new, ex_env);
 			free2d(ex_env);
 		}
 		else
-			str_new = join2d_with_arr(str_new, temp_expand);
+			arg->str_new = join2d_with_arr(arg->str_new, temp_expand);
 		ft_bzero(temp_expand, ft_strlen(temp_expand));
-		x++;
+		arg->x++;
 	}
 	free(temp_expand);
 	free2d(s);
-	return (str_new);
+	return (arg->str_new);
 }
 
 int get_num_pipes(t_table *list)
@@ -364,6 +361,9 @@ int magic(t_table *list, t_list *my_env, char **env, t_list *next)
 	int abs_path = 0;
 	int num_pipes = get_num_pipes(list);
 	int exit_st;
+
+	t_table *current_heredoc = list;
+
 	while (current)
 	{
 		// !!!!!!!!!!!!!!!!!!!!!To check later!!!!!!!!!!
@@ -380,73 +380,42 @@ int magic(t_table *list, t_list *my_env, char **env, t_list *next)
 		}
 
 		/************************* Handle << redirection (Heredoc) ********************/
-		pos_redirection = get_pos_redirection(current->redirection->type, "<<");
-		while (x < current->redirection->heredoc)
+		while (current_heredoc)
 		{
-			pos_redirection_v2 = get_pos_redirection_v2(pos_redirection, current->redirection->type, "<<");
-			buffer = ft_calloc(1, 1);
-			// printf("test %s\n", current->redirection->file[x]);
-			filename = ft_calloc(1, 1);
-			if (current->redirection->file[pos_redirection_v2])
-				filename = ft_strjoin("/tmp/", current->redirection->file[pos_redirection_v2]);
-			tmp = open(filename, O_CREAT | O_RDWR, 0666);
-			printf("Stopping word: %s\n", current->redirection->file[pos_redirection_v2]);
-			in = dup(tmp);
-			// dup2(tmp, 0);
-			while (1)
+			pos_redirection = get_pos_redirection(current->redirection->type, "<<");
+			while (x < current_heredoc->redirection->heredoc)
 			{
-				input = readline("> ");
-				// printf("buf %s\n", buffer);
-				if (ft_strncmp(input, current->redirection->file[pos_redirection_v2], ft_strlen(current->redirection->file[pos_redirection_v2]) + 1) == 0)
+				pos_redirection_v2 = get_pos_redirection_v2(pos_redirection, current_heredoc->redirection->type, "<<");
+				buffer = ft_calloc(1, 1);
+				filename = ft_calloc(1, 1);
+				if (current_heredoc->redirection->file[pos_redirection_v2])
+					filename = ft_strjoin("/tmp/", current_heredoc->redirection->file[pos_redirection_v2]);
+				tmp = open(filename, O_CREAT | O_RDWR, 0666);
+				printf("Stopping word: %s\n", current_heredoc->redirection->file[pos_redirection_v2]);
+				in = dup(tmp);
+				// dup2(tmp, 0);
+				while (1)
 				{
-					write(in, buffer, ft_strlen(buffer));
-					free(input);
-					free(buffer);
-					pos_redirection++;
-					flag = 1;
-					break;
-				}
-				buffer = ft_strjoin(buffer, input);
-				buffer = ft_strjoin(buffer, "\n");
-				free(input);
-				// free(buffer);
-			}
-			x++;
-		}
-		/************************* Handle < redirection ********************/
-		x = 0;
-		pos_redirection = get_pos_redirection(current->redirection->type, "<");
-		while (x < current->redirection->in_redirection)
-		{
-			pos_redirection_v2 = get_pos_redirection_v2(pos_redirection, current->redirection->type, "<");
-			if (ft_strncmp(current->redirection->type[pos_redirection_v2], "<", 2) == 0)
-			{
-				if (access(current->redirection->file[pos_redirection_v2], F_OK) < 0)
-				{
-					printf("minishell: %s: No such file or directory\n", current->redirection->file[pos_redirection_v2]);
-					return (1);
-				}
-				else
-				{
-					// Needs forking
-					tmp = open(current->redirection->file[pos_redirection_v2], O_RDONLY, 0666);
-					pid = fork();
-					if (pid == 0)
+					input = readline("> ");
+					// printf("buf %s\n", buffer);
+					if (ft_strncmp(input, current_heredoc->redirection->file[pos_redirection_v2], ft_strlen(current_heredoc->redirection->file[pos_redirection_v2]) + 1) == 0)
 					{
-						args = copy_args_to_2d_redirection(current->redirection->file[pos_redirection_v2], cmd);
-						execve(cmd, args, env2d);
+						write(in, buffer, ft_strlen(buffer));
+						free(input);
+						free(buffer);
+						pos_redirection++;
+						flag = 1;
+						break;
 					}
-					else
-						waitpid(pid, &g_exit_status, 0);
+					buffer = ft_strjoin(buffer, input);
+					buffer = ft_strjoin(buffer, "\n");
+					free(input);
+					// free(buffer);
 				}
-				pos_redirection++;
+				x++;
 			}
-			x++;
-		}
-		if (flag && current->cmd && !current->pip)
-		{
-			printf("WTF redire %s => %d\n", current->cmd, current->pip);
-			in = open(filename, O_RDONLY, 0666);
+			x = 0;
+			current_heredoc = current_heredoc->next;
 		}
 		/***************************** PIPING *************************/
 		pipe(pipefds);
@@ -456,7 +425,7 @@ int magic(t_table *list, t_list *my_env, char **env, t_list *next)
 			if (pid == 0)
 			{
 				/************************* Check for cmd permissions and existence ********************/
-				if ((access(current->cmd, F_OK) < 0 && current->cmd[0] == '/') || (current->cmd[0] == '.' && access(current->cmd, F_OK | X_OK) < 0))
+				if (current->cmd && ((access(current->cmd, F_OK) < 0 && current->cmd[0] == '/') || (current->cmd[0] == '.' && access(current->cmd, F_OK | X_OK) < 0)))
 				{
 					printf("minishell: %s: No such file or directory\n", current->cmd);
 					g_exit_status = 127;
@@ -493,6 +462,36 @@ int magic(t_table *list, t_list *my_env, char **env, t_list *next)
 						}
 						x++;
 					}
+					/************************* Handle < redirection ********************/
+					// printf("current->ambiguous %d\n", current->ambiguous);
+
+					x = 0;
+					pos_redirection = get_pos_redirection(current->redirection->type, "<");
+					while (x < current->redirection->in_redirection)
+					{
+						pos_redirection_v2 = get_pos_redirection_v2(pos_redirection, current->redirection->type, "<");
+						if (ft_strncmp(current->redirection->type[pos_redirection_v2], "<", 2) == 0)
+						{
+							if (access(current->redirection->file[pos_redirection_v2], F_OK) < 0)
+							{
+								printf("minishell: %s: No such file or directory\n", current->redirection->file[pos_redirection_v2]);
+								return (1);
+							}
+							else
+							{
+								tmp = open(current->redirection->file[pos_redirection_v2], O_RDONLY, 0666);
+								args = copy_args_to_2d(current->cmd, current->arg);
+								execve(cmd, args, env2d);
+							}
+							pos_redirection++;
+						}
+						x++;
+					}
+					if (flag && current->cmd && !current->pip)
+					{
+						// printf("WTF redire %s => %d\n", current->cmd, current->pip);
+						in = open(filename, O_RDONLY, 0666);
+					}
 					/************************* Handle >> redirection ********************/
 					x = 0;
 					pos_redirection = get_pos_redirection(current->redirection->type, ">>");
@@ -528,12 +527,7 @@ int magic(t_table *list, t_list *my_env, char **env, t_list *next)
 						else
 							execve(current->cmd, args, env2d);
 					}
-					exit(1); // Handle error!!
-					while (args[j])
-					{
-						// printf("args here: %s\n", args[j]);
-						j++;
-					}
+					exit(0);
 				}
 			}
 			else
@@ -580,6 +574,7 @@ int magic(t_table *list, t_list *my_env, char **env, t_list *next)
 	g_exit_status = WEXITSTATUS(g_exit_status);
 	return 0;
 }
+
 int get_pos_redirection_v2(int start, char **redirection, char *redirection_type)
 {
 	while (redirection[start])
@@ -625,7 +620,6 @@ void	parser_arg(char *input, char **env, t_list *my_env, t_list *next)
 	char	**str;
 	char	**s;
 	t_myarg	*arg;
-	int x = 0;
 
 	arg = malloc(1 * sizeof(t_myarg));
 	arg->quote = 0;
@@ -644,32 +638,12 @@ void	parser_arg(char *input, char **env, t_list *my_env, t_list *next)
 		arg->i = 0;
 		arg->index = 0;
 		s = get_token_from_str(str, s, arg);
-		arg->final_expand = expand(s, my_env, arg->num_alloc);
+		arg->final_expand = expand(s, my_env, arg->num_alloc, arg);
 		arg->final_expand = clean_expand(arg->final_expand, "\3\4\5\6");
 		final_list = final_addition(arg->final_expand);
 		final_list->exp_exit = arg->exp_exit; // *******this for expand the exit status if 1 don't (if 0 expand) *******//
 		final_list->exp_heredoc = arg->exp_heredoc;// *******this for expand inside heredoc status if 1 don't (if 0 expand)*******//
-		printf("___for heredoc___%d___for exit status____ %d\n\n\n", final_list->exp_heredoc, final_list->exp_exit);//test//
 		magic(final_list, my_env, env, next);
-		x = 0;
-		while (final_list)
-		{
-			printf("_____CMD_____=..%s\n\n", final_list->cmd);
-			x = 0;
-			while (final_list->arg[x])
-				printf("_____ARG_____=..%s\n\n", final_list->arg[x++]);
-			printf("_____PIPE_____=..%s\n\n", final_list->redirection->pipe);
-			x = 0;
-			while (final_list->redirection->type[x])
-				printf("_____TYPE_REDI_____=..%s\n\n",
-					final_list->redirection->type[x++]);
-			x = 0;
-			while (final_list->redirection->file[x])
-				printf("_____FILE_____=..%s\n\n",
-					final_list->redirection->file[x++]);
-			final_list = final_list->next;
-		}
-		free_list(final_list);
 	}
 }
 
@@ -689,15 +663,15 @@ int main(int ac, char **av, char **env)
 	(void)av;
 	t_list *my_env = NULL;
 	t_list *next;
-	signal(SIGINT, sig_int);
-	signal(SIGQUIT, SIG_IGN);
-	my_env = get_env(env);
-	next = my_env->next;
 	if (ac != 1)
 		return (1);
+	my_env = get_env(env);
+	next = my_env->next;
 	g_exit_status = 0;
 	while (1)
 	{
+		signal(SIGINT, sig_int);
+		signal(SIGQUIT, SIG_IGN);
 		input = readline("minishell$ ");
 		add_history(input);
 		if (input)

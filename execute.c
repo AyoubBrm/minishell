@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 15:58:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/16 22:20:56 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/06/24 19:11:33 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,10 @@ char *check_valid_cmd(char *cmd, char **path)
 	tmp = ft_split_origin(cmd, ' ');
 	while (path[i])
 	{
+		
 		valid_path = ft_strjoin(path[i], "/");
-		valid_path = ft_strjoin(valid_path, tmp[0]);
+		if (tmp[0])
+			valid_path = ft_strjoin(valid_path, tmp[0]);
 		if (access(valid_path, F_OK) == 0)
 		{
 			free2d(tmp);
@@ -80,7 +82,7 @@ char **copy_args_to_2d(char *cmd_path, char **args)
 		total += ft_strlen(args[i]) + 1;
 		i++;
 	}
-	new_args = malloc(sizeof(char *) * (total + cmd_len) + 1);
+	new_args = ft_calloc(sizeof(char *) , (total + cmd_len) + 1);
 
 	new_args[0] = ft_strdup(cmd_path);
 	i = 1;
@@ -91,7 +93,7 @@ char **copy_args_to_2d(char *cmd_path, char **args)
 		i++;
 		j++;
 	}
-	new_args[i] = NULL;
+	// new_args[i] = NULL;
 	return new_args;
 }
 

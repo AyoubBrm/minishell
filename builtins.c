@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/23 21:31:14 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/24 15:06:50 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,13 @@ void my_echo(char **cmd, int exit_status)
     int j = 2;
     i = 0;
 
+    if (!cmd[0])
+    {
+        printf("\n");
+        return;
+    }
+    else if (!handle_n(cmd[0]) && !cmd[1])
+        return;
     while (cmd[i])
     {
         if (ft_strncmp(cmd[i], "$?", 2) == 0)
@@ -428,14 +435,6 @@ void my_unset(char **to_unset, t_list *my_env, t_list *next)
     int i = 0;
 
     current = my_env;
-    if (ft_strncmp(current->key, to_unset[0], ft_strlen(to_unset[0]) + 1) == 0)
-    {
-        printf("debug 1 %s\n", to_unset[0]);
-        tmp = current->next;
-        freenode(&my_env, current);
-        current = tmp;
-        next = current;
-    }
 
     while (to_unset[i])
     {
@@ -443,7 +442,15 @@ void my_unset(char **to_unset, t_list *my_env, t_list *next)
         current = my_env;
         while (current)
         {
-            if (ft_strncmp(current->key, to_unset[i], ft_strlen(to_unset[i]) + 1) == 0)
+            if (ft_strncmp(current->key, to_unset[0], ft_strlen(to_unset[0]) + 1) == 0)
+            {
+                printf("debug 1 %s\n", to_unset[0]);
+                tmp = current->next;
+                freenode(&my_env, current);
+                current = tmp;
+                next = current;
+            }
+            else if (ft_strncmp(current->key, to_unset[i], ft_strlen(to_unset[i]) + 1) == 0)
             {
                 tmp = current->next;
                 freenode(&my_env, current);
