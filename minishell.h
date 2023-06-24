@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/22 15:01:39 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/23 22:03:25 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <string.h>
 #include <signal.h>
 #include <sys/errno.h>
+#include <fcntl.h>
 
 typedef struct s_myenv
 {
@@ -36,28 +37,33 @@ typedef struct s_env
 }   t_env;
 
 void *my_realloc(char *ptr, int size);
-//Built-ins
-void    my_echo(char **cmd);
-void    my_cd(char *path, t_list *myenv);
-char    *my_pwd();
-void    my_env(char **env, char **cmd, t_env *myenv);
-t_list  *get_env(char **env);
-void    new_env(t_list *head);
-void    exit();
-void    myexport(char **cmd, t_list *my_env);
+// Built-ins
+void my_echo(char **cmd, int exit_status);
+int handle_n(char *args);
+void my_cd(char *path, t_list *myenv);
+char *my_pwd();
+void my_env(char **env, char **cmd, t_env *myenv);
+t_list *get_env(char **env);
+void new_env(t_list *head);
+int my_exit(char **args, int exit_status);
+void myexport(char **cmd, t_list *my_env);
 
-void    my_unset(char **to_unset, t_list *my_env);
+void my_unset(char **to_unset, t_list *my_env, t_list *next);
 
-//Free
-void	free2d(char **arg);
-void    free_env(void *env);
-void    freenode(t_list **lst, t_list *node);
+// Free
+void free2d(char **arg);
+void free_env(void *env);
+void freenode(t_list **lst, t_list *node);
 
 //barssing
 
 typedef struct s_addition
 {
 	int how_many;
+	int heredoc;
+	int out_redirection;
+	int in_redirection;
+	int append_redirection;
 	char **type;
 	char **file;
 	char *pipe;
@@ -67,12 +73,15 @@ typedef struct s_addition
 typedef struct s_tab
 {
 	int pip;
+	int num_pipes;
 	char *cmd;
 	t_redirection *redirection;
 	char **arg;
 	struct s_tab *next;
-	int		ambiguous;
-	int		no_file_dire;
+	int ambiguous;
+	int no_file_dire;
+	int exp_exit;
+	int exp_heredoc;
 }t_table;
 
 typedef struct s_my
@@ -83,8 +92,10 @@ typedef struct s_my
 	int		num_alloc;
 	int		quote;
 	int		exp_heredoc;
+	int		exp_exit;
 	char	**final_expand;
 }t_myarg;
+
 
 char	**get_token_from_str(char **str, char **s, t_myarg *arg);
 int		account_quote(char *input);
@@ -101,6 +112,15 @@ char	**join_2D_arr(char **str1, char **str2);
 void	here_doc_expaand(char *input, t_myarg *arg);
 void	str_inside_double_qoute(char **str, char **s, t_myarg *arg);
 void	str_inside_single_qoute(char **str, char **s, t_myarg *arg);
+char 	**get_path(char **env);
+char 	**list_to_double_pointer(t_list *my_env, t_list *next);
+char 	*check_valid_cmd(char *cmd, char **path);
+char 	**copy_args_to_2d(char *cmd_path, char **args);
+void 	pipes(t_table *list, char **args, char **env2d, char *cmd);
+int 	is_builtin(char *builtin);
+char 	**copy_args_to_2d_redirection(char *filename, char *cmd_path);
+int 	get_pos_redirection(char **redirection, char *redirection_type);
+int 	get_pos_redirection_v2(int start, char **redirection, char *redirection_type);
 
 
 #endif

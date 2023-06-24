@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 16:02:29 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/19 18:28:33 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/23 22:42:23 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ void	for_null_cmd_or_arg(char **str, char **s, t_myarg *arg)
 
 char	**get_token_from_str(char **str, char **s, t_myarg *arg)
 {
+	arg->exp_exit = 0;
 	while (str[arg->x])
 	{
 		if (str[arg->x][arg->i] && !ft_strchr2("\'\"", str[arg->x][arg->i], 2))
@@ -54,7 +55,6 @@ char	**get_token_from_str(char **str, char **s, t_myarg *arg)
 		arg->x++;
 		arg->i = 0;
 	}
-	// if (str)
-	// 	free2d(str);
+	free2d(str);
 	return (s);
 }

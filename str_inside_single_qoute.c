@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 23:16:19 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/23 13:22:24 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/23 22:15:57 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,5 +92,6 @@ void	str_inside_single_qoute(char **str, char **s, t_myarg *arg)
 			pipe_rid_inside_str(str, s, arg, star);
 		else
 			str_inside_qoute(str, s, arg, star);
+		arg->exp_exit =1;
 	}
 }

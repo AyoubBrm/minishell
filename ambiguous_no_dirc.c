@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 22:40:14 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/23 15:54:51 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/23 22:38:48 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,11 @@ void	ambiguous_no_file(t_table *head)
 				|| !head->arg[i][0])
 			{
 				head->no_file_dire = 1;
-				head->arg[i][0] = '\0';
+				// head->arg[i][0] = '\0';
 			};
 		}
-		// printf("ambig--%d-----no_file-%d\n", head->ambiguous,
-			// head->no_file_dire);
+		printf("ambig--%d-----no_file-%d\n", head->ambiguous,
+			head->no_file_dire);
 		head = head->next;
 	}
 }
