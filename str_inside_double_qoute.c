@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 21:54:57 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/23 13:21:24 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/26 19:14:06 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,16 @@ void	inside_qoute(char **str, char **s, t_myarg *arg, int star)
 		if (!s[arg->index])
 			s[arg->index] = ft_calloc(1, 1);
 		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
-			- 1);
-		// this for first arg between ("asdasda")
+				- 1);
 	}
 	else if ((str[arg->x - 1][0] && ft_strchr2(" \t", str[arg->x
 				- 1][ft_strlen(str[arg->x - 1]) - 1], 2)))
-		// this is for second string inside (space "asd") and before the string space that mean new strig have to allocted
 		s[arg->index] = ft_substr(str[arg->x], star, arg->i - 1);
 	else if (arg->x > 0 && str[arg->x - 1])
 		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
-			- 1);
+				- 1);
 }
+
 void	pipe_rid_insde_qoute(char **str, char **s, t_myarg *arg, int star)
 {
 	if ((arg->x == 0) || (str[arg->x] && str[arg->x - 1] && ft_strchr2(" \t",
@@ -46,7 +45,7 @@ void	pipe_rid_insde_qoute(char **str, char **s, t_myarg *arg, int star)
 	while (str[arg->x][arg->i] && str[arg->x][arg->i] != '"')
 		arg->i++;
 	s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
-		- 1);
+			- 1);
 }
 
 void	dollar_inside_qoute(char **str, char **s, t_myarg *arg, int star)
@@ -60,14 +59,14 @@ void	dollar_inside_qoute(char **str, char **s, t_myarg *arg, int star)
 		if (!s[arg->index])
 			s[arg->index] = ft_calloc(1, 1);
 		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
-			- 1);
+				- 1);
 	}
 	s[arg->index] = ft_strjoin_new(s[arg->index], "\3", 0, 0);
 }
 
 void	str_inside_double_qoute(char **str, char **s, t_myarg *arg)
 {
-	int star;
+	int	star;
 
 	if (str[arg->x][arg->i] == '"' && str[arg->x][arg->i + 1] != '"')
 	{

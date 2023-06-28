@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 11:47:42 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/22 15:01:56 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/26 23:31:30 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	here_doc_expaand(char *input, t_myarg *arg)
 					+ 2] == ' ' || input[i + 2] == '\t'))
 		{
 			i += 2;
-			printf("%c\n", input[i]);
 			while (input && (input[i] == ' ' || input[i] == '\t'))
 				i++;
 			while (input[i] && input[i] != '"' && input[i] != '\''

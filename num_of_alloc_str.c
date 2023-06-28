@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 01:41:06 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/21 12:37:40 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/26 19:09:50 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int	num_alloc_str2(int *x, char *input, int num_alloc)
 	}
 	return (num_alloc);
 }
+
 int	num_alloc_str1(int *x, char *input, int num_alloc)
 {
 	if (input[*x] != '"' && input[*x] != '\'')
@@ -49,7 +50,7 @@ int	num_alloc_str1(int *x, char *input, int num_alloc)
 	{
 		while ((input[*x] == '>' && input[*x + 1] == '>') || (input[*x] == '<'
 				&& input[*x + 1] == '<') || (input[*x] == '|' && input[*x
-				+ 1] == '|'))
+					+ 1] == '|'))
 			(*x)++;
 		num_alloc++;
 	}
@@ -58,8 +59,8 @@ int	num_alloc_str1(int *x, char *input, int num_alloc)
 
 int	num_alloc_str(char *input)
 {
-	int x;
-	int num_alloc;
+	int	x;
+	int	num_alloc;
 
 	x = 0;
 	num_alloc = 0;

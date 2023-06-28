@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 19:15:35 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/11 19:47:58 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/26 15:38:34 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	free_list(t_table *head)
 {
-	t_table *new_addition;
+	t_table	*new_addition;
 
 	while (head)
 	{

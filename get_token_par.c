@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 16:02:29 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/23 22:42:23 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/26 15:39:42 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 void	for_null_cmd_or_arg(char **str, char **s, t_myarg *arg)
 {
 	if (((((str[arg->x][0] == '"' && str[arg->x][1] == '"')
-					|| (str[arg->x][0] == '\'' && str[arg->x][1] == '\''))
-				&& (arg->x == 0 && str[arg->x + 1])) && ft_strchr(" \t",
+			|| (str[arg->x][0] == '\'' && str[arg->x][1] == '\''))
+			&& (arg->x == 0 && str[arg->x + 1])) && ft_strchr(" \t",
 				str[arg->x + 1][0])))
 		s[arg->index] = ft_calloc(1, 1);
 	if (((((str[arg->x][0] == '"' && str[arg->x][1] == '"')
-					|| (str[arg->x][0] == '\'' && str[arg->x][1] == '\''))
-				&& (arg->x > 0 && str[arg->x + 1] && str[arg->x - 1]))
+			|| (str[arg->x][0] == '\'' && str[arg->x][1] == '\''))
+			&& (arg->x > 0 && str[arg->x + 1] && str[arg->x - 1]))
 			&& ft_strchr(" \t", str[arg->x + 1][0]) && ft_strchr(" \t",
 				str[arg->x - 1][ft_strlen(str[arg->x - 1]) - 1])))
 		s[arg->index] = ft_calloc(1, 1);

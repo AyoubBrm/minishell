@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/24 13:01:44 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/27 23:15:49 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ typedef struct s_tab
 	int no_file_dire;
 	int exp_exit;
 	int exp_heredoc;
+	int	x;
 }t_table;
 
 typedef struct s_my
@@ -95,12 +96,18 @@ typedef struct s_my
 	int		exp_exit;
 	char	**final_expand;
 	char	**str_new;
+	int		star;
+	char	*var;
+	char	*temp_expand;
+	char	**ex_env;
+	char	*temp_str;
+	char	*temp;
 }t_myarg;
 
 
 char	**get_token_from_str(char **str, char **s, t_myarg *arg);
-int		account_quote(char *input);
-char	**clean_expand(char **final_expand, char *str);
+void	account_quote(char *input, t_myarg *arg);
+char	**clean_expand(char **final_expand, char *str, t_myarg *arg);
 void	token_v2(char **str, char **s, t_myarg *arg);
 void	free_list(t_table *head);
 void	str_and_dollar_with_out_quote(char **str, char**s, t_myarg *arg);
@@ -109,7 +116,7 @@ void	free_list(t_table *head);
 t_table	*error(t_table *list);
 void	ambiguous_no_file(t_table *head);
 int		num_alloc_str(char *input);
-char	**join_2D_arr(char **str1, char **str2);
+char	**join_2d_arr(char **str1, char **str2);
 void	here_doc_expaand(char *input, t_myarg *arg);
 void	str_inside_double_qoute(char **str, char **s, t_myarg *arg);
 void	str_inside_single_qoute(char **str, char **s, t_myarg *arg);
@@ -121,7 +128,16 @@ void 	pipes(t_table *list, char **args, char **env2d, char *cmd);
 int 	is_builtin(char *builtin);
 char 	**copy_args_to_2d_redirection(char *filename, char *cmd_path);
 int 	get_pos_redirection(char **redirection, char *redirection_type);
+char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
+		int flags);
 int 	get_pos_redirection_v2(int start, char **redirection, char *redirection_type);
+char	**expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg);
+void	expand_inside_env_or_dont_expand(t_myarg *arg);
+t_table	*final_addition(char **str_new);
+t_table *addition_infile(char **str_new, int *i, t_table *new_addition);
+t_table *addition_part(char **str_new, t_table *new_addition);
+t_table	*output_rid_and_cmd(char **str_new, int *i, t_table *new_addition);
+
 
 
 #endif

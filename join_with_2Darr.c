@@ -6,17 +6,17 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 21:42:05 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/19 01:36:30 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/26 19:08:45 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**join_2D_arr(char **str1, char **str2)
+char	**join_2d_arr(char **str1, char **str2)
 {
-	int i;
-	int j;
-	char **new_expand;
+	int		i;
+	int		j;
+	char	**new_expand;
 
 	i = 0;
 	j = 0;

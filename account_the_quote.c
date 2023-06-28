@@ -6,40 +6,36 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 19:08:36 by abouram           #+#    #+#             */
-/*   Updated: 2023/05/29 19:10:10 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/26 14:10:37 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	account_quote(char *input)
+void	account_quote(char *input, t_myarg *arg)
 {
-	int x;
-	int quote;
-
-	x = 0;
-	quote = 0;
-	while (input[x])
+	arg->x = 0;
+	arg->quote = 0;
+	while (input[arg->x])
 	{
-		if (input[x] == '"')
+		if (input[arg->x] == '"')
 		{
-			x++;
-			quote++;
-			while (input[x] && input[x] != '"')
-				x++;
-			if (input[x] == '"')
-				quote++;
+			arg->x++;
+			arg->quote++;
+			while (input[arg->x] && input[arg->x] != '"')
+				arg->x++;
+			if (input[arg->x] == '"')
+				arg->quote++;
 		}
-		if (input[x] == '\'')
+		if (input[arg->x] == '\'')
 		{
-			x++;
-			quote++;
-			while (input[x] && input[x] != '\'')
-				x++;
-			if (input[x] == '\'')
-				quote++;
+			arg->x++;
+			arg->quote++;
+			while (input[arg->x] && input[arg->x] != '\'')
+				arg->x++;
+			if (input[arg->x] == '\'')
+				arg->quote++;
 		}
-		x++;
+		arg->x++;
 	}
-	return (quote);
 }

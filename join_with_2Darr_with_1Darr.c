@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 21:31:30 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/19 01:36:10 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/27 22:14:18 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 char	**join2d_with_arr(char **str1, char *str2)
 {
-	int		i;
 	char	**new_expand;
+	int		i;
 
 	i = 0;
 	if (!str1 && !str2)

@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 17:00:18 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/23 13:48:55 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/26 19:27:22 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ void	token2(char **str, char **s, t_myarg *arg, int star)
 	if (str[arg->x][arg->i] && ft_strchr2("<>|", str[arg->x][arg->i], 3))
 	{
 		if ((arg->i > 0 && !ft_strchr2(&str[arg->x][0], ' ', arg->i)
-				&& !ft_strchr2(&str[arg->x][0], '\t', arg->i)) || (arg->x > 0
-				&& arg->i == 0))
+			&& !ft_strchr2(&str[arg->x][0], '\t', arg->i)) || (arg->x > 0
+			&& arg->i == 0))
 			arg->index++;
 		else if (arg->i > 0 && str[arg->x][arg->i - 1] && !ft_strchr2(" \t",
 				str[arg->x][arg->i - 1], 2))
@@ -29,7 +29,7 @@ void	token2(char **str, char **s, t_myarg *arg, int star)
 		while (str[arg->x][arg->i] && ft_strchr2("<>|", str[arg->x][arg->i], 3))
 			arg->i++;
 		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
-			- 1);
+				- 1);
 		token_v2(str, s, arg);
 	}
 }
@@ -37,14 +37,14 @@ void	token2(char **str, char **s, t_myarg *arg, int star)
 void	token_whitout_quote(char **str, char **s, t_myarg *arg, int star)
 {
 	if ((str[arg->x + 1] && str[arg->x][arg->i] == '$' && str[arg->x][arg->i
-			+ 1] == '\0' && str[arg->x + 1][0] == '"') || (str[arg->x + 1]
-			&& str[arg->x][arg->i] == '$' && str[arg->x][arg->i + 1] == '\0'
-			&& str[arg->x + 1][0] == '\''))
+		+ 1] == '\0' && str[arg->x + 1][0] == '"') || (str[arg->x + 1]
+		&& str[arg->x][arg->i] == '$' && str[arg->x][arg->i + 1] == '\0'
+		&& str[arg->x + 1][0] == '\''))
 	{
 		if (!s[arg->index])
 			s[arg->index] = ft_calloc(1, 1);
 		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
-			- 1);
+				- 1);
 		arg->x++;
 		arg->i = 0;
 		star = 0;
@@ -52,7 +52,7 @@ void	token_whitout_quote(char **str, char **s, t_myarg *arg, int star)
 				str[arg->x][arg->i], 4))
 			arg->i++;
 		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
-			- 1);
+				- 1);
 	}
 	else
 		token2(str, s, arg, star);
@@ -89,15 +89,15 @@ void	token(char **str, char **s, t_myarg *arg, int star)
 	{
 		arg->i++;
 		while ((str[arg->x][arg->i] && !ft_strchr2("\t $><|",
-					str[arg->x][arg->i], 6)))
+				str[arg->x][arg->i], 6)))
 			arg->i++;
 		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
-			- 1);
+				- 1);
 		for_5_6(str, s, arg);
 	}
 	else
 		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
-			- 1);
+				- 1);
 	if (ft_strchr2(" \t", str[arg->x][arg->i], 2))
 		arg->index++;
 	while (ft_strchr2(" \t", str[arg->x][arg->i], 2))

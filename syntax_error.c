@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:29:48 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/19 01:59:36 by abouram          ###   ########.fr       */
+/*   Updated: 2023/06/27 22:57:42 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,36 +76,44 @@ int	redirection_error(t_table *list, t_table *free, char *temp_red)
 	return (0);
 }
 
+int	error_file_pip_rid(t_table *list, t_table *free)
+{
+	int	x;
+
+	if (list->redirection->pipe && list->redirection->file
+		&& pipe_error(list, free, list->redirection->pipe,
+			list->redirection->file))
+		return (0);
+	else if (list->redirection->file && file_error(list,
+			list->redirection->file))
+		return (0);
+	x = 0;
+	while (list->redirection->type[x])
+	{
+		if (redirection_error(list, free, list->redirection->type[x]))
+			return (0);
+		else if (list->redirection->type[x] && !list->redirection->file)
+		{
+			printf("syntax error near unexpected token `newline'\n");
+			free_list(free);
+			return (0);
+		}
+		x++;
+	}
+	return (1);
+}
+
 t_table	*error(t_table *list)
 {
 	t_table	*head;
 	t_table	*free;
-	int		x;
 
 	free = list;
 	head = list;
 	while (list)
 	{
-		if (list->redirection->pipe && list->redirection->file
-			&& pipe_error(list, free, list->redirection->pipe,
-				list->redirection->file))
+		if (error_file_pip_rid(list, free) == 0)
 			return (0);
-		else if (list->redirection->file && file_error(list,
-				list->redirection->file))
-			return (0);
-		x = 0;
-		while (list->redirection->type[x])
-		{
-			if (redirection_error(list, free, list->redirection->type[x]))
-				return (0);
-			else if (list->redirection->type[x] && !list->redirection->file)
-			{
-				printf("syntax error near unexpected token `newline'\n");
-				free_list(free);
-				return (0);
-			}
-			x++;
-		}
 		list = list->next;
 	}
 	return (head);
