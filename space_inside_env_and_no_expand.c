@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   space_inside_env_and_no_expand.c                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:23:50 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/13 23:22:02 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/14 00:04:28 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	space_var(t_myarg *arg)
 {
 	if (!arg->temp_str)
-		arg->temp_str = ft_calloc(1, 1);
+		arg->temp_str = ft_calloc(2, 1);
 	while (arg->temp_expand[arg->index] && ft_strchr(" \t",
 			arg->temp_expand[arg->index]))
 		arg->index++;
@@ -32,9 +32,11 @@ void	space_var(t_myarg *arg)
 					arg->temp_expand[0]))
 				arg->temp_str = ft_strjoin_new(arg->temp_str, "\7", 0, 0);
 		}
-		// else
-		// 	arg->temp_str = ft_strjoin_new(arg->temp_str, arg->temp_expand,
-		// 			arg->index, arg->index);
+		else if (arg->temp_expand[arg->index])
+		{
+			arg->temp_str = ft_strjoin_new(arg->temp_str, arg->temp_expand,
+					arg->index, arg->index);
+		}
 		arg->index++;
 	}
 }
