@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/27 23:15:49 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/13 23:12:20 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define MINISHELL_H
 
 #include "libft/libft.h"
+#include "ft_printf/ft_printf.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <readline/readline.h>
@@ -22,6 +23,7 @@
 #include <signal.h>
 #include <sys/errno.h>
 #include <fcntl.h>
+#include <dirent.h>
 
 typedef struct s_myenv
 {
@@ -44,11 +46,11 @@ void my_cd(char *path, t_list *myenv);
 char *my_pwd();
 void my_env(char **env, char **cmd, t_env *myenv);
 t_list *get_env(char **env);
-void new_env(t_list *head);
+void new_env(t_list **head);
 int my_exit(char **args, int exit_status);
 void myexport(char **cmd, t_list *my_env);
 
-void my_unset(char **to_unset, t_list *my_env, t_list *next);
+void my_unset(char **to_unset, t_list **my_env);
 
 // Free
 void free2d(char **arg);
@@ -104,6 +106,34 @@ typedef struct s_my
 	char	*temp;
 }t_myarg;
 
+typedef struct pipes_n_redirection
+{
+	char **env2d; // Double ** env
+	char **path;
+	char *input;
+	int tmp; // Open tmp file for heredoc
+	int trunc_redirect;
+	int append_redirection;
+	int pos_redirection;
+	int pos_redirection_v2;
+	char *buffer; // tmp string to join input of heredoc
+	char *tmp_buffer;
+	int *pids;
+	int num_pipes;
+	char *cmd;
+	char **args;
+	char *filename;
+	char **filemames;
+	int pipefds[2];
+	int in;
+	int out;
+	int pid;
+	int flag;
+	int abs_path;
+	int is_redirected;
+	char wildcard[200];
+}	t_pipes_n_redirection;
+
 
 char	**get_token_from_str(char **str, char **s, t_myarg *arg);
 void	account_quote(char *input, t_myarg *arg);
@@ -121,7 +151,7 @@ void	here_doc_expaand(char *input, t_myarg *arg);
 void	str_inside_double_qoute(char **str, char **s, t_myarg *arg);
 void	str_inside_single_qoute(char **str, char **s, t_myarg *arg);
 char 	**get_path(char **env);
-char 	**list_to_double_pointer(t_list *my_env, t_list *next);
+char **list_to_double_pointer(t_list *my_env);
 char 	*check_valid_cmd(char *cmd, char **path);
 char 	**copy_args_to_2d(char *cmd_path, char **args);
 void 	pipes(t_table *list, char **args, char **env2d, char *cmd);
@@ -139,5 +169,25 @@ t_table *addition_part(char **str_new, t_table *new_addition);
 t_table	*output_rid_and_cmd(char **str_new, int *i, t_table *new_addition);
 
 
+//Redirection
+int get_pos_redirection(char **redirection, char *redirection_type);
+int get_pos_redirection_v2(int start, char **redirection, char *redirection_type);
+// void out_redirection(t_table *current, int out, int is_redirected);
+void out_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int i);
+void app_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int i);
+// void app_redirection(t_table *current, int out, int is_redirected);
+void in_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int i);
+// void no_such_file(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int g_exit_status);
+void no_such_file(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int g_exit_status, int i);
+void all_redirections(t_table *current, t_pipes_n_redirection *pipes_n_redirection);
+
+//Execution
+void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status);
+void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status);
+void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status);
+
+//Wildcard
+void wildcard(char *path);
+void wildcard_helper(t_pipes_n_redirection *pipes_n_redirection);
 
 #endif

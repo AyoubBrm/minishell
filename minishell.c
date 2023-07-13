@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/26 23:35:40 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/13 23:17:40 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,251 +28,146 @@ int get_num_pipes(t_table *list)
 	return i;
 }
 
-int magic(t_table *list, t_list *my_env, char **env, t_list *next)
+int magic(t_table *list, t_list *my_env, char **env)
 {
-	(void)env;
-	// next = my_env->next;
-	char **env2d = list_to_double_pointer(my_env, next);
-	char **path = get_path(env2d);
 
-	// while(path[i])
-	// {
-	// 	printf("%s\n", path[i]);
-	// 	i++;
-	// }
-	t_table *current = list;
-	// t_table *current_heredoc = list;
-	char *input;
-	int tmp; // Open tmp file for heredoc
-	int trunc_redirect;
-	int append_redirection;
-	int pos_redirection;
-	int pos_redirection_v2;
-	char *buffer = NULL; // tmp string to join input of heredoc
-	int x = 0;
-	char *cmd = NULL;
-	char **args = NULL;
-	char *filename;
-	int j = 0;
-	int pipefds[2];
-	int in = 0; // Save input of the previous cmd
-	int out = 0;
-	int pid = 0;
-	int flag = 0;
-	int abs_path = 0;
-	int num_pipes = get_num_pipes(list);
-	int exit_st;
+	t_pipes_n_redirection *pipes_n_redirection = ft_calloc(sizeof(t_pipes_n_redirection), 1);
+
+	pipes_n_redirection->env2d = list_to_double_pointer(my_env);
+	pipes_n_redirection->path = get_path(pipes_n_redirection->env2d);
+
+	pipes_n_redirection->num_pipes = get_num_pipes(list);
+	pipes_n_redirection->pids = ft_calloc(sizeof(int), pipes_n_redirection->num_pipes + 1);
 
 	t_table *current_heredoc = list;
+	pipes_n_redirection->cmd = NULL;
+	pipes_n_redirection->args = NULL;
+	pipes_n_redirection->filename = NULL;
 
+	// pipes_n_redirection->filemames = malloc(sizeof(char *) * pipes_n_redirection->num_pipes + 1);
+	int x = 0;
+	int k = 0;
+	t_table *current = list;
 	while (current)
 	{
-		// !!!!!!!!!!!!!!!!!!!!!To check later!!!!!!!!!!
 		if (current->cmd)
 		{
-			cmd = check_valid_cmd(current->cmd, path);
-			args = copy_args_to_2d(current->cmd, current->arg);
-			while (args[j])
-			{
-				// printf("args: %s\n", args[j]);
-				j++;
-			}
-			j = 0;
+			free(pipes_n_redirection->cmd);
+			free2d(pipes_n_redirection->args);
+			pipes_n_redirection->cmd = check_valid_cmd(current->cmd, pipes_n_redirection->path);
+			pipes_n_redirection->args = copy_args_to_2d(current->cmd, current->arg);
 		}
 
 		/************************* Handle << redirection (Heredoc) ********************/
 		while (current_heredoc)
 		{
-			pos_redirection = get_pos_redirection(current->redirection->type, "<<");
+			pipes_n_redirection->pos_redirection = get_pos_redirection(current->redirection->type, "<<");
 			while (x < current_heredoc->redirection->heredoc)
 			{
-				pos_redirection_v2 = get_pos_redirection_v2(pos_redirection, current_heredoc->redirection->type, "<<");
-				buffer = ft_calloc(1, 1);
-				filename = ft_calloc(1, 1);
-				if (current_heredoc->redirection->file[pos_redirection_v2])
-					filename = ft_strjoin("/tmp/", current_heredoc->redirection->file[pos_redirection_v2]);
-				tmp = open(filename, O_CREAT | O_RDWR, 0666);
-				printf("Stopping word: %s\n", current_heredoc->redirection->file[pos_redirection_v2]);
-				in = dup(tmp);
-				// dup2(tmp, 0);
+				pipes_n_redirection->pos_redirection_v2 = get_pos_redirection_v2(pipes_n_redirection->pos_redirection, current_heredoc->redirection->type, "<<");
+				pipes_n_redirection->buffer = ft_calloc(1, 1);
+				if (current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2])
+				{
+					free(pipes_n_redirection->filename);
+					pipes_n_redirection->filename = ft_strjoin("/tmp/", current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2]);
+				}
+				if (pipes_n_redirection->tmp)
+					close(pipes_n_redirection->tmp);
+
+				if (pipes_n_redirection->tmp)
+					close(pipes_n_redirection->tmp);
+				if (pipes_n_redirection->in)
+					close(pipes_n_redirection->in);
+
+				pipes_n_redirection->tmp = open(pipes_n_redirection->filename, O_CREAT | O_RDWR, 0666);
+				pipes_n_redirection->in = pipes_n_redirection->tmp;
 				while (1)
 				{
-					input = readline("> ");
-					// printf("buf %s\n", buffer);
-					if (ft_strncmp(input, current_heredoc->redirection->file[pos_redirection_v2], ft_strlen(current_heredoc->redirection->file[pos_redirection_v2]) + 1) == 0)
+					pipes_n_redirection->input = readline("> ");
+					if (ft_strncmp(pipes_n_redirection->input, current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2], ft_strlen(current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2]) + 1) == 0)
 					{
-						write(in, buffer, ft_strlen(buffer));
-						free(input);
-						free(buffer);
-						pos_redirection++;
-						flag = 1;
+						write(pipes_n_redirection->in, pipes_n_redirection->buffer, ft_strlen(pipes_n_redirection->buffer));
+						free(pipes_n_redirection->input);
+						free(pipes_n_redirection->buffer);
+						pipes_n_redirection->pos_redirection++;
+						pipes_n_redirection->flag = 1;
 						break;
 					}
-					buffer = ft_strjoin(buffer, input);
-					buffer = ft_strjoin(buffer, "\n");
-					free(input);
-					// free(buffer);
+					pipes_n_redirection->tmp_buffer = ft_strjoin(pipes_n_redirection->buffer, pipes_n_redirection->input);
+					free(pipes_n_redirection->buffer);
+					pipes_n_redirection->buffer = ft_strjoin(pipes_n_redirection->tmp_buffer, "\n");
+					free(pipes_n_redirection->tmp_buffer);
+					free(pipes_n_redirection->input);
 				}
 				x++;
 			}
 			x = 0;
 			current_heredoc = current_heredoc->next;
 		}
+		/************************* End << Heredoc ************************************/
+		if (pipes_n_redirection->flag && current->cmd && !current->pip)
+		{
+			pipes_n_redirection->in = open(pipes_n_redirection->filename, O_RDONLY, 0666);
+		}
 		/***************************** PIPING *************************/
-		pipe(pipefds);
-		if (current->cmd)
+		pipe(pipes_n_redirection->pipefds);
+		pipes_n_redirection->pid = fork();
+		if (pipes_n_redirection->pid == 0)
 		{
-			pid = fork();
-			if (pid == 0)
-			{
-				/************************* Check for cmd permissions and existence ********************/
-				if (current->cmd && ((access(current->cmd, F_OK) < 0 && current->cmd[0] == '/') || (current->cmd[0] == '.' && access(current->cmd, F_OK | X_OK) < 0)))
-				{
-					printf("minishell: %s: No such file or directory\n", current->cmd);
-					g_exit_status = 127;
-					exit(g_exit_status);
-				}
-				else if (!cmd && current->cmd[0] != '/' && !is_builtin(current->cmd) && access(current->cmd, F_OK | X_OK) < 0)
-				{
-					printf("minishell: %s: command not found\n", current->cmd);
-					g_exit_status = 127;
-					exit(g_exit_status);
-				}
-				else
-				{
-					if (access(current->cmd, F_OK | X_OK) == 0)
-						abs_path = 1;
-					dup2(in, 0);
-					if (current->pip)
-						dup2(pipefds[1], 1);
-					close(pipefds[0]);
-					close(pipefds[1]);
-					/************************* Handle > redirection ********************/
-					x = 0;
-					pos_redirection = get_pos_redirection(current->redirection->type, ">");
-					while (x < current->redirection->out_redirection)
-					{
-						pos_redirection_v2 = get_pos_redirection_v2(pos_redirection, current->redirection->type, ">");
-						if (current->redirection->file[pos_redirection_v2] && ft_strncmp(current->redirection->type[pos_redirection_v2], ">", 2) == 0)
-						{
-							trunc_redirect = open(current->redirection->file[pos_redirection_v2], O_CREAT | O_TRUNC | O_RDWR, 0666);
-							out = dup(1);
-							dup2(trunc_redirect, 1);
-							close(trunc_redirect);
-							pos_redirection++;
-						}
-						x++;
-					}
-					/************************* Handle < redirection ********************/
-					// printf("current->ambiguous %d\n", current->ambiguous);
-
-					x = 0;
-					pos_redirection = get_pos_redirection(current->redirection->type, "<");
-					while (x < current->redirection->in_redirection)
-					{
-						pos_redirection_v2 = get_pos_redirection_v2(pos_redirection, current->redirection->type, "<");
-						if (ft_strncmp(current->redirection->type[pos_redirection_v2], "<", 2) == 0)
-						{
-							if (access(current->redirection->file[pos_redirection_v2], F_OK) < 0)
-							{
-								printf("minishell: %s: No such file or directory\n", current->redirection->file[pos_redirection_v2]);
-								return (1);
-							}
-							else
-							{
-								tmp = open(current->redirection->file[pos_redirection_v2], O_RDONLY, 0666);
-								args = copy_args_to_2d(current->cmd, current->arg);
-								execve(cmd, args, env2d);
-							}
-							pos_redirection++;
-						}
-						x++;
-					}
-					if (flag && current->cmd && !current->pip)
-					{
-						// printf("WTF redire %s => %d\n", current->cmd, current->pip);
-						in = open(filename, O_RDONLY, 0666);
-					}
-					/************************* Handle >> redirection ********************/
-					x = 0;
-					pos_redirection = get_pos_redirection(current->redirection->type, ">>");
-					while (x < current->redirection->append_redirection)
-					{
-						pos_redirection_v2 = get_pos_redirection_v2(pos_redirection, current->redirection->type, ">>");
-						if (current->redirection->file[pos_redirection_v2] && ft_strncmp(current->redirection->type[pos_redirection_v2], ">>", 2) == 0)
-						{
-							append_redirection = open(current->redirection->file[pos_redirection_v2], O_CREAT | O_APPEND | O_RDWR, 0666);
-							out = dup(1);
-							dup2(append_redirection, 1);
-							close(append_redirection);
-							pos_redirection++;
-						}
-						x++;
-					}
-					if (is_builtin(current->cmd))
-					{
-						if (current->cmd && !current->arg[0] && ft_strncmp(current->cmd, "export", 7) == 0)
-							myexport(current->arg, my_env);
-						else if (current->cmd && ft_strncmp(current->cmd, "env", 4) == 0)
-							new_env(my_env);
-						else if (current->cmd && ft_strncmp(current->cmd, "echo", 5) == 0)
-							my_echo(current->arg, g_exit_status);
-						else if (current->cmd && ft_strncmp(current->cmd, "pwd", 4) == 0)
-							my_pwd();
-						// exit(0);
-					}
-					else
-					{
-						if (!abs_path)
-							execve(cmd, args, env2d);
-						else
-							execve(current->cmd, args, env2d);
-					}
-					exit(0);
-				}
-			}
-			else
-			{
-				if (current->cmd && current->arg[0] && ft_strncmp(current->cmd, "export", 7) == 0)
-					myexport(current->arg, my_env);
-				else if (current->cmd && ft_strncmp(current->cmd, "unset", 6) == 0)
-					my_unset(current->arg, my_env, next);
-				else if (current->cmd && ft_strncmp(current->cmd, "exit", 5) == 0)
-				{
-					if (!num_pipes)
-						my_exit(current->arg, g_exit_status);
-				}
-				else if (current->cmd && ft_strncmp(current->cmd, "cd", 3) == 0)
-				{
-					if (!num_pipes)
-						my_cd(current->arg[0], my_env);
-				}
-				close(pipefds[1]);
-				// close(1);
-				in = dup(pipefds[0]); // Save input of the previous cmd
-				close(pipefds[0]);
-				dup2(out, 1);
-			}
+			child(current, pipes_n_redirection, my_env, g_exit_status);
 		}
-
-		if (cmd && args)
+		else
 		{
-			free2d(args);
-			free(cmd);
+			parent(current, pipes_n_redirection, my_env, g_exit_status);
 		}
+		// Get all pids
+		pipes_n_redirection->pids[k] = pipes_n_redirection->pid;
+		k++;
+
 		current = current->next;
 	}
-	// close(in);
-	close(pipefds[0]);
-	close(pipefds[1]);
-	// printf("here??");
-	// dup2(in, 0);
-	if (flag)
+
+	if (pipes_n_redirection->tmp)
+		close(pipes_n_redirection->tmp);
+	if (pipes_n_redirection->in)
+		close(pipes_n_redirection->in);
+
+	free2d(pipes_n_redirection->env2d);
+	free2d(pipes_n_redirection->path);
+
+	if (pipes_n_redirection->cmd && pipes_n_redirection->args)
 	{
-		unlink(filename);
+		free2d(pipes_n_redirection->args);
+		free(pipes_n_redirection->cmd);
 	}
-	waitpid(pid, &g_exit_status, 0);
+	if (pipes_n_redirection->pipefds[0])
+	{
+		close(pipes_n_redirection->pipefds[0]);
+		close(pipes_n_redirection->pipefds[1]);
+	}
+	if (pipes_n_redirection->flag)
+	{
+		free(pipes_n_redirection->filename);
+		unlink(pipes_n_redirection->filename);
+	}
+	k = 0;
+	// while (pipes_n_redirection->filemames[k])
+	// {
+	// 	unlink(pipes_n_redirection->filename);
+	// 	k++;
+	// }
+	k = 0;
+	while (k < pipes_n_redirection->num_pipes + 1)
+	{
+		waitpid(pipes_n_redirection->pids[k], &g_exit_status, 0);
+		k++;
+	}
+	free(pipes_n_redirection->pids);
 	g_exit_status = WEXITSTATUS(g_exit_status);
+
+	free(pipes_n_redirection);
+	// while (1)
+	// 	;
 	return 0;
 }
 
@@ -315,7 +210,7 @@ int is_builtin(char *builtin)
 	}
 	return 0;
 }
-void	parser_arg(char *input, char **env, t_list *my_env, t_list *next)
+void	parser_arg(char *input, char **env, t_list *my_env)
 {
 	t_table	*final_list;
 	char	**str;
@@ -346,7 +241,7 @@ void	parser_arg(char *input, char **env, t_list *my_env, t_list *next)
 			return;
 		final_list->exp_exit = arg->exp_exit; // *******this for expand the exit status if 1 don't (if 0 expand) *******//
 		final_list->exp_heredoc = arg->exp_heredoc;// *******this for expand inside heredoc status if 1 don't (if 0 expand)*******//
-		magic(final_list, my_env, env, next);
+		magic(final_list, my_env, env);
 	}
 	int x = 0;
 		while (final_list)
@@ -369,7 +264,7 @@ void	parser_arg(char *input, char **env, t_list *my_env, t_list *next)
 
 void	sig_int()
 {
-	rl_replace_line("", 0);
+	// rl_replace_line("", 0);
 	printf("\n");
 	rl_on_new_line();
 	rl_redisplay();
@@ -382,11 +277,9 @@ int main(int ac, char **av, char **env)
 
 	(void)av;
 	t_list *my_env = NULL;
-	t_list *next;
 	if (ac != 1)
 		return (1);
 	my_env = get_env(env);
-	next = my_env->next;
 	g_exit_status = 0;
 	while (1)
 	{
@@ -395,7 +288,7 @@ int main(int ac, char **av, char **env)
 		input = readline("minishell$ ");
 		add_history(input);
 		if (input)
-			parser_arg(input, env, my_env, next);
+			parser_arg(input, env, my_env);
 		free(input);
 		if (!input)
 			return (0);

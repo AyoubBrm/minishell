@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/24 15:06:50 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/11 20:16:22 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,13 +49,6 @@ void my_echo(char **cmd, int exit_status)
     int j = 2;
     i = 0;
 
-    if (!cmd[0])
-    {
-        printf("\n");
-        return;
-    }
-    else if (!handle_n(cmd[0]) && !cmd[1])
-        return;
     while (cmd[i])
     {
         if (ft_strncmp(cmd[i], "$?", 2) == 0)
@@ -73,6 +66,10 @@ void my_echo(char **cmd, int exit_status)
         }
         else if (ft_strncmp(cmd[i], "-n", 2) == 0)
         {
+            if (!handle_n(cmd[i]) && !cmd[1])
+            {
+                return;
+            }
             if (handle_n(cmd[i]))
             {
                 flag = 1;
@@ -91,7 +88,7 @@ void my_echo(char **cmd, int exit_status)
         }
         i++;
     }
-    if (!flag)
+    if (!flag && cmd[0])
     {
         lol = get_last_args(cmd);
         while (cmd[lol])
@@ -180,27 +177,26 @@ void free_env(void *env)
 t_list *get_env(char **env)
 {
     int i = 0;
-    // int j = 0;
-    // int lol = 0;
 
     t_list *current = NULL;
     t_list *new_env = NULL;
     t_list *head = NULL;
+
     char **env_old = NULL;
     // char *key = NULL;
     // char *value = NULL;
     while (env[i])
     {
-        // free (key);
-        // free2d (env_old);
-        // free (value);
-        // free_env(new_env);
         env_old = ft_split_origin(env[i], '=');
         new_env = malloc(sizeof(t_list));
+
+        new_env->key = NULL;
+        new_env->value = NULL;
+        new_env->all = NULL;
+
         new_env->key = ft_strdup(env_old[0]);
         new_env->value = ft_strdup(env_old[1]);
         free2d(env_old);
-        // new_env->all = malloc(ft_strlen(key) + ft_strlen(value) + 1);
         new_env->all = ft_strjoin(new_env->key, ft_strchr_inc(env[i], '='));
         new_env->next = NULL;
 
@@ -215,42 +211,41 @@ t_list *get_env(char **env)
             current = current->next;
         }
         i++;
-        // new_env = new_env->next;
-        // if (ft_strncmp(current->key, "OLDPWD", 6) == 0)
-        // {
-        //     freenode(&new_env, current);
-        // }
     }
-    // new_env->next = NULL;
     return head;
 }
 
-void new_env(t_list *my_env)
+void new_env(t_list **my_env)
 {
-    t_list *current = my_env;
+    t_list *current = *my_env;
+    // printf("heere wtf head %p\n", current);
     while (current)
     {
-        // if (ft_strncmp(current->key, "OLDPWD", 6) == 0)
-        // {
-        //     freenode(&my_env, current);
-        // }
-        if (ft_strncmp(current->key, "_", 1) == 0)
+        if (current->key && ft_strncmp(current->key, "_", 1) == 0)
         {
             free(current->value);
             current->value = ft_strdup("env");
             current->all = ft_strjoin(current->key, "=env");
             printf("%s\n", current->all);
         }
-        else if (current->key && current->value)
-            printf("%s=%s\n", current->key, current->value);
+        else if (current->key && current->value && current->all)
+            printf("%s\n", current->all);
         current = current->next;
     }
-    // else
-    // {
-    //     close(pipefds[1]);
-    //     *in = pipefds[0];
-    //     printf("?? !!%d\n", *in);
-    // }
+}
+
+t_list *update_env(t_list **my_env)
+{
+    t_list *current = *my_env;
+
+    while (current)
+    {
+        printf("WTHHH %p\n", current);
+        current = current->next;
+    }
+
+    current = *my_env;
+    return current;
 }
 
 void myexport(char **cmd, t_list *my_env)
@@ -259,6 +254,7 @@ void myexport(char **cmd, t_list *my_env)
     int j = 0;
     char *key = NULL;
     char *value = NULL;
+    char *tmp_key = NULL;
     int len;
     int k;
     int b;
@@ -271,7 +267,7 @@ void myexport(char **cmd, t_list *my_env)
     int lol = 0;
     current = my_env;
     my_export = malloc(sizeof(t_list));
-    printf("here %s\n", cmd[0]);
+
     if (!cmd[0])
     {
         while (current)
@@ -294,7 +290,7 @@ void myexport(char **cmd, t_list *my_env)
                 my_export->value[k] = '"';
                 k++;
                 my_export->value[k] = '\0';
-                my_export->key_exp = ft_strjoin(ft_strdup("declare -x "), my_export->key);
+                my_export->key_exp = ft_strjoin("declare -x ", my_export->key);
                 my_export->all = ft_strjoin(my_export->key_exp, my_export->value);
                 my_export->next = NULL;
                 printf("%s\n", my_export->all);
@@ -302,10 +298,17 @@ void myexport(char **cmd, t_list *my_env)
             else
                 printf("declare -x %s\n", my_export->key);
             current = current->next;
+            free(my_export->key_exp);
+            free(my_export->all);
+            free(my_export->key);
+            free(my_export->value);
         }
     }
+    free(my_export);
+
     current = my_env;
     int z = 0;
+
     while (cmd[i])
     {
         while (cmd[i][j])
@@ -327,6 +330,7 @@ void myexport(char **cmd, t_list *my_env)
                         if (key[z] != '_')
                         {
                             printf("Minishell: export: `%s': not a valid identifier\n", cmd[i]);
+                            free(key);
                             return;
                         }
                     }
@@ -337,6 +341,9 @@ void myexport(char **cmd, t_list *my_env)
         }
         i++;
     }
+    if (key)
+        free(key);
+
     i = 0;
     j = 0;
     while (cmd[i])
@@ -350,7 +357,8 @@ void myexport(char **cmd, t_list *my_env)
             {
                 offset = 1;
                 equal = 0;
-                key = ft_strdup(ft_substr(cmd[i], 0, j));
+                tmp_key = ft_substr(cmd[i], 0, j);
+                key = ft_strdup(tmp_key);
                 value = ft_strdup(ft_strchr(cmd[i], '='));
                 while (current)
                 {
@@ -362,9 +370,14 @@ void myexport(char **cmd, t_list *my_env)
                             {
                                 // free(current->value);
                                 current->value = ft_strdup(ft_strchr(cmd[i], '='));
+                                printf("%p\n", current->value);
                             }
                             if (current->all)
+                            {
+                                // free(current->key);
+                                // free(current->value);
                                 free(current->all);
+                            }
                             current->all = ft_strjoin(key, current->value);
                             current->next = NULL;
                             printf("%s\n", current->all);
@@ -387,7 +400,7 @@ void myexport(char **cmd, t_list *my_env)
                     new_export = malloc(sizeof(t_list));
                     new_export->key = key;
                     new_export->value = value;
-                    new_export->all = malloc(ft_strlen(key) + ft_strlen(value) + 1);
+                    // new_export->all = malloc(ft_strlen(key) + ft_strlen(value) + 1);
                     new_export->all = ft_strjoin(key, ft_strchr_inc(cmd[i], '='));
                     new_export->next = NULL;
                     ft_lstadd_back(&my_env, new_export);
@@ -407,7 +420,6 @@ void myexport(char **cmd, t_list *my_env)
                 }
                 else
                 {
-                    printf("loool\n");
                     offset = 0;
                     break;
                 }
@@ -426,39 +438,35 @@ void myexport(char **cmd, t_list *my_env)
         }
         i++;
     }
+    // while(1);
 }
 
-void my_unset(char **to_unset, t_list *my_env, t_list *next)
+void my_unset(char **to_unset, t_list **my_env)
 {
     t_list *current;
     t_list *tmp;
+
     int i = 0;
 
-    current = my_env;
+    current = *my_env;
 
     while (to_unset[i])
     {
         printf("to unset %s\n", to_unset[i]);
-        current = my_env;
         while (current)
         {
-            if (ft_strncmp(current->key, to_unset[0], ft_strlen(to_unset[0]) + 1) == 0)
+            if (current->key && ft_strncmp(current->key, to_unset[i], ft_strlen(to_unset[i]) + 1) == 0)
             {
-                printf("debug 1 %s\n", to_unset[0]);
+                printf("here\n");
                 tmp = current->next;
-                freenode(&my_env, current);
+                freenode(my_env, current);
                 current = tmp;
-                next = current;
-            }
-            else if (ft_strncmp(current->key, to_unset[i], ft_strlen(to_unset[i]) + 1) == 0)
-            {
-                tmp = current->next;
-                freenode(&my_env, current);
-                current = tmp;
+                break;
             }
             if (current)
                 current = current->next;
         }
+        current = *my_env;
         i++;
     }
 }

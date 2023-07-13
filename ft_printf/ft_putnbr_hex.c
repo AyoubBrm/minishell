@@ -1,36 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   ft_putnbr_hex.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/30 20:11:20 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/13 23:18:08 by shmimi           ###   ########.fr       */
+/*   Created: 2022/11/04 03:39:06 by shmimi            #+#    #+#             */
+/*   Updated: 2022/11/04 03:58:30 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "ft_printf.h"
 
-void	free2d(char **arg)
+void	ft_putnbr_hex(unsigned int n, int *lol)
 {
-	int	i;
-	
-	if (!arg)
-		return ;
-	i = 0;
-	while (arg[i])
+	char	*hex;
+
+	hex = "0123456789abcdef";
+	if (n < 16)
+		ft_putchar(hex[n], lol);
+	else
 	{
-		free(arg[i]);
-		arg[i] = NULL;
-		i++;
+		ft_putnbr_hex(n / 16, lol);
+		ft_putnbr_hex(n % 16, lol);
 	}
-	free(arg);
-	arg = NULL;
-}
-
-void	double_free2d(char **arg1, char **arg2)
-{
-	free2d(arg1);
-	free2d(arg2);
 }

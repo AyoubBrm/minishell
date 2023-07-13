@@ -1,36 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   ft_putnbr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/30 20:11:20 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/13 23:18:08 by shmimi           ###   ########.fr       */
+/*   Created: 2022/11/04 03:39:12 by shmimi            #+#    #+#             */
+/*   Updated: 2022/11/04 03:39:13 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "ft_printf.h"
 
-void	free2d(char **arg)
+void	ft_putnbr(int n, int *lol)
 {
-	int	i;
-	
-	if (!arg)
-		return ;
-	i = 0;
-	while (arg[i])
+	if (n >= 0 && n < 10)
+		ft_putchar(n + 48, lol);
+	else if (n >= 10)
 	{
-		free(arg[i]);
-		arg[i] = NULL;
-		i++;
+		ft_putnbr(n / 10, lol);
+		ft_putnbr(n % 10, lol);
 	}
-	free(arg);
-	arg = NULL;
-}
-
-void	double_free2d(char **arg1, char **arg2)
-{
-	free2d(arg1);
-	free2d(arg2);
+	if (n == -2147483648)
+	{
+		ft_putchar('-', lol);
+		ft_putchar('2', lol);
+		ft_putnbr(147483648, lol);
+	}
+	else if (n < 0)
+	{
+		ft_putchar('-', lol);
+		n *= -1;
+		ft_putnbr(n, lol);
+	}
+	return ;
 }

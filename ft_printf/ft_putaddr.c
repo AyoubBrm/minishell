@@ -1,36 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   ft_putaddr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/30 20:11:20 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/13 23:18:08 by shmimi           ###   ########.fr       */
+/*   Created: 2022/11/04 03:39:00 by shmimi            #+#    #+#             */
+/*   Updated: 2022/11/04 03:58:19 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "ft_printf.h"
 
-void	free2d(char **arg)
+void	ft_putaddr(unsigned long n, int *lol)
 {
-	int	i;
-	
-	if (!arg)
-		return ;
-	i = 0;
-	while (arg[i])
+	char	*hex;
+
+	hex = "0123456789abcdef";
+	if (n < 16)
 	{
-		free(arg[i]);
-		arg[i] = NULL;
-		i++;
+		ft_putchar(hex[n], lol);
 	}
-	free(arg);
-	arg = NULL;
-}
-
-void	double_free2d(char **arg1, char **arg2)
-{
-	free2d(arg1);
-	free2d(arg2);
+	else
+	{
+		ft_putaddr(n / 16, lol);
+		ft_putaddr(n % 16, lol);
+	}
 }

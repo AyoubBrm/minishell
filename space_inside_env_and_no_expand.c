@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   space_inside_env_and_no_expand.c                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:23:50 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/26 19:07:52 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/13 23:22:02 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ void	space_var(t_myarg *arg)
 					arg->temp_expand[0]))
 				arg->temp_str = ft_strjoin_new(arg->temp_str, "\7", 0, 0);
 		}
-		else
-			arg->temp_str = ft_strjoin_new(arg->temp_str, arg->temp_expand,
-					arg->index, arg->index);
+		// else
+		// 	arg->temp_str = ft_strjoin_new(arg->temp_str, arg->temp_expand,
+		// 			arg->index, arg->index);
 		arg->index++;
 	}
 }
@@ -49,8 +49,8 @@ void	expand_inside_env_or_dont_expand(t_myarg *arg)
 					'\t')))
 		{
 			space_var(arg);
-			arg->temp_expand = ft_strdup(arg->temp_str);
-			free(arg->temp_str);
+			// arg->temp_expand = ft_strdup(arg->temp_str);
+			// free(arg->temp_str);
 			arg->temp_str = NULL;
 		}
 		arg->ex_env = ft_split_origin(arg->temp_expand, ' ');

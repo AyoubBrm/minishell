@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin_new.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/09 18:05:06 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/25 19:41:08 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/13 23:20:59 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,6 @@ char	*ft_strjoin_new(char *s1, char *s2, int x, int j)
 		i++;
 	}
 	p[i] = '\0';
-	free(tmp);
+	// free(tmp);
 	return (p);
 }

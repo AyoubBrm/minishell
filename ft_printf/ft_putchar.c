@@ -1,36 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   ft_putchar.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/30 20:11:20 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/13 23:18:08 by shmimi           ###   ########.fr       */
+/*   Created: 2022/11/04 03:39:02 by shmimi            #+#    #+#             */
+/*   Updated: 2023/07/12 16:59:30 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "ft_printf.h"
+#include <unistd.h>
 
-void	free2d(char **arg)
+void	ft_putchar(char c, int *lol)
 {
-	int	i;
-	
-	if (!arg)
-		return ;
-	i = 0;
-	while (arg[i])
-	{
-		free(arg[i]);
-		arg[i] = NULL;
-		i++;
-	}
-	free(arg);
-	arg = NULL;
-}
-
-void	double_free2d(char **arg1, char **arg2)
-{
-	free2d(arg1);
-	free2d(arg2);
+	write(2, &c, 1);
+	(*lol)++;
 }
