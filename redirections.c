@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 22:46:51 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/12 21:29:59 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/14 17:48:18 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@ void out_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirectio
     pipes_n_redirection->out = dup(1);
     dup2(pipes_n_redirection->trunc_redirect, 1);
     close(pipes_n_redirection->trunc_redirect);
-    if (!current->cmd)
-        exit(0);
 }
 
 void app_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int i)
@@ -28,8 +26,6 @@ void app_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirectio
     pipes_n_redirection->out = dup(1);
     dup2(pipes_n_redirection->append_redirection, 1);
     close(pipes_n_redirection->append_redirection);
-    if (!current->cmd)
-        exit(0);
 }
 
 void in_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int i)
@@ -47,8 +43,6 @@ void in_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirection
         if (current->pip)
             dup2(pipes_n_redirection->pipefds[1], 1);
     }
-    if (!current->cmd)
-        exit(0);
 }
 
 void all_redirections(t_table *current, t_pipes_n_redirection *pipes_n_redirection)
@@ -70,4 +64,6 @@ void all_redirections(t_table *current, t_pipes_n_redirection *pipes_n_redirecti
 		}
 		i++;
 	}
+    if (!current->cmd)
+        exit(0);
 }

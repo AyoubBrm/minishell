@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   find_var_in_env.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:36:30 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/14 00:28:13 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/14 16:32:45 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 char	*expand_status(t_list *env, char *var, char *temp_expand, int flags)
 {
-	if (flags == 4)
+	if (flags == 2)
+		return (temp_expand = ft_substr(var, 0, ft_strlen(var)));
+	else if (flags == 4)
 		return (temp_expand = ft_strjoin_new(temp_expand, var, 0,
 				ft_strlen(var)));
-	else if (flags == 2)
-		return (temp_expand = ft_substr(var, 0, ft_strlen(var)));
 	if (env->value && (ft_strchr(env->value, '>')
 			|| ft_strchr(env->value, '|') || ft_strchr(env->value,
 				'<')))
@@ -45,8 +45,6 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
 			return (temp_expand = expand_status(env, var, temp_expand, flags));
 		env = env->next;
 	}
-	if (temp_expand)
-		return (temp_expand);
 	if (flags == 2)
 		return (temp_expand = ft_substr(var, 0, ft_strlen(var)));
 	if (flags == 4)

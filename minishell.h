@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/13 23:12:20 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/14 01:08:43 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ typedef struct pipes_n_redirection
 	char *cmd;
 	char **args;
 	char *filename;
-	char **filemames;
+	char **filenames;
 	int pipefds[2];
 	int in;
 	int out;
@@ -180,6 +180,7 @@ void in_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirection
 // void no_such_file(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int g_exit_status);
 void no_such_file(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int g_exit_status, int i);
 void all_redirections(t_table *current, t_pipes_n_redirection *pipes_n_redirection);
+int get_num_heredoc(t_table *list);
 
 //Execution
 void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status);

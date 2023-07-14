@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/11 20:16:22 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/14 16:12:20 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -452,12 +452,10 @@ void my_unset(char **to_unset, t_list **my_env)
 
     while (to_unset[i])
     {
-        printf("to unset %s\n", to_unset[i]);
         while (current)
         {
             if (current->key && ft_strncmp(current->key, to_unset[i], ft_strlen(to_unset[i]) + 1) == 0)
             {
-                printf("here\n");
                 tmp = current->next;
                 freenode(my_env, current);
                 current = tmp;

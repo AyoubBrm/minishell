@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 15:58:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/13 23:52:00 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/14 17:49:23 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,26 +51,22 @@ char *check_valid_cmd(char *cmd, char **path)
 	int i = 0;
 	char *valid_path;
 	char *valid_cmd;
-	char **tmp;
 
-	tmp = ft_split_origin(cmd, ' ');
 	while (path[i])
 	{
 		valid_path = ft_strjoin(path[i], "/");
-		if (tmp[0])
-			valid_cmd = ft_strjoin(valid_path, tmp[0]);
+		if (cmd)
+			valid_cmd = ft_strjoin(valid_path, cmd);
 		if (access(valid_cmd, F_OK) == 0)
 		{
-			free2d(tmp);
 			free(valid_path);
 			return valid_cmd;
 		}
-		if (tmp[0])
+		if (cmd)
 			free(valid_cmd);
 		free(valid_path);
 		i++;
 	}
-	free2d(tmp);
 	return 0;
 }
 

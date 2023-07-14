@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   space_inside_env_and_no_expand.c                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:23:50 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/14 00:04:28 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/14 01:58:47 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 
 void	space_var(t_myarg *arg)
 {
-	if (!arg->temp_str)
-		arg->temp_str = ft_calloc(2, 1);
+	arg->temp_str = ft_calloc(2, 1);
 	while (arg->temp_expand[arg->index] && ft_strchr(" \t",
 			arg->temp_expand[arg->index]))
 		arg->index++;
@@ -51,8 +50,8 @@ void	expand_inside_env_or_dont_expand(t_myarg *arg)
 					'\t')))
 		{
 			space_var(arg);
-			// arg->temp_expand = ft_strdup(arg->temp_str);
-			// free(arg->temp_str);
+			arg->temp_expand = ft_strdup(arg->temp_str);
+			free(arg->temp_str);
 			arg->temp_str = NULL;
 		}
 		arg->ex_env = ft_split_origin(arg->temp_expand, ' ');
