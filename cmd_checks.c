@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 20:11:55 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/14 17:18:15 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/15 00:00:54 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,23 @@ void no_such_file(t_table *current, t_pipes_n_redirection *pipes_n_redirection, 
         pipes_n_redirection->is_redirected = 0;
         app_redirection(current, pipes_n_redirection, i);
         /************************** End >> Redirection ***************************/
-        ft_printf("bash: %s: command not found\n", current->cmd);
+        int i = 0;
+        int flag = 0;
+        while (pipes_n_redirection->env2d[i])
+        {
+            if (ft_strnstr(pipes_n_redirection->env2d[i], "PATH", 4))
+            {
+                flag = 1;
+            }
+            i++;
+        }
+        if (flag)
+        {
+            ft_printf("bash: %s: command not found\n", current->cmd);
+            g_exit_status = 127;
+            exit(g_exit_status);
+        }
+        ft_printf("bash: %s: No such file or directory\n", current->cmd);
         g_exit_status = 127;
         exit(g_exit_status);
     }

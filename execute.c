@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 15:58:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/14 17:49:23 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/16 20:16:39 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ char **copy_args_to_2d(char *cmd_path, char **args)
 		total += ft_strlen(args[i]) + 1;
 		i++;
 	}
-	new_args = malloc(sizeof(char *) * (total + cmd_len) + 1);
+	new_args = ft_calloc(sizeof(char *), (total + cmd_len) + 1);
 
 	new_args[0] = ft_strdup(cmd_path);
 	i = 1;
@@ -189,6 +189,13 @@ void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list 
 	/****************************************************** Handle all redirections **********************************************/
 	all_redirections(current, pipes_n_redirection);
 	/****************************************************** End redirections********** **********************************************/
+	if (current->cmd || current->cmd[0])
+	{
+		free(pipes_n_redirection->cmd);
+		free2d(pipes_n_redirection->args);
+		pipes_n_redirection->cmd = check_valid_cmd(current->cmd, pipes_n_redirection->path);
+		pipes_n_redirection->args = copy_args_to_2d(current->cmd, current->arg);
+	}
 	/******************************************** Check for cmd permissions and existence *******************************************/
 	no_such_file(current, pipes_n_redirection, g_exit_status, i);
 	/***************************** END checking for cmd permissions and existence ******************************/

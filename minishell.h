@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/14 01:08:43 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/16 17:31:54 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #include <fcntl.h>
 #include <dirent.h>
 
+int g_exit_status;
 typedef struct s_myenv
 {
     char *key;
@@ -181,6 +182,7 @@ void in_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirection
 void no_such_file(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int g_exit_status, int i);
 void all_redirections(t_table *current, t_pipes_n_redirection *pipes_n_redirection);
 int get_num_heredoc(t_table *list);
+int heredoc_which_redirection(char **redirection);
 
 //Execution
 void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status);

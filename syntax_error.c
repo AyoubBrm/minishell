@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_error.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:29:48 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/27 22:57:42 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/16 15:59:39 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 int	pipe_error(t_table *list, t_table *free, char *temp_pipe, char **temp_file)
 {
 	if ((temp_pipe && !list->cmd && !temp_file[0]) || (list->pip == 1
-			&& !list->next->cmd && !list->next->redirection->file[0])
+			&& !list->next->cmd && list->next->redirection->file
+			&& !list->next->redirection->file[0])
 		|| (temp_pipe && temp_pipe[0] == '|' && temp_pipe[1] == '|'))
 	{
+
 		printf("syntax error near unexpected token `%c%c'\n", temp_pipe[0],
 			temp_pipe[1]);
 		free_list(free);
@@ -116,5 +118,6 @@ t_table	*error(t_table *list)
 			return (0);
 		list = list->next;
 	}
+	// list->exp_exit = 258;
 	return (head);
 }

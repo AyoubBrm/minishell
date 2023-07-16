@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/14 16:12:20 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/15 00:28:11 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ void my_cd(char *path, t_list *my_env)
     if (path)
     {
         if (chdir(path) != 0)
-            printf("cd: %s: No such file or directory\n", path);
+            printf("bash: cd: %s: No such file or directory\n", path);
     }
     else if (!path && home_found)
     {
@@ -136,7 +136,7 @@ void my_cd(char *path, t_list *my_env)
         }
     }
     else
-        printf("cd: HOME not set\n");
+        printf("bash: cd: HOME not set\n");
 }
 
 char *my_pwd()
@@ -472,8 +472,10 @@ void my_unset(char **to_unset, t_list **my_env)
 int my_exit(char **args, int exit_status)
 {
     int i = 0;
-    int j = 0;
+    int j = 1;
     int overflow = 0;
+
+    j = 0;
 
     while (args[i])
     {
@@ -481,7 +483,25 @@ int my_exit(char **args, int exit_status)
         {
             if (!ft_isdigit(args[i][j]))
             {
-                printf("exit\n");
+                // printf("exit\n");
+                if (args[i][0] == '-')
+                {
+                    j++;
+                    while (ft_isdigit(args[i][j]) && !ft_isdigit(args[i][j]))
+                        j++;
+                    if (!ft_isdigit(args[i][j]) && args[i][j])
+                    {
+                        printf("minishell: exit: %s: numeric argument required\n", args[i]);
+                        exit(255);
+                    }
+                }
+                j = 1;
+                while (args[i][0] == '-' && ft_isdigit(args[i][j]))
+                {
+                    j++;
+                    if (args[i][j] == '\0')
+                        exit(255);
+                }
                 printf("minishell: exit: %s: numeric argument required\n", args[i]);
                 exit(255);
             }
@@ -493,13 +513,14 @@ int my_exit(char **args, int exit_status)
 
     if (args[0] && args[1])
     {
-        printf("exit\n");
+        // printf("exit\n");
         printf("minishell: exit: too many arguments\n");
+        exit_status = 1;
         return 1;
     }
     else if (args[0])
     {
-        printf("exit\n");
+        // printf("exit\n");
         if (ft_atoi_origin(args[0]) > 256)
             overflow = ft_atoi_origin(args[0]) - 256;
         else
@@ -509,9 +530,9 @@ int my_exit(char **args, int exit_status)
     }
     else
     {
-        printf("exit\n");
-        exit(0);
+        // printf("exit\n");
+        exit(exit_status);
     }
-    printf("exit\n");
+    // printf("exit\n");
     exit(exit_status);
 }

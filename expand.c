@@ -6,12 +6,11 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:29:36 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/25 23:14:09 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/15 00:41:31 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 void	skip_after_dollar(t_myarg *arg, char **s)
 {
 	if ((s[arg->x][arg->i] == '$' && ft_strchr("@*", s[arg->x][arg->i + 1]))
@@ -28,6 +27,9 @@ void	skip_after_dollar(t_myarg *arg, char **s)
 	}
 	else
 	{
+		if (arg->i > 0 && s[arg->x][arg->i - 1] == '$'
+			&& s[arg->x][arg->i] == '?')
+			arg->i++;
 		arg->star = arg->i;
 		while ((s[arg->x][arg->i] && s[arg->x][arg->i] != '$'))
 			arg->i++;
@@ -75,7 +77,8 @@ void	expand2(char **s, t_list *my_env, t_myarg *arg)
 			arg->i++;
 			while ((ft_isdigit(s[arg->x][arg->i])
 				|| ft_isalpha(s[arg->x][arg->i])
-				|| s[arg->x][arg->i] == '_') && !ft_strchr("\3\4\5\6",
+				|| s[arg->x][arg->i] == '_' || ((s[arg->x][arg->i] == '?')
+				&& s[arg->x][arg->i - 1] != '?')) && !ft_strchr("\3\4\5\6",
 				s[arg->x][arg->i]))
 				arg->i++;
 			expand_inside_quote(s, arg, my_env);
