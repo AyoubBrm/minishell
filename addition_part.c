@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 23:06:29 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/14 17:37:56 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/16 22:22:14 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,13 @@ t_table	*addition_append(char **str_new, int *i, t_table *new_addition)
 }
 t_table *addition_heredoc(char **str_new, int *i, t_table *new_addition)
 {
-	if (str_new[*i] && ft_strncmp(str_new[*i], "<<", 2) == 0)
+	if (str_new[*i] && ft_strncmp(str_new[*i], "<<", 3) == 0)
 	{
 		new_addition->redirection->type = join2d_with_arr(new_addition->redirection->type,
 			str_new[(*i)++]);
 		new_addition->redirection->how_many++;
 		new_addition->redirection->heredoc++;
+		printf("%d : %d\n", new_addition->redirection->heredoc, new_addition->redirection->how_many);
 		if (str_new[*i] && str_new[*i][0] != '|')
 		{
 			if (str_new[*i] && str_new[*i][0] == '\7')

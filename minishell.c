@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/16 22:08:24 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/16 22:19:36 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,13 +65,15 @@ int magic(t_table *list, t_list *my_env, char **env, t_myarg *arg)
 	int k = 0;
 	t_table *current = list;
 
+	printf("here %d\n", current->redirection->heredoc);
+
 	while (current)
 	{
 		/************************* Handle << redirection (Heredoc) ********************/
 		while (current_heredoc)
 		{
 			pipes_n_redirection->pos_redirection = get_pos_redirection(current->redirection->type, "<<");
-			while (x < current->redirection->how_many)
+			while (x < current->redirection->heredoc)
 			{
 				pipes_n_redirection->pos_redirection_v2 = get_pos_redirection_v2(pipes_n_redirection->pos_redirection, current_heredoc->redirection->type, "<<");
 				pipes_n_redirection->buffer = ft_calloc(1, 1);
