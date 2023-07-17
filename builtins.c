@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/15 00:28:11 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/17 19:30:39 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void my_echo(char **cmd, int exit_status)
         printf("\n");
 }
 
-void my_cd(char *path, t_list *my_env)
+int my_cd(char *path, t_list *my_env)
 {
     t_list *current = my_env;
     int home_found = 0;
@@ -121,7 +121,11 @@ void my_cd(char *path, t_list *my_env)
     if (path)
     {
         if (chdir(path) != 0)
+        {
             printf("bash: cd: %s: No such file or directory\n", path);
+            g_exit_status = 1;
+            return g_exit_status;
+        }
     }
     else if (!path && home_found)
     {
@@ -136,7 +140,12 @@ void my_cd(char *path, t_list *my_env)
         }
     }
     else
+    {
         printf("bash: cd: HOME not set\n");
+        g_exit_status = 1;
+        return g_exit_status;
+    }
+    return g_exit_status;
 }
 
 char *my_pwd()

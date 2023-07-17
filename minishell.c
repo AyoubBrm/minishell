@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/16 22:19:36 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/17 22:31:27 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int get_num_heredoc(t_table *list)
 	return i;
 }
 
-int magic(t_table *list, t_list *my_env, char **env, t_myarg *arg)
+void magic(t_table *list, t_list *my_env, char **env, t_myarg *arg)
 {
 
 	t_pipes_n_redirection *pipes_n_redirection = ft_calloc(sizeof(t_pipes_n_redirection), 1);
@@ -50,7 +50,7 @@ int magic(t_table *list, t_list *my_env, char **env, t_myarg *arg)
 	pipes_n_redirection->num_pipes = get_num_pipes(list);
 	pipes_n_redirection->pids = ft_calloc(sizeof(int), pipes_n_redirection->num_pipes + 1);
 	// if (get_num_heredoc(list))
-		// pipes_n_redirection->filenames = ft_calloc(sizeof(char *), get_num_heredoc(list));
+	// pipes_n_redirection->filenames = ft_calloc(sizeof(char *), get_num_heredoc(list));
 
 	t_table *current_heredoc = list;
 	pipes_n_redirection->cmd = NULL;
@@ -58,14 +58,10 @@ int magic(t_table *list, t_list *my_env, char **env, t_myarg *arg)
 	pipes_n_redirection->filename = NULL;
 	char **p;
 
-	char **lol;
-
 	// pipes_n_redirection->filemames = malloc(sizeof(char *) * pipes_n_redirection->num_pipes + 1);
 	int x = 0;
 	int k = 0;
 	t_table *current = list;
-
-	printf("here %d\n", current->redirection->heredoc);
 
 	while (current)
 	{
@@ -89,23 +85,17 @@ int magic(t_table *list, t_list *my_env, char **env, t_myarg *arg)
 					close(pipes_n_redirection->in);
 
 				if (heredoc_which_redirection(current_heredoc->redirection->type) == 1)
-					pipes_n_redirection->tmp = open(pipes_n_redirection->filenames[x], O_CREAT | O_RDWR, 0666);
+					pipes_n_redirection->tmp = open(pipes_n_redirection->filename, O_CREAT | O_RDWR, 0666);
 				else if (heredoc_which_redirection(current_heredoc->redirection->type) == 2)
-					pipes_n_redirection->tmp = open(pipes_n_redirection->filenames[x], O_CREAT | O_APPEND | O_RDWR, 0666);
+					pipes_n_redirection->tmp = open(pipes_n_redirection->filename, O_CREAT | O_APPEND | O_RDWR, 0666);
 				else
 					pipes_n_redirection->tmp = open(pipes_n_redirection->filename, O_CREAT | O_RDWR, 0666);
 				pipes_n_redirection->in = pipes_n_redirection->tmp;
 				while (1)
 				{
 					pipes_n_redirection->input = readline("> ");
-					if (pipes_n_redirection->input && ft_strchr(pipes_n_redirection->input, '$') && current->exp_heredoc == 0)
-					{
-						pipes_n_redirection->input = ft_strjoin(pipes_n_redirection->input, "\n");
-						p = ft_split_origin(pipes_n_redirection->input, '\n');
-						p = expand(p, my_env, arg->num_alloc, arg);
-						pipes_n_redirection->input = ft_strdup(p[0]);
-					}
-					else if (pipes_n_redirection->input && ft_strncmp(pipes_n_redirection->input, current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2], ft_strlen(current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2]) + 1) == 0)
+					// printf("%s: %zu: %s: %zu\n", current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2], ft_strlen(current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2]), pipes_n_redirection->input, ft_strlen(pipes_n_redirection->input));
+					if (pipes_n_redirection->input && ft_strncmp(pipes_n_redirection->input, current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2], ft_strlen(current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2]) + 1) == 0)
 					{
 						write(pipes_n_redirection->in, pipes_n_redirection->buffer, ft_strlen(pipes_n_redirection->buffer));
 						free(pipes_n_redirection->input);
@@ -113,6 +103,13 @@ int magic(t_table *list, t_list *my_env, char **env, t_myarg *arg)
 						pipes_n_redirection->pos_redirection++;
 						pipes_n_redirection->flag = 1;
 						break;
+					}
+					else if (pipes_n_redirection->input && ft_strchr(pipes_n_redirection->input, '$') && arg->ex_here == 0 && current->exp_heredoc == 0)
+					{
+						pipes_n_redirection->input = ft_strjoin(pipes_n_redirection->input, "\n");
+						p = ft_split_origin(pipes_n_redirection->input, '\n');
+						p = expand(p, my_env, arg->num_alloc, arg);
+						pipes_n_redirection->input = ft_strdup(p[0]);
 					}
 					else if (!pipes_n_redirection->input)
 						break;
@@ -128,6 +125,13 @@ int magic(t_table *list, t_list *my_env, char **env, t_myarg *arg)
 			current_heredoc = current_heredoc->next;
 		}
 		/************************* End << Heredoc ************************************/
+
+		if (current->ambiguous && arg->ex_here == 1)
+		{
+			printf("bash: %s: ambiguous redirect\n", arg->p);
+			g_exit_status = 1;
+			return;
+		}
 
 		if (pipes_n_redirection->flag && current->cmd && !current->pip)
 		{
@@ -197,13 +201,13 @@ int magic(t_table *list, t_list *my_env, char **env, t_myarg *arg)
 		waitpid(pipes_n_redirection->pids[k], &g_exit_status, 0);
 		k++;
 	}
+
 	free(pipes_n_redirection->pids);
 	g_exit_status = WEXITSTATUS(g_exit_status);
 
 	free(pipes_n_redirection);
 	// while (1)
 	// 	;
-	return 0;
 }
 
 int heredoc_which_redirection(char **redirection)
@@ -252,10 +256,7 @@ int is_builtin(char *builtin)
 	while (i < 7)
 	{
 		if (ft_strncmp(builtin, built_ins[i], ft_strlen(builtin) + 1) == 0)
-		{
-			// printf("\n--builtin %s\n", builtin);
 			return 1;
-		}
 		i++;
 	}
 	return 0;
@@ -286,7 +287,7 @@ void parser_arg(char *input, char **env, t_list *my_env)
 		s = get_token_from_str(str, s, arg);
 		arg->final_expand = expand(s, my_env, arg->num_alloc, arg);
 		arg->final_expand = clean_expand(arg->final_expand, "\3\4\5\6", arg);
-		final_list = final_addition(arg->final_expand);
+		final_list = final_addition(arg->final_expand, arg->p);
 		if (final_list == NULL)
 			return;
 		final_list->exp_exit = arg->exp_exit;		// *******this for expand the exit status if 1 don't (if 0 expand) *******//
@@ -294,23 +295,23 @@ void parser_arg(char *input, char **env, t_list *my_env)
 		// printf("---%d--dasda-\n", arg->exp_exit);
 		magic(final_list, my_env, env, arg);
 	}
-	// int x = 0;
-	// while (final_list)
-	// {
-	// 	printf("********************* BEGIN ***************************\n");
-	// 	printf("_____CMD_____=..%s\n\n", final_list->cmd);
-	// 	x = 0;
-	// 	while (final_list->arg[x])
-	// 		printf("_____ARG_____=..%s\n\n", final_list->arg[x++]);
-	// 	printf("_____PIPE_____=..%s\n\n", final_list->redirection->pipe);
-	// 	x = 0;
-	// 	while (final_list->redirection->type[x])
-	// 		printf("_____TYPE_REDI_____=..%s\n\n", final_list->redirection->type[x++]);
-	// 	x = 0;
-	// 	while (final_list->redirection->file[x])
-	// 		printf("_____FILE_____=..%s\n\n", final_list->redirection->file[x++]);
-	// 	final_list = final_list->next;
-	// }
+	int x = 0;
+	while (final_list)
+	{
+		printf("********************* BEGIN ***************************\n");
+		printf("_____CMD_____=..%s\n\n", final_list->cmd);
+		x = 0;
+		while (final_list->arg[x])
+			printf("_____ARG_____=..%s\n\n", final_list->arg[x++]);
+		printf("_____PIPE_____=..%s\n\n", final_list->redirection->pipe);
+		x = 0;
+		while (final_list->redirection->type[x])
+			printf("_____TYPE_REDI_____=..%s\n\n", final_list->redirection->type[x++]);
+		x = 0;
+		while (final_list->redirection->file[x])
+			printf("_____FILE_____=..%s\n\n", final_list->redirection->file[x++]);
+		final_list = final_list->next;
+	}
 }
 
 void sig_int()
@@ -331,6 +332,7 @@ int main(int ac, char **av, char **env)
 	if (ac != 1)
 		return (1);
 	my_env = get_env(env);
+	g_exit_status = 0;
 	while (1)
 	{
 		signal(SIGINT, sig_int);
@@ -341,7 +343,7 @@ int main(int ac, char **av, char **env)
 			parser_arg(input, env, my_env);
 		free(input);
 		if (!input)
-			return (0);
+			return (g_exit_status);
 	}
 	return (0);
 }

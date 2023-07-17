@@ -3,31 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi_origin.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 00:14:29 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/23 20:47:01 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/17 18:51:33 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static void	check_test(long *result, int i, int *sign, char *nb)
+static int	check_test(long *result, int i, int *sign, char *nb)
 {
 	if (*result == 214748364 && (nb[i] - '0') == 8 && *sign == -1)
 	{
 		*result = 2147483648;
-		return ;
+		return 1;
 	}
 	else if ((*result > 2147483647 / 10) || (*result == 2147483647 / 10
 			&& (nb[i] - '0') > 7))
 	{
-		write(2, "Error: Max int exceeded\n", 25);
-		exit(1);
+		return 255;
 	}
 	*result *= 10;
 	if ((nb[i] >= '0' && nb[i] <= '9'))
 		*result += nb[i] - '0';
+	return 0;
 }
 
 static void	check(char *nb, int i, long *result, int *sign)

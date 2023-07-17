@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 15:58:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/16 20:16:39 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/17 19:30:48 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,6 +189,7 @@ void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list 
 	/****************************************************** Handle all redirections **********************************************/
 	all_redirections(current, pipes_n_redirection);
 	/****************************************************** End redirections********** **********************************************/
+	/****************************************************** Get cmd path and args **********************************************/
 	if (current->cmd || current->cmd[0])
 	{
 		free(pipes_n_redirection->cmd);
@@ -196,6 +197,7 @@ void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list 
 		pipes_n_redirection->cmd = check_valid_cmd(current->cmd, pipes_n_redirection->path);
 		pipes_n_redirection->args = copy_args_to_2d(current->cmd, current->arg);
 	}
+	/****************************************************** End cmd path and args **********************************************/
 	/******************************************** Check for cmd permissions and existence *******************************************/
 	no_such_file(current, pipes_n_redirection, g_exit_status, i);
 	/***************************** END checking for cmd permissions and existence ******************************/
@@ -229,7 +231,7 @@ void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list
 	else if (current->cmd && ft_strncmp(current->cmd, "cd", 3) == 0)
 	{
 		if (!pipes_n_redirection->num_pipes)
-			my_cd(current->arg[0], my_env);
+			g_exit_status = my_cd(current->arg[0], my_env);
 	}
 	else if (current->arg[0] && ft_strncmp(current->arg[0], "*", 2) == 0)
 		wildcard_helper(pipes_n_redirection);

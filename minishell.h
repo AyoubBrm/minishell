@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/16 17:31:54 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/17 19:26:51 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void *my_realloc(char *ptr, int size);
 // Built-ins
 void my_echo(char **cmd, int exit_status);
 int handle_n(char *args);
-void my_cd(char *path, t_list *myenv);
+int my_cd(char *path, t_list *myenv);
 char *my_pwd();
 void my_env(char **env, char **cmd, t_env *myenv);
 t_list *get_env(char **env);
@@ -105,6 +105,8 @@ typedef struct s_my
 	char	**ex_env;
 	char	*temp_str;
 	char	*temp;
+	char	*p;
+	int		ex_here;
 }t_myarg;
 
 typedef struct pipes_n_redirection
@@ -145,7 +147,7 @@ void	str_and_dollar_with_out_quote(char **str, char**s, t_myarg *arg);
 char	**join2d_with_arr(char **str1, char *str2);
 void	free_list(t_table *head);
 t_table	*error(t_table *list);
-void	ambiguous_no_file(t_table *head);
+void	ambiguous_no_file(t_table *head, char *p);
 int		num_alloc_str(char *input);
 char	**join_2d_arr(char **str1, char **str2);
 void	here_doc_expaand(char *input, t_myarg *arg);
@@ -164,7 +166,7 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
 int 	get_pos_redirection_v2(int start, char **redirection, char *redirection_type);
 char	**expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg);
 void	expand_inside_env_or_dont_expand(t_myarg *arg);
-t_table	*final_addition(char **str_new);
+t_table	*final_addition(char **str_new, char *p);
 t_table *addition_infile(char **str_new, int *i, t_table *new_addition);
 t_table *addition_part(char **str_new, t_table *new_addition);
 t_table	*output_rid_and_cmd(char **str_new, int *i, t_table *new_addition);
@@ -182,8 +184,7 @@ void in_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirection
 void no_such_file(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int g_exit_status, int i);
 void all_redirections(t_table *current, t_pipes_n_redirection *pipes_n_redirection);
 int get_num_heredoc(t_table *list);
-int heredoc_which_redirection(char **redirection);
-
+int	heredoc_which_redirection(char **redirection);
 //Execution
 void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status);
 void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status);

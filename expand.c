@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:29:36 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/15 00:41:31 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/17 22:33:43 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,6 @@ void	skip_after_dollar(t_myarg *arg, char **s)
 	}
 	else
 	{
-		if (arg->i > 0 && s[arg->x][arg->i - 1] == '$'
-			&& s[arg->x][arg->i] == '?')
-			arg->i++;
 		arg->star = arg->i;
 		while ((s[arg->x][arg->i] && s[arg->x][arg->i] != '$'))
 			arg->i++;
@@ -40,10 +37,20 @@ void	skip_after_dollar(t_myarg *arg, char **s)
 
 void	expand_inside_quote(char **s, t_myarg *arg, t_list *my_env)
 {
-	arg->var = ft_substr(s[arg->x], arg->star, arg->i - arg->star);
-	if (arg->x > 0 && !ft_strncmp("<<", arg->str_new[arg->x - 1], 3))
+	if (arg->x > 0 && (!ft_strncmp("<", arg->str_new[arg->x - 1], 2)
+		|| !ft_strncmp(">", arg->str_new[arg->x - 1], 1)))
+	{
+		arg->temp_expand = find_in_env_and_alloced(my_env, arg->var,
+			arg->temp_expand, 0);
+		if (!arg->temp_expand[0])
+			arg->p = ft_strdup(arg->var);
+		arg->ex_here = 1;
+	}
+	else if (arg->x > 0 && !ft_strncmp("<<", arg->str_new[arg->x - 1], 3))
+	{
 		arg->temp_expand = find_in_env_and_alloced(my_env, arg->var,
 				arg->temp_expand, 2);
+	}
 	else if (s[arg->x][arg->i] == '\4')
 	{
 		arg->temp_expand = find_in_env_and_alloced(my_env, arg->var,
@@ -64,7 +71,6 @@ void	expand_inside_quote(char **s, t_myarg *arg, t_list *my_env)
 	else
 		arg->temp_expand = find_in_env_and_alloced(my_env, arg->var,
 				arg->temp_expand, 0);
-	free(arg->var);
 }
 
 void	expand2(char **s, t_list *my_env, t_myarg *arg)
@@ -77,10 +83,12 @@ void	expand2(char **s, t_list *my_env, t_myarg *arg)
 			arg->i++;
 			while ((ft_isdigit(s[arg->x][arg->i])
 				|| ft_isalpha(s[arg->x][arg->i])
-				|| s[arg->x][arg->i] == '_' || ((s[arg->x][arg->i] == '?')
-				&& s[arg->x][arg->i - 1] != '?')) && !ft_strchr("\3\4\5\6",
+				|| s[arg->x][arg->i] == '_') && !ft_strchr("\3\4\5\6",
 				s[arg->x][arg->i]))
+					arg->i++;
+			if (s[arg->x][arg->i] == '?')
 				arg->i++;
+			arg->var = ft_substr(s[arg->x], arg->star, arg->i - arg->star);
 			expand_inside_quote(s, arg, my_env);
 		}
 	}
@@ -91,7 +99,9 @@ char	**expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg)
 	arg->index = 0;
 	arg->str_new = ft_calloc(num_alloc + 1, sizeof(char *));
 	arg->x = 0;
+	arg->ex_here = 0;
 	arg->temp_expand = ft_calloc(1, 1);
+	arg->p = ft_calloc(1, sizeof(char *));
 	while (s[arg->x])
 	{
 		arg->i = 0;

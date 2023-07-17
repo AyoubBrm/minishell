@@ -6,13 +6,13 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 23:35:59 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/27 23:18:24 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/17 01:10:43 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_table	*final_addition(char **str_new)
+t_table	*final_addition(char **str_new, char *p)
 {
 	t_table	*new_addition;
 	t_table	*head;
@@ -37,6 +37,6 @@ t_table	*final_addition(char **str_new)
 		return (NULL);
 	new_addition->next = NULL;
 	free2d(str_new);
-	ambiguous_no_file(head2);
+	ambiguous_no_file(head2, p);
 	return (head);
 }

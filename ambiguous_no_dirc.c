@@ -6,13 +6,13 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 22:40:14 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/26 15:37:18 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/17 01:13:49 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	file_rid(t_table *head)
+void	file_rid(t_table *head, char *p)
 {
 	int	i;
 
@@ -38,7 +38,7 @@ void	file_rid(t_table *head)
 	}
 }
 
-void	cmd_arg(t_table *head)
+void	cmd_arg(t_table *head, char *p)
 {
 	int	i;
 
@@ -58,7 +58,7 @@ void	cmd_arg(t_table *head)
 	}
 }
 
-void	ambiguous_no_file(t_table *head)
+void	ambiguous_no_file(t_table *head, char *p)
 {
 	int	i;
 
@@ -66,8 +66,8 @@ void	ambiguous_no_file(t_table *head)
 	head->no_file_dire = 0;
 	while (head)
 	{
-		cmd_arg(head);
-		file_rid(head);
+		cmd_arg(head, p);
+		file_rid(head, p);
 		i = -1;
 		while (head->arg[++i])
 		{
