@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 15:58:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/17 19:30:48 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/19 16:43:55 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,17 +118,17 @@ char **list_to_double_pointer(t_list *my_env)
 	{
 		// printf("%s\n", current->all);
 		height++;
-		if (current->value)
-			width += ft_strlen(current->all) + 1;
-		else if (current->key)
-			width += ft_strlen(current->key) + 1;
-		// if (current->next)
+		// if (current->value)
+		// 	width += ft_strlen(current->all) + 1;
+		// else if (current->key)
+		// 	width += ft_strlen(current->key) + 1;
+
 		current = current->next;
 	}
 	// printf("width %d\n", width);
 	// printf("height %d\n", height);
 
-	new_env = malloc(sizeof(char *) * (width * height) + 1);
+	new_env = (char **)ft_calloc(sizeof(char *), (height + 1));
 
 	current = my_env;
 	int i = 0;
@@ -158,8 +158,6 @@ void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, 
 			myexport(current->arg, my_env);
 		else if (current->cmd && ft_strncmp(current->cmd, "env", 4) == 0)
 		{
-			if (!my_env)
-				printf("???\n");
 			new_env(&my_env);
 		}
 		else if (current->cmd && ft_strncmp(current->cmd, "echo", 5) == 0)
@@ -217,21 +215,23 @@ void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list 
 	execute_cmds(current, pipes_n_redirection, my_env, g_exit_status);
 }
 
-void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status)
+void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list **my_env, int g_exit_status)
 {
 	if (current->cmd && current->arg[0] && ft_strncmp(current->cmd, "export", 7) == 0)
-		myexport(current->arg, my_env);
+		myexport(current->arg, *my_env);
 	else if (current->cmd && ft_strncmp(current->cmd, "unset", 6) == 0 && !current->pip)
-		my_unset(current->arg, &my_env);
+	{
+		my_unset(current->arg, my_env);
+	}
 	else if (current->cmd && ft_strncmp(current->cmd, "exit", 5) == 0)
 	{
 		if (!pipes_n_redirection->num_pipes)
-			my_exit(current->arg, g_exit_status);
+			my_exit(current->arg, g_exit_status, pipes_n_redirection);
 	}
 	else if (current->cmd && ft_strncmp(current->cmd, "cd", 3) == 0)
 	{
 		if (!pipes_n_redirection->num_pipes)
-			g_exit_status = my_cd(current->arg[0], my_env);
+			g_exit_status = my_cd(current->arg[0], *my_env, pipes_n_redirection);
 	}
 	else if (current->arg[0] && ft_strncmp(current->arg[0], "*", 2) == 0)
 		wildcard_helper(pipes_n_redirection);

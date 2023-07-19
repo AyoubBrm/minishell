@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   space_inside_env_and_no_expand.c                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:23:50 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/14 01:58:47 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/18 23:52:09 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void	space_var(t_myarg *arg)
 			if (arg->temp_expand[arg->index - 1] && !ft_strchr(" \t",
 					arg->temp_expand[0]))
 				arg->temp_str = ft_strjoin_new(arg->temp_str, "\7", 0, 0);
+			arg->p = arg->var;
 		}
 		else if (arg->temp_expand[arg->index])
 		{
@@ -40,23 +41,25 @@ void	space_var(t_myarg *arg)
 	}
 }
 
-void	expand_inside_env_or_dont_expand(t_myarg *arg)
+void expand_inside_env_or_dont_expand(t_myarg *arg, char **s)
 {
-	if (((ft_strchr(arg->temp_expand, '\6') || ft_strchr(arg->temp_expand,
-					'\5')) && (ft_strchr(arg->temp_expand, ' ')
-				|| ft_strchr(arg->temp_expand, '\t'))))
+	if ((ft_strchr(s[arg->x], '$') && ((ft_strchr(arg->temp_expand, '\6') 
+		|| ft_strchr(arg->temp_expand, '\5')) && (ft_strchr(arg->temp_expand, ' ')
+		|| ft_strchr(arg->temp_expand, '\t')))))
 	{
-		if ((ft_strchr(arg->temp_expand, ' ') || ft_strchr(arg->temp_expand,
-					'\t')))
+		if((arg->space == 0 && ((ft_strchr(arg->temp_expand, ' ')
+			|| ft_strchr(arg->temp_expand, '\t')))))
 		{
 			space_var(arg);
 			arg->temp_expand = ft_strdup(arg->temp_str);
 			free(arg->temp_str);
 			arg->temp_str = NULL;
+			arg->ex_env = ft_split_origin(arg->temp_expand, ' ');
+			arg->str_new = join_2d_arr(arg->str_new, arg->ex_env);
+			free2d(arg->ex_env);
 		}
-		arg->ex_env = ft_split_origin(arg->temp_expand, ' ');
-		arg->str_new = join_2d_arr(arg->str_new, arg->ex_env);
-		free2d(arg->ex_env);
+		else
+			arg->str_new = join2d_with_arr(arg->str_new, arg->temp_expand);
 	}
 	else
 		arg->str_new = join2d_with_arr(arg->str_new, arg->temp_expand);

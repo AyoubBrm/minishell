@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_checks.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 20:11:55 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/17 19:43:25 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/18 21:01:46 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void no_such_file(t_table *current, t_pipes_n_redirection *pipes_n_redirection, 
         g_exit_status = 127;
         exit(g_exit_status);
     }
-    else if (!pipes_n_redirection->cmd && current->cmd[0] != '/' && !is_builtin(current->cmd) && access(current->cmd, F_OK | X_OK) < 0)
+    else if (!current->cmd[0] || (!pipes_n_redirection->cmd && current->cmd[0] != '/' && !is_builtin(current->cmd) && access(current->cmd, F_OK | X_OK) < 0))
     {
         /************************* Handle > redirection ********************/
         pipes_n_redirection->is_redirected = 0;

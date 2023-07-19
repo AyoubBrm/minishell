@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/17 19:30:39 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/19 16:43:31 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 int handle_n(char *args)
 {
     int i = 1;
-    // int j = 1;
 
     while (args[i])
     {
@@ -51,25 +50,10 @@ void my_echo(char **cmd, int exit_status)
 
     while (cmd[i])
     {
-        if (ft_strncmp(cmd[i], "$?", 2) == 0)
-        {
-            flag = 1;
-            printf("%d", exit_status);
-            while (cmd[i][j])
-            {
-                printf("%c", cmd[i][j]);
-                j++;
-            }
-            if (cmd[i + 1])
-                printf(" ");
-            j = 2;
-        }
-        else if (ft_strncmp(cmd[i], "-n", 2) == 0)
+        if (ft_strncmp(cmd[0], "-n", 2) == 0)
         {
             if (!handle_n(cmd[i]) && !cmd[1])
-            {
                 return;
-            }
             if (handle_n(cmd[i]))
             {
                 flag = 1;
@@ -104,10 +88,11 @@ void my_echo(char **cmd, int exit_status)
         printf("\n");
 }
 
-int my_cd(char *path, t_list *my_env)
+int my_cd(char *path, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection)
 {
     t_list *current = my_env;
     int home_found = 0;
+    pipes_n_redirection->exit_builtin = 1;
     while (current)
     {
         if (ft_strncmp(current->key, "HOME", 4) == 0)
@@ -192,12 +177,13 @@ t_list *get_env(char **env)
     t_list *head = NULL;
 
     char **env_old = NULL;
+
     // char *key = NULL;
     // char *value = NULL;
     while (env[i])
     {
         env_old = ft_split_origin(env[i], '=');
-        new_env = malloc(sizeof(t_list));
+        new_env = ft_calloc(sizeof(t_list), 1);
 
         new_env->key = NULL;
         new_env->value = NULL;
@@ -230,14 +216,14 @@ void new_env(t_list **my_env)
     // printf("heere wtf head %p\n", current);
     while (current)
     {
-        if (current->key && ft_strncmp(current->key, "_", 1) == 0)
-        {
-            free(current->value);
-            current->value = ft_strdup("env");
-            current->all = ft_strjoin(current->key, "=env");
-            printf("%s\n", current->all);
-        }
-        else if (current->key && current->value && current->all)
+        // if (current->key && ft_strncmp(current->key, "_", 1) == 0)
+        // {
+        //     free(current->value);
+        //     current->value = ft_strdup("env");
+        //     current->all = ft_strjoin(current->key, "=env");
+        //     printf("%s\n", current->all);
+        // }
+        if (current->key && current->value && current->all)
             printf("%s\n", current->all);
         current = current->next;
     }
@@ -249,7 +235,7 @@ t_list *update_env(t_list **my_env)
 
     while (current)
     {
-        printf("WTHHH %p\n", current);
+        printf("WTHHH %s\n", current->key);
         current = current->next;
     }
 
@@ -307,10 +293,10 @@ void myexport(char **cmd, t_list *my_env)
             else
                 printf("declare -x %s\n", my_export->key);
             current = current->next;
-            free(my_export->key_exp);
-            free(my_export->all);
-            free(my_export->key);
-            free(my_export->value);
+            // free(my_export->key_exp);
+            // free(my_export->all);
+            // free(my_export->key);
+            // free(my_export->value);
         }
     }
     free(my_export);
@@ -379,21 +365,21 @@ void myexport(char **cmd, t_list *my_env)
                             {
                                 // free(current->value);
                                 current->value = ft_strdup(ft_strchr(cmd[i], '='));
-                                printf("%p\n", current->value);
+                                // printf("%p\n", current->value);
                             }
                             if (current->all)
                             {
                                 // free(current->key);
                                 // free(current->value);
-                                free(current->all);
+                                // free(current->all);
                             }
                             current->all = ft_strjoin(key, current->value);
                             current->next = NULL;
-                            printf("%s\n", current->all);
+                            // printf("%s\n", current->all);
                         }
                         else
                         {
-                            free(current->value);
+                            // free(current->value);
                             current->value = ft_strdup(ft_strchr(cmd[i], '='));
                             current->all = ft_strjoin(key, current->value);
                             current->next = NULL;
@@ -412,39 +398,43 @@ void myexport(char **cmd, t_list *my_env)
                     // new_export->all = malloc(ft_strlen(key) + ft_strlen(value) + 1);
                     new_export->all = ft_strjoin(key, ft_strchr_inc(cmd[i], '='));
                     new_export->next = NULL;
+                    // printf("key %s\n", new_export->key);
+                    // printf("key %s\n", new_export->key);
+                    // if (!(ft_strncmp(new_export->key, key, ft_strlen(key) + 1) == 0))
+                    // printf("??\n");
                     ft_lstadd_back(&my_env, new_export);
                 }
                 lol = 0;
             }
             j++;
         }
-        if (!offset)
-        {
-            current = my_env;
-            while (current)
-            {
-                if (ft_compare(current->key, cmd[i]) == 0)
-                {
-                    offset = 1;
-                }
-                else
-                {
-                    offset = 0;
-                    break;
-                }
-                current = current->next;
-            }
-            if (offset)
-            {
-                new_export = malloc(sizeof(t_list));
-                new_export->key = ft_strdup(cmd[i]);
-                new_export->value = NULL;
-                new_export->all = NULL;
-                new_export->next = NULL;
-                ft_lstadd_back(&my_env, new_export);
-                offset = 0;
-            }
-        }
+        // if (!offset)
+        // {
+        //     current = my_env;
+        //     while (current)
+        //     {
+        //         if (ft_compare(current->key, cmd[i]) == 0)
+        //         {
+        //             offset = 1;
+        //         }
+        //         else
+        //         {
+        //             offset = 0;
+        //             break;
+        //         }
+        //         current = current->next;
+        //     }
+        //     if (offset)
+        //     {
+        //         new_export = malloc(sizeof(t_list));
+        //         new_export->key = ft_strdup(cmd[i]);
+        //         new_export->value = NULL;
+        //         new_export->all = NULL;
+        //         new_export->next = NULL;
+        //         ft_lstadd_back(&my_env, new_export);
+        //         offset = 0;
+        //     }
+        // }
         i++;
     }
     // while(1);
@@ -468,21 +458,20 @@ void my_unset(char **to_unset, t_list **my_env)
                 tmp = current->next;
                 freenode(my_env, current);
                 current = tmp;
-                break;
             }
-            if (current)
-                current = current->next;
+            current = current->next;
         }
         current = *my_env;
         i++;
     }
 }
 
-int my_exit(char **args, int exit_status)
+int my_exit(char **args, int exit_status, t_pipes_n_redirection *pipes_n_redirection)
 {
     int i = 0;
     int j = 1;
     int overflow = 0;
+    pipes_n_redirection->exit_builtin = 1;
 
     j = 0;
 
@@ -544,4 +533,31 @@ int my_exit(char **args, int exit_status)
     }
     // printf("exit\n");
     exit(exit_status);
+}
+
+void freenode(t_list **lst, t_list *node)
+{
+    t_list *prev;
+    if (*lst == node)
+    {
+
+        *lst = (*lst)->next;
+        // return ;
+    }
+    else
+    {
+        prev = *lst;
+        while (prev->next != node)
+            prev = prev->next;
+        prev->next = node->next;
+    }
+
+    free(node->key);
+    free(node->value);
+    free(node->all);
+    node->key = NULL;
+    node->value = NULL;
+    node->all = NULL;
+    free(node);
+    node = NULL;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_error.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:29:48 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/17 19:03:18 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/19 00:58:44 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,9 @@ int	error_file_pip_rid(t_table *list, t_table *free)
 	{
 		if (list->redirection->file && !list->redirection->file[0])
 			list->redirection->file = NULL;
-		if (list->redirection->type[x] && !list->redirection->file)
+		if (redirection_error(list, free, list->redirection->type[x]))
+			return (0);
+		else if (list->redirection->type[x] && !list->redirection->file)
 		{
 			printf("bash: syntax error\n");
 			free_list(free);

@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 23:06:29 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/17 01:14:39 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/18 01:07:14 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ t_table *clean_cmd_and_put_arg(char **str_new, int *i, t_table *new_addition)
     if (str_new[*i] && new_addition->cmd && !ft_strchr("<>|", str_new[*i][0])
 			&& str_new[*i][0] != '\6')
 	{
-		if (((str_new[*i] && str_new[*i][0]) && (str_new[*i][0] == '\7'
-					|| str_new[*i][0] == '\1')))
+		if (((str_new[*i] && str_new[*i][0]) && str_new[*i][0] == '\1'))
 			ft_memmove(str_new[*i], &str_new[*i][1], ft_strlen(str_new[*i]));
 		new_addition->arg = join2d_with_arr(new_addition->arg,
 			str_new[(*i)++]);

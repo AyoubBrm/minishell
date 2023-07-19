@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/17 19:26:51 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/19 17:04:01 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,25 +38,6 @@ typedef struct s_env
     char *pwd;
     // char **myenv;
 }   t_env;
-
-void *my_realloc(char *ptr, int size);
-// Built-ins
-void my_echo(char **cmd, int exit_status);
-int handle_n(char *args);
-int my_cd(char *path, t_list *myenv);
-char *my_pwd();
-void my_env(char **env, char **cmd, t_env *myenv);
-t_list *get_env(char **env);
-void new_env(t_list **head);
-int my_exit(char **args, int exit_status);
-void myexport(char **cmd, t_list *my_env);
-
-void my_unset(char **to_unset, t_list **my_env);
-
-// Free
-void free2d(char **arg);
-void free_env(void *env);
-void freenode(t_list **lst, t_list *node);
 
 //barssing
 
@@ -107,6 +88,9 @@ typedef struct s_my
 	char	*temp;
 	char	*p;
 	int		ex_here;
+	int 	space;
+	int		ambg;
+	char	*tmp;
 }t_myarg;
 
 typedef struct pipes_n_redirection
@@ -134,6 +118,7 @@ typedef struct pipes_n_redirection
 	int flag;
 	int abs_path;
 	int is_redirected;
+	int exit_builtin;
 	char wildcard[200];
 }	t_pipes_n_redirection;
 
@@ -147,7 +132,7 @@ void	str_and_dollar_with_out_quote(char **str, char**s, t_myarg *arg);
 char	**join2d_with_arr(char **str1, char *str2);
 void	free_list(t_table *head);
 t_table	*error(t_table *list);
-void	ambiguous_no_file(t_table *head, char *p);
+void	ambiguous_no_file(t_table *head, t_myarg *arg);
 int		num_alloc_str(char *input);
 char	**join_2d_arr(char **str1, char **str2);
 void	here_doc_expaand(char *input, t_myarg *arg);
@@ -165,8 +150,8 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
 		int flags);
 int 	get_pos_redirection_v2(int start, char **redirection, char *redirection_type);
 char	**expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg);
-void	expand_inside_env_or_dont_expand(t_myarg *arg);
-t_table	*final_addition(char **str_new, char *p);
+void	expand_inside_env_or_dont_expand(t_myarg *arg, char **s);
+t_table	*final_addition(char **str_new, t_myarg *arg);
 t_table *addition_infile(char **str_new, int *i, t_table *new_addition);
 t_table *addition_part(char **str_new, t_table *new_addition);
 t_table	*output_rid_and_cmd(char **str_new, int *i, t_table *new_addition);
@@ -188,10 +173,31 @@ int	heredoc_which_redirection(char **redirection);
 //Execution
 void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status);
 void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status);
-void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status);
+void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list **my_env, int g_exit_status);
 
 //Wildcard
 void wildcard(char *path);
 void wildcard_helper(t_pipes_n_redirection *pipes_n_redirection);
+
+
+
+void *my_realloc(char *ptr, int size);
+// Built-ins
+void my_echo(char **cmd, int exit_status);
+int handle_n(char *args);
+int my_cd(char *path, t_list *myenv, t_pipes_n_redirection *pipes_n_redirection);
+char *my_pwd();
+void my_env(char **env, char **cmd, t_env *myenv);
+t_list *get_env(char **env);
+void new_env(t_list **head);
+int my_exit(char **args, int exit_status, t_pipes_n_redirection *pipes_n_redirection);
+void myexport(char **cmd, t_list *my_env);
+
+void my_unset(char **to_unset, t_list **my_env);
+
+// Free
+void free2d(char **arg);
+void free_env(void *env);
+void freenode(t_list **lst, t_list *node);
 
 #endif

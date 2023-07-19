@@ -6,13 +6,13 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 23:35:59 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/17 01:10:43 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/18 19:43:35 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_table	*final_addition(char **str_new, char *p)
+t_table	*final_addition(char **str_new, t_myarg *arg)
 {
 	t_table	*new_addition;
 	t_table	*head;
@@ -30,13 +30,13 @@ t_table	*final_addition(char **str_new, char *p)
 	new_addition->redirection->type = ft_calloc(1, sizeof(char *));
 	new_addition->redirection->file = ft_calloc(1, sizeof(char *));
 	new_addition->pip = 0;
-	new_addition->arg = ft_calloc(1, sizeof(char *));
+	new_addition->arg = ft_calloc(2, sizeof(char *));
 	new_addition = addition_part(str_new, new_addition);
 	head = error(head);
 	if (head == 0)
 		return (NULL);
 	new_addition->next = NULL;
 	free2d(str_new);
-	ambiguous_no_file(head2, p);
+	ambiguous_no_file(head2, arg);
 	return (head);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/17 22:31:27 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/19 17:03:50 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,12 @@ int get_num_heredoc(t_table *list)
 	return i;
 }
 
-void magic(t_table *list, t_list *my_env, char **env, t_myarg *arg)
+void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 {
-
+	if (!env[0])
+		return;
+	t_list *my_env;
+	my_env = *my_en;
 	t_pipes_n_redirection *pipes_n_redirection = ft_calloc(sizeof(t_pipes_n_redirection), 1);
 
 	pipes_n_redirection->env2d = list_to_double_pointer(my_env);
@@ -126,13 +129,18 @@ void magic(t_table *list, t_list *my_env, char **env, t_myarg *arg)
 		}
 		/************************* End << Heredoc ************************************/
 
-		if (current->ambiguous && arg->ex_here == 1)
+		if ((current->ambiguous && arg->ex_here) || arg->ambg)
 		{
-			printf("bash: %s: ambiguous redirect\n", arg->p);
+			ft_printf("bash: %s: ambiguous redirect\n", arg->p);
 			g_exit_status = 1;
 			return;
 		}
-
+		if (current->no_file_dire)
+		{
+			ft_printf("bash: : No such file or directory\n");
+			g_exit_status = 1;
+			return;
+		}
 		if (pipes_n_redirection->flag && current->cmd && !current->pip)
 		{
 			close(pipes_n_redirection->in);
@@ -148,7 +156,7 @@ void magic(t_table *list, t_list *my_env, char **env, t_myarg *arg)
 		}
 		else
 		{
-			parent(current, pipes_n_redirection, my_env, g_exit_status);
+			parent(current, pipes_n_redirection, my_en, g_exit_status);
 		}
 		// Get all pids
 		pipes_n_redirection->pids[k] = pipes_n_redirection->pid;
@@ -203,7 +211,10 @@ void magic(t_table *list, t_list *my_env, char **env, t_myarg *arg)
 	}
 
 	free(pipes_n_redirection->pids);
-	g_exit_status = WEXITSTATUS(g_exit_status);
+	if (pipes_n_redirection->exit_builtin)
+		g_exit_status = 1;
+	else
+		g_exit_status = WEXITSTATUS(g_exit_status);
 
 	free(pipes_n_redirection);
 	// while (1)
@@ -261,7 +272,7 @@ int is_builtin(char *builtin)
 	}
 	return 0;
 }
-void parser_arg(char *input, char **env, t_list *my_env)
+void parser_arg(char *input, char **env, t_list **my_env)
 {
 	t_table *final_list;
 	char **str;
@@ -275,8 +286,11 @@ void parser_arg(char *input, char **env, t_list *my_env)
 	account_quote(input, arg);
 	arg->num_alloc = num_alloc_str(input);
 	if (arg->quote % 2 == 1)
-		printf("%s\n",
-			   "minishell: syntax error near unexpected token `\"' or `\''");
+	{
+		ft_printf("%s\n",
+			   "minishell: unexpected EOF while looking for matching");
+		g_exit_status = 2;
+	}
 	else
 	{
 		str = ft_split(input, '\"');
@@ -284,10 +298,12 @@ void parser_arg(char *input, char **env, t_list *my_env)
 		arg->x = 0;
 		arg->i = 0;
 		arg->index = 0;
+		arg->space = 0;
+		arg->ambg = 0;
 		s = get_token_from_str(str, s, arg);
-		arg->final_expand = expand(s, my_env, arg->num_alloc, arg);
+		arg->final_expand = expand(s, *my_env, arg->num_alloc, arg);
 		arg->final_expand = clean_expand(arg->final_expand, "\3\4\5\6", arg);
-		final_list = final_addition(arg->final_expand, arg->p);
+		final_list = final_addition(arg->final_expand, arg);
 		if (final_list == NULL)
 			return;
 		final_list->exp_exit = arg->exp_exit;		// *******this for expand the exit status if 1 don't (if 0 expand) *******//
@@ -295,23 +311,23 @@ void parser_arg(char *input, char **env, t_list *my_env)
 		// printf("---%d--dasda-\n", arg->exp_exit);
 		magic(final_list, my_env, env, arg);
 	}
-	int x = 0;
-	while (final_list)
-	{
-		printf("********************* BEGIN ***************************\n");
-		printf("_____CMD_____=..%s\n\n", final_list->cmd);
-		x = 0;
-		while (final_list->arg[x])
-			printf("_____ARG_____=..%s\n\n", final_list->arg[x++]);
-		printf("_____PIPE_____=..%s\n\n", final_list->redirection->pipe);
-		x = 0;
-		while (final_list->redirection->type[x])
-			printf("_____TYPE_REDI_____=..%s\n\n", final_list->redirection->type[x++]);
-		x = 0;
-		while (final_list->redirection->file[x])
-			printf("_____FILE_____=..%s\n\n", final_list->redirection->file[x++]);
-		final_list = final_list->next;
-	}
+	// int x = 0;
+	// while (final_list)
+	// {
+	// 	printf("********************* BEGIN ***************************\n");
+	// 	printf("_____CMD_____=..%s\n\n", final_list->cmd);
+	// 	x = 0;
+	// 	while (final_list->arg[x])
+	// 		printf("_____ARG_____=..%s\n\n", final_list->arg[x++]);
+	// 	printf("_____PIPE_____=..%s\n\n", final_list->redirection->pipe);
+	// 	x = 0;
+	// 	while (final_list->redirection->type[x])
+	// 		printf("_____TYPE_REDI_____=..%s\n\n", final_list->redirection->type[x++]);
+	// 	x = 0;
+	// 	while (final_list->redirection->file[x])
+	// 		printf("_____FILE_____=..%s\n\n", final_list->redirection->file[x++]);
+	// 	final_list = final_list->next;
+	// }
 }
 
 void sig_int()
@@ -340,7 +356,7 @@ int main(int ac, char **av, char **env)
 		input = readline("minishell$ ");
 		add_history(input);
 		if (input)
-			parser_arg(input, env, my_env);
+			parser_arg(input, env, &my_env);
 		free(input);
 		if (!input)
 			return (g_exit_status);
