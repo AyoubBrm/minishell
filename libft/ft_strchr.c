@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/02 22:08:19 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/22 22:04:48 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/20 15:44:01 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 char	*ft_strchr(char *s, int c)
 {
-	size_t	i;
+	int	i;
 
 	i = 0;
 	while (i <= ft_strlen(s))
@@ -45,7 +45,7 @@ int	ft_strchr2(char *s, char c, int end)
 
 char	*ft_strchr_inc(char *s, int c)
 {
-	size_t	i;
+	int	i;
 
 	i = 0;
 	while (i <= ft_strlen(s))

@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:29:36 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/19 00:17:58 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/20 21:38:02 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void	expand2(char **s, t_list *my_env, t_myarg *arg)
 			arg->i++;
 			while ((ft_isdigit(s[arg->x][arg->i])
 				|| ft_isalpha(s[arg->x][arg->i])
-				|| s[arg->x][arg->i] == '_') && !ft_strchr("\3\4\5\6",
+				|| s[arg->x][arg->i] == '_') && !ft_strchr("3456",
 				s[arg->x][arg->i]))
 					arg->i++;
 			if (s[arg->x][arg->i] == '?')
@@ -112,22 +112,7 @@ char	**expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg)
 			expand2(s, my_env, arg);
 			skip_after_dollar(arg, s);
 		}
-		if ((arg->x > 0 && arg->space == 1 && ft_strchr(s[arg->x], '$')
-			&& (ft_strncmp(s[arg->x - 1], ">", 1) || ft_strncmp(s[arg->x - 1], "<", 1))))
-		{
-			arg->tmp = ft_calloc(1,1);
-			arg->tmp = find_in_env_and_alloced(my_env, arg->var, arg->tmp, 0);
-			if (arg->x > 0 && ft_strchr(arg->tmp, ' ')
-				&& (ft_strchr(s[arg->x - 1], '>')
-				|| ft_strchr(s[arg->x - 1], '<')))
-			{
-				arg->ambg = 1;
-				arg->p = arg->var;
-				g_exit_status = 1;
-			}
-			free(arg->tmp);
-		}
-		expand_inside_env_or_dont_expand(arg, s);
+		expand_inside_env_or_dont_expand(my_env ,arg, s);
 		ft_bzero(arg->temp_expand, ft_strlen(arg->temp_expand));
 		arg->x++;
 	}

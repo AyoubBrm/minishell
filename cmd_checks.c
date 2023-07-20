@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 20:11:55 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/18 21:01:46 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:12:19 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void no_such_file(t_table *current, t_pipes_n_redirection *pipes_n_redirection, 
 {
     if (!current->cmd)
         exit(0);
-    if ((access(current->cmd, F_OK) < 0 && current->cmd[0] == '/') || (current->cmd[0] == '.' && access(current->cmd, F_OK | X_OK) < 0))
+    if ((access(current->cmd, F_OK | X_OK) < 0 && current->cmd[0] == '/') || (current->cmd[0] == '.' && access(current->cmd, F_OK | X_OK) < 0))
     {
         /************************* Handle > redirection ********************/
         pipes_n_redirection->is_redirected = 0;

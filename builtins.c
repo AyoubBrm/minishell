@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/19 16:43:31 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:11:44 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ int my_cd(char *path, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection
     {
         if (chdir(path) != 0)
         {
-            printf("bash: cd: %s: No such file or directory\n", path);
+            ft_printf("bash: cd: %s: No such file or directory\n", path);
             g_exit_status = 1;
             return g_exit_status;
         }
@@ -126,7 +126,7 @@ int my_cd(char *path, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection
     }
     else
     {
-        printf("bash: cd: HOME not set\n");
+        ft_printf("bash: cd: HOME not set\n");
         g_exit_status = 1;
         return g_exit_status;
     }
@@ -213,37 +213,15 @@ t_list *get_env(char **env)
 void new_env(t_list **my_env)
 {
     t_list *current = *my_env;
-    // printf("heere wtf head %p\n", current);
     while (current)
     {
-        // if (current->key && ft_strncmp(current->key, "_", 1) == 0)
-        // {
-        //     free(current->value);
-        //     current->value = ft_strdup("env");
-        //     current->all = ft_strjoin(current->key, "=env");
-        //     printf("%s\n", current->all);
-        // }
-        if (current->key && current->value && current->all)
-            printf("%s\n", current->all);
+        if (current->key && current->value)
+            printf("%s=%s\n", current->key, current->value);
         current = current->next;
     }
 }
 
-t_list *update_env(t_list **my_env)
-{
-    t_list *current = *my_env;
-
-    while (current)
-    {
-        printf("WTHHH %s\n", current->key);
-        current = current->next;
-    }
-
-    current = *my_env;
-    return current;
-}
-
-void myexport(char **cmd, t_list *my_env)
+void myexport(char **cmd, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection)
 {
     int i = 0;
     int j = 0;
@@ -255,6 +233,7 @@ void myexport(char **cmd, t_list *my_env)
     int b;
     int offset = 0;
     int equal = 1;
+    int flag = 0;
     t_list *new_export;
     t_list *current;
     t_list *my_export;
@@ -306,34 +285,56 @@ void myexport(char **cmd, t_list *my_env)
 
     while (cmd[i])
     {
+        // printf("%s\n", cmd[i]);
+        j = 0;
         while (cmd[i][j])
         {
+            if (ft_isdigit(cmd[i][0]))
+            {
+                ft_printf("bash: not a valid identifier\n");
+                g_exit_status = 1;
+                pipes_n_redirection->exit_builtin = 1;
+                flag = 1;
+                break;
+            }
             if (cmd[i][j] == '+' && cmd[i][j + 1] == '+')
             {
-                printf("Minishell: export: `%s': not a valid identifier\n", cmd[i]);
-                return;
+                ft_printf("bash: not a valid identifier\n");
+                g_exit_status = 1;
+                pipes_n_redirection->exit_builtin = 1;
+                flag = 1;
+                break;
             }
             else if ((cmd[i][j] == '+' && cmd[i][j + 1] == '=') || cmd[i][j] == '=')
             {
                 if (!key)
                     key = ft_substr(cmd[i], 0, j);
                 value = ft_strchr_inc(cmd[i], '=');
+                // printf("%s=%s\n", key, value);
                 while (key[z])
                 {
                     if (!ft_isalpha(key[z]))
                     {
-                        if (key[z] != '_')
+                        if (key[z] != '_' && (!ft_isdigit(key[z])))
                         {
-                            printf("Minishell: export: `%s': not a valid identifier\n", cmd[i]);
+                            ft_printf("bash: not a valid identifier\n");
                             free(key);
-                            return;
+                            key = NULL;
+                            g_exit_status = 1;
+                            pipes_n_redirection->exit_builtin = 1;
+                            flag = 1;
+                            break;
                         }
+                        flag = 0;
                     }
                     z++;
                 }
             }
             j++;
         }
+        if (!flag)
+            my_export_add(cmd[i], pipes_n_redirection, my_env, i);
+        flag = 0;
         i++;
     }
     if (key)
@@ -341,103 +342,116 @@ void myexport(char **cmd, t_list *my_env)
 
     i = 0;
     j = 0;
-    while (cmd[i])
+
+    if (!pipes_n_redirection->exit_builtin)
+        pipes_n_redirection->exit_builtin = 0;
+
+    // while(1);
+}
+
+void my_export_add(char *cmd, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int i)
+{
+    int equal;
+    int offset = 0;
+    char *key;
+    char *tmp_key;
+    char *value;
+    int j = 0;
+    int lol = 0;
+    t_list *current;
+    t_list *new_export;
+
+    j = 0;
+    equal = 1;
+    current = my_env;
+    while (cmd[j])
     {
-        j = 0;
-        equal = 1;
-        current = my_env;
-        while (cmd[i][j])
+        if ((cmd[j] == '=' || cmd[j] == '+') && equal)
         {
-            if ((cmd[i][j] == '=' || cmd[i][j] == '+') && equal)
+            offset = 1;
+            equal = 0;
+            tmp_key = ft_substr(cmd, 0, j);
+            key = ft_strdup(tmp_key);
+            value = ft_strdup(ft_strchr(cmd, '='));
+            while (current)
             {
-                offset = 1;
-                equal = 0;
-                tmp_key = ft_substr(cmd[i], 0, j);
-                key = ft_strdup(tmp_key);
-                value = ft_strdup(ft_strchr(cmd[i], '='));
-                while (current)
+                if (ft_strncmp(current->key, key, ft_strlen(key) + 1) == 0)
                 {
-                    if (ft_strncmp(current->key, key, ft_strlen(key) + 1) == 0)
+                    if (!current->value) //!(ft_strncmp(current->value, value, -1) == 0)
                     {
-                        if (!current->value) //!(ft_strncmp(current->value, value, -1) == 0)
-                        {
-                            if (!current->value)
-                            {
-                                // free(current->value);
-                                current->value = ft_strdup(ft_strchr(cmd[i], '='));
-                                // printf("%p\n", current->value);
-                            }
-                            if (current->all)
-                            {
-                                // free(current->key);
-                                // free(current->value);
-                                // free(current->all);
-                            }
-                            current->all = ft_strjoin(key, current->value);
-                            current->next = NULL;
-                            // printf("%s\n", current->all);
-                        }
-                        else
+                        if (!current->value)
                         {
                             // free(current->value);
-                            current->value = ft_strdup(ft_strchr(cmd[i], '='));
-                            current->all = ft_strjoin(key, current->value);
-                            current->next = NULL;
+                            current->value = ft_strdup(ft_strchr(cmd, '='));
+                            // printf("%p\n", current->value);
                         }
-
-                        lol = 1;
-                        break;
+                        if (current->all)
+                        {
+                            // free(current->key);
+                            // free(current->value);
+                            // free(current->all);
+                        }
+                        current->all = ft_strjoin(key, current->value);
+                        // printf("%s\n", current->all);
                     }
-                    current = current->next;
+                    else
+                    {
+                        // free(current->value);
+                        current->value = ft_strdup(ft_strchr(cmd, '='));
+                        current->all = ft_strjoin(key, current->value);
+                    }
+
+                    lol = 1;
+                    break;
                 }
-                if (!lol)
-                {
-                    new_export = malloc(sizeof(t_list));
-                    new_export->key = key;
-                    new_export->value = value;
-                    // new_export->all = malloc(ft_strlen(key) + ft_strlen(value) + 1);
-                    new_export->all = ft_strjoin(key, ft_strchr_inc(cmd[i], '='));
-                    new_export->next = NULL;
-                    // printf("key %s\n", new_export->key);
-                    // printf("key %s\n", new_export->key);
-                    // if (!(ft_strncmp(new_export->key, key, ft_strlen(key) + 1) == 0))
-                    // printf("??\n");
-                    ft_lstadd_back(&my_env, new_export);
-                }
-                lol = 0;
+                current = current->next;
             }
-            j++;
+            if (!lol)
+            {
+                new_export = malloc(sizeof(t_list));
+                new_export->key = key;
+                new_export->value = value;
+                // new_export->all = malloc(ft_strlen(key) + ft_strlen(value) + 1);
+                new_export->all = ft_strjoin(key, ft_strchr_inc(cmd, '='));
+                new_export->next = NULL;
+                // printf("key %s\n", new_export->key);
+                // printf("key %s\n", new_export->key);
+                // if (!(ft_strncmp(new_export->key, key, ft_strlen(key) + 1) == 0))
+                // printf("??\n");
+                ft_lstadd_back(&my_env, new_export);
+            }
+            lol = 0;
         }
-        // if (!offset)
-        // {
-        //     current = my_env;
-        //     while (current)
-        //     {
-        //         if (ft_compare(current->key, cmd[i]) == 0)
-        //         {
-        //             offset = 1;
-        //         }
-        //         else
-        //         {
-        //             offset = 0;
-        //             break;
-        //         }
-        //         current = current->next;
-        //     }
-        //     if (offset)
-        //     {
-        //         new_export = malloc(sizeof(t_list));
-        //         new_export->key = ft_strdup(cmd[i]);
-        //         new_export->value = NULL;
-        //         new_export->all = NULL;
-        //         new_export->next = NULL;
-        //         ft_lstadd_back(&my_env, new_export);
-        //         offset = 0;
-        //     }
-        // }
-        i++;
+        j++;
     }
-    // while(1);
+    if (!offset)
+    {
+        current = my_env;
+        while (current)
+        {
+            if (ft_compare(current->key, cmd) == 0)
+            {
+                offset = 1;
+            }
+            else
+            {
+                offset = 0;
+                break;
+            }
+            current = current->next;
+        }
+        if (offset)
+        {
+            new_export = malloc(sizeof(t_list));
+            new_export->key = ft_strdup(cmd);
+            new_export->value = NULL;
+            new_export->all = NULL;
+            new_export->next = NULL;
+            ft_lstadd_back(&my_env, new_export);
+            offset = 0;
+        }
+    }
+    i++;
 }
 
 void my_unset(char **to_unset, t_list **my_env)

@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 12:49:45 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/14 22:15:05 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/20 15:43:28 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int		ft_isdigit(int c);
 int		ft_isascii(int c);
 int		ft_isalnum(int c);
 long	ft_atoi(char *str, int *max);
-size_t	ft_strlen(char *s);
+int		ft_strlen(char *s);
 char	*ft_strdup(char *s1);
 void	ft_putnbr_fd(int n, int fd);
 void	ft_bzero(void *s, size_t n);

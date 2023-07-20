@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/19 17:04:01 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:11:23 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
 		int flags);
 int 	get_pos_redirection_v2(int start, char **redirection, char *redirection_type);
 char	**expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg);
-void	expand_inside_env_or_dont_expand(t_myarg *arg, char **s);
+void 	expand_inside_env_or_dont_expand(t_list *my_env,t_myarg *arg, char **s);
 t_table	*final_addition(char **str_new, t_myarg *arg);
 t_table *addition_infile(char **str_new, int *i, t_table *new_addition);
 t_table *addition_part(char **str_new, t_table *new_addition);
@@ -191,7 +191,8 @@ void my_env(char **env, char **cmd, t_env *myenv);
 t_list *get_env(char **env);
 void new_env(t_list **head);
 int my_exit(char **args, int exit_status, t_pipes_n_redirection *pipes_n_redirection);
-void myexport(char **cmd, t_list *my_env);
+void myexport(char **cmd, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection);
+void my_export_add(char *cmd, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int i);
 
 void my_unset(char **to_unset, t_list **my_env);
 

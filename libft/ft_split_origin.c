@@ -6,73 +6,93 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 00:15:26 by shmimi            #+#    #+#             */
-/*   Updated: 2023/06/19 19:00:40 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/20 00:20:55 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static size_t	ft_found(char *str, char c)
+static int	count_words(char *s, char delimeter)
 {
-	size_t	i;
-	size_t	counter;
-	size_t	j;
+	int	i;
+	int	count;
 
-	j = ft_strlen(str) - 1;
 	i = 0;
-	counter = 0;
-	while (str[i] && i <= j)
+	count = 0;
+	while (s[i] != '\0')
 	{
-		if (str[i] && str[i] == c)
+		while (s[i] == delimeter && s[i])
 			i++;
-		else if (str[i] && str[i] != c)
-		{
-			while (str[i] != c && str[i])
-				i++;
-			counter++;
-		}
+		if (s[i] == '\0')
+			break ;
+		while (s[i] != delimeter && s[i])
+			i++;
+		count++;
 	}
-	return (counter);
+	return (count);
 }
 
-static void	ft_par(char **p, char *s, char c)
+static int	count_chars(char *s, char c, int *st)
 {
-	size_t	i;
-	size_t	j;
-	size_t	star;
-	size_t	end;
-	size_t	k;
+	int	i;
 
-	j = ft_strlen(s) - 1;
-	k = 0;
 	i = 0;
-	while (s[i] && s[i] == c)
-		i++;
-	while (s[i] && s[j] && s[j] == c)
-		j--;
-	while (s[i] && i <= j)
+	while (s[*st] != c && s[*st])
 	{
-		while (s[i] && s[i] == c)
-			i++;
-		star = i;
-		while (s[i] && s[i] != c)
-			i++;
-		end = i;
-		p[k++] = ft_substr(s, star, end - star);
+		i++;
+		(*st)++;
 	}
+	return (i);
+}
+
+static void	assign(char *s, char delimeter, char **tab, int word_counts)
+{
+	int	i;
+	int	fixed;
+	int	second_dimension;
+
+	i = 0;
+	fixed = 0;
+	while (i < word_counts)
+	{
+		second_dimension = 0;
+		while (s[fixed] == delimeter && s[fixed])
+			fixed++;
+		while (s[fixed] != delimeter && s[fixed])
+			tab[i][second_dimension++] = s[fixed++];
+		tab[i][second_dimension] = 0;
+		i++;
+	}
+	tab[i] = 0;
 }
 
 char	**ft_split_origin(char *s, char c)
 {
-	char	**p;
+	int		i;
+	char	**tab;
+	int		cw;
+	int		st;
 
-	if (!s)
-		return (NULL);
-	p = (char **)ft_calloc((ft_found(s, c) + 1), sizeof(char *));
-	if (!p)
-		return (NULL);
-	ft_par(p, s, c);
-	return (p);
+	i = 0;
+	st = 0;
+	if (s)
+	{
+		cw = count_words((char *)s, c);
+		tab = (char **)malloc(sizeof(char *) * (cw + 1));
+		if (!tab)
+			return (0);
+		while (i < cw)
+		{
+			while (s[st] == c && s[st])
+				st++;
+			tab[i++] = (char *)malloc(count_chars((char *)s, c, &st) + 1);
+			if (!s[i - 1])
+				return (0);
+		}
+		assign((char *)s, c, tab, cw);
+		return (tab);
+	}
+	return (0);
 }
 
 // int main()

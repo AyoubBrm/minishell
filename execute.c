@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 15:58:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/19 16:43:55 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:12:04 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,11 +155,9 @@ void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, 
 	if (is_builtin(current->cmd))
 	{
 		if (current->cmd && !current->arg[0] && ft_strncmp(current->cmd, "export", 7) == 0)
-			myexport(current->arg, my_env);
+			myexport(current->arg, my_env, pipes_n_redirection);
 		else if (current->cmd && ft_strncmp(current->cmd, "env", 4) == 0)
-		{
 			new_env(&my_env);
-		}
 		else if (current->cmd && ft_strncmp(current->cmd, "echo", 5) == 0)
 			my_echo(current->arg, g_exit_status);
 		else if (current->cmd && ft_strncmp(current->cmd, "pwd", 4) == 0)
@@ -218,7 +216,7 @@ void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list 
 void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list **my_env, int g_exit_status)
 {
 	if (current->cmd && current->arg[0] && ft_strncmp(current->cmd, "export", 7) == 0)
-		myexport(current->arg, *my_env);
+		myexport(current->arg, *my_env, pipes_n_redirection);
 	else if (current->cmd && ft_strncmp(current->cmd, "unset", 6) == 0 && !current->pip)
 	{
 		my_unset(current->arg, my_env);

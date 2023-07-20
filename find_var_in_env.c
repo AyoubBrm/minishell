@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:36:30 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/15 00:38:31 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/20 21:41:35 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 char	*expand_status(t_list *env, char *var, char *temp_expand, int flags)
 {
 	if (flags == 2)
-		return (temp_expand = ft_substr(var, 0, ft_strlen(var)));
+		return (temp_expand = ft_strjoin_new(temp_expand, var, 0, ft_strlen(var)));
 	else if (flags == 4)
 		return (temp_expand = ft_strjoin_new(temp_expand, var, 0,
 				ft_strlen(var)));
@@ -29,7 +29,7 @@ char	*expand_status(t_list *env, char *var, char *temp_expand, int flags)
 	}
 	else
 		temp_expand = ft_strjoin_new(temp_expand, env->value, 0,
-				ft_strlen(env->value));
+				ft_strlen(env->value) );
 	return (temp_expand);
 }
 

@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 21:54:57 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/18 23:07:50 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:20:56 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,11 @@ void	str_inside_double_qoute(char **str, char **s, t_myarg *arg)
 			pipe_rid_insde_qoute(str, s, arg, star);
 		else
 		{
+			if (!s[arg->index])
+				s[arg->index] = ft_calloc(1, 1);
+			s[arg->index] = ft_strjoin(s[arg->index], "\2");
 			inside_qoute(str, s, arg, star);
-			arg->space = 1;
+			s[arg->index] = ft_strjoin(s[arg->index], "\2");
 		}
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/19 17:03:50 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/20 21:42:44 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 		while (current_heredoc)
 		{
 			pipes_n_redirection->pos_redirection = get_pos_redirection(current->redirection->type, "<<");
-			while (x < current->redirection->heredoc)
+			while (x < current_heredoc->redirection->heredoc)
 			{
 				pipes_n_redirection->pos_redirection_v2 = get_pos_redirection_v2(pipes_n_redirection->pos_redirection, current_heredoc->redirection->type, "<<");
 				pipes_n_redirection->buffer = ft_calloc(1, 1);
@@ -87,9 +87,9 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 				if (pipes_n_redirection->in)
 					close(pipes_n_redirection->in);
 
-				if (heredoc_which_redirection(current_heredoc->redirection->type) == 1)
+				if (heredoc_which_redirection(current_heredoc->redirection->type) == 1 && current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2])
 					pipes_n_redirection->tmp = open(pipes_n_redirection->filename, O_CREAT | O_RDWR, 0666);
-				else if (heredoc_which_redirection(current_heredoc->redirection->type) == 2)
+				else if (heredoc_which_redirection(current_heredoc->redirection->type) == 2 && current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2])
 					pipes_n_redirection->tmp = open(pipes_n_redirection->filename, O_CREAT | O_APPEND | O_RDWR, 0666);
 				else
 					pipes_n_redirection->tmp = open(pipes_n_redirection->filename, O_CREAT | O_RDWR, 0666);
@@ -115,7 +115,17 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 						pipes_n_redirection->input = ft_strdup(p[0]);
 					}
 					else if (!pipes_n_redirection->input)
+					{
+						if (pipes_n_redirection->filename)
+						{
+							write(pipes_n_redirection->in, pipes_n_redirection->buffer, ft_strlen(pipes_n_redirection->buffer));
+							free(pipes_n_redirection->input);
+							free(pipes_n_redirection->buffer);
+							pipes_n_redirection->pos_redirection++;
+							pipes_n_redirection->flag = 1;
+						}
 						break;
+					}
 					pipes_n_redirection->tmp_buffer = ft_strjoin(pipes_n_redirection->buffer, pipes_n_redirection->input);
 					free(pipes_n_redirection->buffer);
 					pipes_n_redirection->buffer = ft_strjoin(pipes_n_redirection->tmp_buffer, "\n");
@@ -302,7 +312,8 @@ void parser_arg(char *input, char **env, t_list **my_env)
 		arg->ambg = 0;
 		s = get_token_from_str(str, s, arg);
 		arg->final_expand = expand(s, *my_env, arg->num_alloc, arg);
-		arg->final_expand = clean_expand(arg->final_expand, "\3\4\5\6", arg);
+		arg->final_expand = clean_expand(arg->final_expand, "\2\3\4\5\6", arg);
+		arg->x = 0;
 		final_list = final_addition(arg->final_expand, arg);
 		if (final_list == NULL)
 			return;

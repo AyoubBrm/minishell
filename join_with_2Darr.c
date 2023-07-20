@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 21:42:05 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/26 19:08:45 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/20 00:32:09 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char	**join_2d_arr(char **str1, char **str2)
 		i++;
 	while (str2[j])
 		j++;
-	new_expand = ft_calloc((i + j) + 1, sizeof(char *));
+	new_expand = ft_calloc((i + j) + 2 , sizeof(char *));
 	if (!new_expand)
 		return (NULL);
 	i = -1;
