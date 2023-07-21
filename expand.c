@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:29:36 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/20 21:38:02 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/21 21:56:22 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ void	expand_inside_quote(char **s, t_myarg *arg, t_list *my_env)
 	else
 		arg->temp_expand = find_in_env_and_alloced(my_env, arg->var,
 				arg->temp_expand, 0);
+	
 }
 
 void	expand2(char **s, t_list *my_env, t_myarg *arg)
@@ -83,7 +84,7 @@ void	expand2(char **s, t_list *my_env, t_myarg *arg)
 			arg->i++;
 			while ((ft_isdigit(s[arg->x][arg->i])
 				|| ft_isalpha(s[arg->x][arg->i])
-				|| s[arg->x][arg->i] == '_') && !ft_strchr("3456",
+				|| s[arg->x][arg->i] == '_' || s[arg->x][arg->i] == '\1') && !ft_strchr("\3\4\5\6",
 				s[arg->x][arg->i]))
 					arg->i++;
 			if (s[arg->x][arg->i] == '?')
@@ -114,7 +115,8 @@ char	**expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg)
 		}
 		expand_inside_env_or_dont_expand(my_env ,arg, s);
 		ft_bzero(arg->temp_expand, ft_strlen(arg->temp_expand));
-		arg->x++;
+		if (s[arg->x])
+			arg->x++;
 	}
 	free(arg->temp_expand);
 	free2d(s);

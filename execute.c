@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 15:58:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/20 18:12:04 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/21 23:04:08 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ char **list_to_double_pointer(t_list *my_env)
 	return new_env;
 }
 
-void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status)
+void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env)
 {
 	if (is_builtin(current->cmd))
 	{
@@ -159,9 +159,9 @@ void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, 
 		else if (current->cmd && ft_strncmp(current->cmd, "env", 4) == 0)
 			new_env(&my_env);
 		else if (current->cmd && ft_strncmp(current->cmd, "echo", 5) == 0)
-			my_echo(current->arg, g_exit_status);
+			my_echo(current->arg);
 		else if (current->cmd && ft_strncmp(current->cmd, "pwd", 4) == 0)
-			my_pwd();
+			my_pwd(my_env);
 	}
 	else
 	{
@@ -179,7 +179,7 @@ void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, 
 	exit(0);
 }
 
-void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status)
+void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env)
 {
 	int i = 0;
 	/****************************************************** Handle all redirections **********************************************/
@@ -195,7 +195,7 @@ void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list 
 	}
 	/****************************************************** End cmd path and args **********************************************/
 	/******************************************** Check for cmd permissions and existence *******************************************/
-	no_such_file(current, pipes_n_redirection, g_exit_status, i);
+	no_such_file(current, pipes_n_redirection, i);
 	/***************************** END checking for cmd permissions and existence ******************************/
 	if (access(current->cmd, F_OK | X_OK) == 0)
 		pipes_n_redirection->abs_path = 1;
@@ -210,10 +210,10 @@ void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list 
 	all_redirections(current, pipes_n_redirection);
 	/****************************************************** End redirections********************************************************/
 	/****************************************************** Execute CMDs ******************************************************/
-	execute_cmds(current, pipes_n_redirection, my_env, g_exit_status);
+	execute_cmds(current, pipes_n_redirection, my_env);
 }
 
-void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list **my_env, int g_exit_status)
+void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list **my_env)
 {
 	if (current->cmd && current->arg[0] && ft_strncmp(current->cmd, "export", 7) == 0)
 		myexport(current->arg, *my_env, pipes_n_redirection);
@@ -224,12 +224,12 @@ void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list
 	else if (current->cmd && ft_strncmp(current->cmd, "exit", 5) == 0)
 	{
 		if (!pipes_n_redirection->num_pipes)
-			my_exit(current->arg, g_exit_status, pipes_n_redirection);
+			my_exit(current->arg, pipes_n_redirection);
 	}
 	else if (current->cmd && ft_strncmp(current->cmd, "cd", 3) == 0)
 	{
 		if (!pipes_n_redirection->num_pipes)
-			g_exit_status = my_cd(current->arg[0], *my_env, pipes_n_redirection);
+			my_cd(current->arg[0], *my_env, pipes_n_redirection);
 	}
 	else if (current->arg[0] && ft_strncmp(current->arg[0], "*", 2) == 0)
 		wildcard_helper(pipes_n_redirection);

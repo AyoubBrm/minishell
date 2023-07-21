@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 21:54:57 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/20 18:20:56 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/21 21:48:36 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	str_inside_double_qoute(char **str, char **s, t_myarg *arg)
 {
 	int	star;
 	
-	if (str[arg->x][arg->i] == '"' && str[arg->x][arg->i + 1] != '"')
+	if (str[arg->x][arg->i] && str[arg->x][arg->i] == '"' && str[arg->x][arg->i + 1] != '"')
 	{
 		arg->i++;
 		star = arg->i;

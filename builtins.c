@@ -6,24 +6,11 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/20 18:11:44 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/21 23:16:03 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int handle_n(char *args)
-{
-    int i = 1;
-
-    while (args[i])
-    {
-        if (args[i] != 'n')
-            return 1;
-        i++;
-    }
-    return 0;
-}
 
 int get_last_args(char **args)
 {
@@ -37,8 +24,20 @@ int get_last_args(char **args)
     }
     return i - 1;
 }
+int handle_n(char *args)
+{
+    int i = 1;
 
-void my_echo(char **cmd, int exit_status)
+    while (args[i])
+    {
+        if (args[i] != 'n')
+            return 1;
+        i++;
+    }
+    return 0;
+}
+
+void my_echo(char **cmd)
 {
 
     int i;
@@ -46,11 +45,12 @@ void my_echo(char **cmd, int exit_status)
     int lol = 0;
     int blank = 0;
     int j = 2;
+    int n = 0;
     i = 0;
 
     while (cmd[i])
     {
-        if (ft_strncmp(cmd[0], "-n", 2) == 0)
+        if (ft_strncmp(cmd[i], "-n", 2) == 0 && !n)
         {
             if (!handle_n(cmd[i]) && !cmd[1])
                 return;
@@ -70,12 +70,26 @@ void my_echo(char **cmd, int exit_status)
             if (!handle_n(cmd[i]))
                 blank = 1;
         }
+        else
+        {
+            n = 1;
+            flag = 1;
+            if (!cmd[i + 1])
+                printf("%s", cmd[i]);
+            else
+                printf("%s ", cmd[i]);
+        }
         i++;
+    }
+    if (flag && !blank)
+    {
+        printf("\n");
+        return ;
     }
     if (!flag && cmd[0])
     {
         lol = get_last_args(cmd);
-        while (cmd[lol])
+        while (cmd[lol] && !(ft_strncmp(cmd[i - 1], "-n", 2) == 0)) // cmd[i - 1][0] != '-' && cmd[i - 1][1] != 'n'
         {
             if (!cmd[lol + 1])
                 printf("%s", cmd[lol]);
@@ -108,8 +122,8 @@ int my_cd(char *path, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection
         if (chdir(path) != 0)
         {
             ft_printf("bash: cd: %s: No such file or directory\n", path);
-            g_exit_status = 1;
-            return g_exit_status;
+            global_struct.g_exit_status = 1;
+            return global_struct.g_exit_status;
         }
     }
     else if (!path && home_found)
@@ -127,25 +141,22 @@ int my_cd(char *path, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection
     else
     {
         ft_printf("bash: cd: HOME not set\n");
-        g_exit_status = 1;
-        return g_exit_status;
+     	global_struct.g_exit_status = 1;
+        return global_struct.g_exit_status;
     }
-    return g_exit_status;
+    return global_struct.g_exit_status;
 }
 
-char *my_pwd()
+void my_pwd(t_list *my_env)
 {
-    int size = 5;
-    char *buf = malloc(size);
-    while (getcwd(buf, size) == NULL)
+    char pwd[PATH_MAX];
+    if (getcwd(pwd, sizeof(pwd)) == NULL)
     {
-        size += size;
-        buf = my_realloc(buf, size);
+        perror("getcwd");
+       global_struct.g_exit_status = 1;
+        return;
     }
-    char *pwd = getcwd(buf, size);
     printf("%s\n", pwd);
-    free(buf);
-    return pwd;
 }
 
 void *my_realloc(char *ptr, int size)
@@ -154,18 +165,9 @@ void *my_realloc(char *ptr, int size)
         return NULL;
     free(ptr);
     ptr = malloc(size);
+    if (ptr == NULL)
+        return NULL;
     return ptr;
-}
-
-void free_env(void *env)
-{
-    (void)env;
-    // t_list *env_var = (t_list *)env;
-    // free2d(env_var->all);
-
-    // free(env_var->key);
-    // free(env_var->value);
-    // free(env_var);
 }
 
 t_list *get_env(char **env)
@@ -178,8 +180,6 @@ t_list *get_env(char **env)
 
     char **env_old = NULL;
 
-    // char *key = NULL;
-    // char *value = NULL;
     while (env[i])
     {
         env_old = ft_split_origin(env[i], '=');
@@ -292,7 +292,7 @@ void myexport(char **cmd, t_list *my_env, t_pipes_n_redirection *pipes_n_redirec
             if (ft_isdigit(cmd[i][0]))
             {
                 ft_printf("bash: not a valid identifier\n");
-                g_exit_status = 1;
+                global_struct.g_exit_status = 1;
                 pipes_n_redirection->exit_builtin = 1;
                 flag = 1;
                 break;
@@ -300,7 +300,7 @@ void myexport(char **cmd, t_list *my_env, t_pipes_n_redirection *pipes_n_redirec
             if (cmd[i][j] == '+' && cmd[i][j + 1] == '+')
             {
                 ft_printf("bash: not a valid identifier\n");
-                g_exit_status = 1;
+                global_struct.g_exit_status = 1;
                 pipes_n_redirection->exit_builtin = 1;
                 flag = 1;
                 break;
@@ -320,7 +320,7 @@ void myexport(char **cmd, t_list *my_env, t_pipes_n_redirection *pipes_n_redirec
                             ft_printf("bash: not a valid identifier\n");
                             free(key);
                             key = NULL;
-                            g_exit_status = 1;
+                           global_struct.g_exit_status = 1;
                             pipes_n_redirection->exit_builtin = 1;
                             flag = 1;
                             break;
@@ -462,16 +462,20 @@ void my_unset(char **to_unset, t_list **my_env)
     int i = 0;
 
     current = *my_env;
-
     while (to_unset[i])
     {
         while (current)
         {
-            if (current->key && ft_strncmp(current->key, to_unset[i], ft_strlen(to_unset[i]) + 1) == 0)
+            if (current->next && current->key && ft_strncmp(current->key, to_unset[i], ft_strlen(to_unset[i]) + 1) == 0)
             {
                 tmp = current->next;
                 freenode(my_env, current);
                 current = tmp;
+            }
+            else if (!current->next)
+            {
+                freenode(my_env, current);
+                break;
             }
             current = current->next;
         }
@@ -480,7 +484,7 @@ void my_unset(char **to_unset, t_list **my_env)
     }
 }
 
-int my_exit(char **args, int exit_status, t_pipes_n_redirection *pipes_n_redirection)
+int my_exit(char **args, t_pipes_n_redirection *pipes_n_redirection)
 {
     int i = 0;
     int j = 1;
@@ -503,7 +507,7 @@ int my_exit(char **args, int exit_status, t_pipes_n_redirection *pipes_n_redirec
                         j++;
                     if (!ft_isdigit(args[i][j]) && args[i][j])
                     {
-                        printf("minishell: exit: %s: numeric argument required\n", args[i]);
+                        ft_printf("minishell: exit: %s: numeric argument required\n", args[i]);
                         exit(255);
                     }
                 }
@@ -514,7 +518,7 @@ int my_exit(char **args, int exit_status, t_pipes_n_redirection *pipes_n_redirec
                     if (args[i][j] == '\0')
                         exit(255);
                 }
-                printf("minishell: exit: %s: numeric argument required\n", args[i]);
+                ft_printf("minishell: exit: %s: numeric argument required\n", args[i]);
                 exit(255);
             }
             j++;
@@ -527,7 +531,7 @@ int my_exit(char **args, int exit_status, t_pipes_n_redirection *pipes_n_redirec
     {
         // printf("exit\n");
         printf("minishell: exit: too many arguments\n");
-        exit_status = 1;
+        global_struct.g_exit_status = 1;
         return 1;
     }
     else if (args[0])
@@ -537,27 +541,23 @@ int my_exit(char **args, int exit_status, t_pipes_n_redirection *pipes_n_redirec
             overflow = ft_atoi_origin(args[0]) - 256;
         else
             overflow = ft_atoi_origin(args[0]);
-        exit_status = overflow;
+        global_struct.g_exit_status = overflow;
         exit(overflow);
     }
     else
     {
         // printf("exit\n");
-        exit(exit_status);
+        exit(global_struct.g_exit_status);
     }
     // printf("exit\n");
-    exit(exit_status);
+    exit(global_struct.g_exit_status);
 }
 
 void freenode(t_list **lst, t_list *node)
 {
     t_list *prev;
     if (*lst == node)
-    {
-
         *lst = (*lst)->next;
-        // return ;
-    }
     else
     {
         prev = *lst;

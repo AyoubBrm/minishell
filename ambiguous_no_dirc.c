@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 22:40:14 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/20 00:46:13 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/21 23:33:38 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ void file_rid(t_table *head, t_myarg *arg)
 	i = -1;
 	while (head->redirection->file[++i])
 	{
-		if (head->redirection->file[i][0] == '\6')
+		if (head->redirection->file[i][0] == '\6' && arg->space == 0)
 		{
 			head->ambiguous = 1;
 			head->redirection->file[i][0] = '\0';
-			g_exit_status = 1;
+			global_struct.g_exit_status = 1;
 		}
 		else if (head->redirection->file[i][0] == '\3' || head->redirection->file[i][0] == '\5' || !head->redirection->file[i][0])
 		{
@@ -43,10 +43,10 @@ void cmd_arg(t_table *head, t_myarg *arg)
 
 	if (head->cmd && head->cmd[0] == '\1')
 		ft_memmove(head->cmd, &head->cmd[1], ft_strlen(head->cmd));
-	else if (head->cmd && head->cmd[0] == '\7')
+	else if (head->cmd && head->cmd[0] == '\7' && arg->space == 0)
 	{
 		head->ambiguous = 1;
-		g_exit_status = 1;
+		global_struct.g_exit_status = 1;
 	}
 	else if (head->cmd && head->cmd[0] == '\6')
 		head->cmd = NULL;
@@ -55,10 +55,10 @@ void cmd_arg(t_table *head, t_myarg *arg)
 	i = -1;
 	while (head->arg[++i])
 	{
-		if (head->arg[i] && head->arg[i][0] == '\7')
+		if (head->arg[i] && head->arg[i][0] == '\7' && arg->space == 0)
 		{
 			head->ambiguous = 1;
-			g_exit_status = 1;
+			global_struct.g_exit_status = 1;
 			head->arg[i] = ft_memmove(head->arg[i],
 				&head->arg[i][1], ft_strlen(head->arg[i]));
 		}
@@ -80,17 +80,14 @@ void ambiguous_no_file(t_table *head, t_myarg *arg)
 		i = -1;
 		while (head->arg[++i])
 		{
-			if (head->arg[i][0] == '\3' || head->arg[i][0] == '\5' || !head->arg[i][0])
+			if ((head->arg[i][0] == '\3' || head->arg[i][0] == '\5')
+				|| (!head->arg[i][0] && ft_strncmp(head->cmd, "echo", 5) != 0))
 			{
 				head->no_file_dire = 1;
 				head->arg[i][0] = '\0';
 			}
 		}
 		i = -1;
-		// printf("--%d--\n", head->no_file_dire);
-		while (head->redirection->type[++i])
-		{
-		}
 		head = head->next;
 	}
 }

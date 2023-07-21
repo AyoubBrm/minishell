@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/20 18:11:23 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/21 23:06:32 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,17 @@
 #include <sys/errno.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <sys/stat.h>
 
-int g_exit_status;
+
+typedef struct s_gl
+{
+	int g_exit_status;
+	int heredoc_signal;
+}t_global;
+
+t_global global_struct; 
+
 typedef struct s_myenv
 {
     char *key;
@@ -166,14 +175,14 @@ void app_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirectio
 // void app_redirection(t_table *current, int out, int is_redirected);
 void in_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int i);
 // void no_such_file(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int g_exit_status);
-void no_such_file(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int g_exit_status, int i);
+void no_such_file(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int i);
 void all_redirections(t_table *current, t_pipes_n_redirection *pipes_n_redirection);
 int get_num_heredoc(t_table *list);
 int	heredoc_which_redirection(char **redirection);
 //Execution
-void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status);
-void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int g_exit_status);
-void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list **my_env, int g_exit_status);
+void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env);
+void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env);
+void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list **my_env);
 
 //Wildcard
 void wildcard(char *path);
@@ -183,18 +192,19 @@ void wildcard_helper(t_pipes_n_redirection *pipes_n_redirection);
 
 void *my_realloc(char *ptr, int size);
 // Built-ins
-void my_echo(char **cmd, int exit_status);
-int handle_n(char *args);
-int my_cd(char *path, t_list *myenv, t_pipes_n_redirection *pipes_n_redirection);
-char *my_pwd();
-void my_env(char **env, char **cmd, t_env *myenv);
-t_list *get_env(char **env);
-void new_env(t_list **head);
-int my_exit(char **args, int exit_status, t_pipes_n_redirection *pipes_n_redirection);
-void myexport(char **cmd, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection);
-void my_export_add(char *cmd, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int i);
+void 	my_echo(char **cmd);
+int 	handle_n(char *args);
+int		my_cd(char *path, t_list *myenv, t_pipes_n_redirection *pipes_n_redirection);
+void	my_pwd(t_list *my_env);
+void	my_env(char **env, char **cmd, t_env *myenv);
+t_list	*get_env(char **env);
+void	new_env(t_list **head);
+int		my_exit(char **args, t_pipes_n_redirection *pipes_n_redirection);
+void	myexport(char **cmd, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection);
+void	my_export_add(char *cmd, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int i);
 
-void my_unset(char **to_unset, t_list **my_env);
+void	my_unset(char **to_unset, t_list **my_env);
+void	sig_int();
 
 // Free
 void free2d(char **arg);

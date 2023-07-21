@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 23:16:19 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/20 18:58:04 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/21 21:56:29 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void	pipe_rid_inside_str(char **str, char **s, t_myarg *arg, int star)
 		arg->i++;
 	s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
 			- 1);
+	s[arg->index] = ft_strjoin_new(s[arg->index], "\4", 0, 0);
 }
 
 void	dollar_inside_str(char **str, char **s, t_myarg *arg, int star)

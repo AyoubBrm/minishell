@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/29 19:08:36 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/26 14:10:37 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/21 17:51:35 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	account_quote(char *input, t_myarg *arg)
 			if (input[arg->x] == '\'')
 				arg->quote++;
 		}
-		arg->x++;
+		if (input[arg->x])
+			arg->x++;
 	}
 }

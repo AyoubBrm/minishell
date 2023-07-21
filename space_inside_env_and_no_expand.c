@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:23:50 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/20 21:42:11 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/21 00:19:27 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,17 +69,17 @@ void expand_inside_env_or_dont_expand(t_list *my_env,t_myarg *arg, char **s)
 		{
 			arg->tmp = ft_calloc(1,1);
 			arg->tmp = find_in_env_and_alloced(my_env, arg->var, arg->tmp, 0);
-			if (arg->tmp[0] == ' ' && arg->space == 1)
+			if (arg->tmp && arg->tmp[0] == ' ' && arg->space == 1)
 			{
 				arg->ambg = 2;
-				arg->p = arg->var;
-				g_exit_status = 1;
+				arg->p = ft_strdup(arg->var);
+				global_struct.g_exit_status = 1;
 			}
-			if (arg->tmp[ft_strlen(arg->tmp) - 1] == ' ' && arg->space == 2)
+			if (arg->tmp && arg->tmp[ft_strlen(arg->tmp) - 1] == ' ' && arg->space == 2)
 			{
 				arg->ambg = 2;
-				arg->p = arg->var;
-				g_exit_status = 1;
+				arg->p = ft_strdup(arg->var);
+				global_struct.g_exit_status = 1;
 			}
 			else
 			{

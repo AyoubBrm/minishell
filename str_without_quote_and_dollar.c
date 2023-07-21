@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 17:00:18 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/19 18:11:17 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/21 22:48:17 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,18 +41,37 @@ void	token_whitout_quote(char **str, char **s, t_myarg *arg, int star)
 		&& str[arg->x][arg->i] == '$' && str[arg->x][arg->i + 1] == '\0'
 		&& str[arg->x + 1][0] == '\''))
 	{
+		if (arg->i > 0 && str[arg->x][arg->i] == '$' && ft_strchr("\t ",str[arg->x][arg->i - 1]))
+			arg->x++;
 		if (!s[arg->index])
 			s[arg->index] = ft_calloc(1, 1);
-		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
-				- 1);
-		arg->x++;
-		arg->i = 0;
-		star = 0;
-		while (str[arg->x][arg->i] && !ft_strchr2("\'\" \t",
-				str[arg->x][arg->i], 4))
-			arg->i++;
-		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
-				- 1);
+		if (str[arg->x][0] != '"' && str[arg->x][1] != '"'
+			&& str[arg->x][0] != '\'' && str[arg->x][1] != '\'')
+			s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
+					- 1);
+		if ((str[arg->x][0] == '"' && str[arg->x][1] != '"' ))
+		{
+			star = 1;
+			arg->i = 1;
+			while (str[arg->x] && str[arg->x][arg->i] != '"')
+				arg->i++;
+			s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
+					- 1);
+		}
+		else if ((str[arg->x][0] == '\'' && str[arg->x][1] != '\'' ))
+		{
+			star = 1;
+			arg->i = 1;
+			while (str[arg->x] && str[arg->x][arg->i] != '\'')
+				arg->i++;
+			s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
+					- 1);
+		}
+		if (str[arg->x + 1])
+		{
+			arg->x++;
+			arg->i = 0;
+		}
 	}
 	else
 		token2(str, s, arg, star);
@@ -95,7 +114,7 @@ void	token(char **str, char **s, t_myarg *arg, int star)
 				- 1);
 		for_5_6(str, s, arg);
 	}
-	else
+	else if (str[arg->x][arg->i] != '$')
 		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
 				- 1);
 	if (ft_strchr2(" \t", str[arg->x][arg->i], 2))

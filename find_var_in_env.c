@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:36:30 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/20 21:41:35 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/21 21:51:58 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*expand_status(t_list *env, char *var, char *temp_expand, int flags)
 	else if (flags == 4)
 		return (temp_expand = ft_strjoin_new(temp_expand, var, 0,
 				ft_strlen(var)));
-	if (env->value && (ft_strchr(env->value, '>')
+	if (flags != 4 && env->value && (ft_strchr(env->value, '>')
 			|| ft_strchr(env->value, '|') || ft_strchr(env->value,
 				'<')))
 	{
@@ -29,7 +29,7 @@ char	*expand_status(t_list *env, char *var, char *temp_expand, int flags)
 	}
 	else
 		temp_expand = ft_strjoin_new(temp_expand, env->value, 0,
-				ft_strlen(env->value) );
+				ft_strlen(env->value));
 	return (temp_expand);
 }
 
@@ -47,7 +47,7 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
 	}
 	if (ft_strncmp (var,"$?", 3) == 0)
 	{
-		my_env->ex_status = ft_itoa(g_exit_status);
+		my_env->ex_status = ft_itoa(global_struct.g_exit_status);
 		temp_expand = ft_strjoin(temp_expand, my_env->ex_status);
 		free(my_env->ex_status);
 		return (temp_expand);

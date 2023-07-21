@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:29:48 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/19 00:58:44 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/21 00:19:12 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ t_table	*error(t_table *list)
 	{
 		if (error_file_pip_rid(list, free) == 0)
 		{
-			g_exit_status = 2;
+			global_struct.g_exit_status = 2;
 			return (0);
 		}
 		list = list->next;
