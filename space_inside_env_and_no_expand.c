@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:23:50 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/21 00:19:27 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/22 17:29:18 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	space_var(t_myarg *arg)
 			if (arg->temp_expand[arg->index - 1] && !ft_strchr(" \t",
 					arg->temp_expand[0]))
 				arg->temp_str = ft_strjoin_new(arg->temp_str, "\7", 0, 0);
-			arg->p = arg->var;
+			arg->p = ft_strdup(arg->var);
 		}
 		else if (arg->temp_expand[arg->index])
 		{
@@ -79,6 +79,7 @@ void expand_inside_env_or_dont_expand(t_list *my_env,t_myarg *arg, char **s)
 			{
 				arg->ambg = 2;
 				arg->p = ft_strdup(arg->var);
+				free(arg->var);
 				global_struct.g_exit_status = 1;
 			}
 			else

@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:29:36 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/21 21:56:22 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/22 17:44:50 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ void	expand2(char **s, t_list *my_env, t_myarg *arg)
 	{
 		if ((ft_strchr(s[arg->x], '\3') || !ft_strchr(s[arg->x], '\3')))
 		{
+			arg->free = 1;
 			arg->star = arg->i;
 			arg->i++;
 			while ((ft_isdigit(s[arg->x][arg->i])
@@ -101,6 +102,7 @@ char	**expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg)
 	arg->str_new = ft_calloc(num_alloc + 1, sizeof(char *));
 	arg->x = 0;
 	arg->ex_here = 0;
+	arg->free = 0;
 	arg->temp_expand = ft_calloc(1, 1);
 	arg->p = ft_calloc(1, sizeof(char *));
 	while (s[arg->x])
@@ -114,9 +116,16 @@ char	**expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg)
 			skip_after_dollar(arg, s);
 		}
 		expand_inside_env_or_dont_expand(my_env ,arg, s);
+			while (1);
 		ft_bzero(arg->temp_expand, ft_strlen(arg->temp_expand));
 		if (s[arg->x])
 			arg->x++;
+		// if (arg->free)
+		// {
+		// 	free(arg->var);
+		// 	arg->var = NULL;
+		// 	arg->free = 0;
+		// }
 	}
 	free(arg->temp_expand);
 	free2d(s);

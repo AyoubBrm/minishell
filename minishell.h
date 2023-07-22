@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/21 23:06:32 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/22 17:33:06 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ typedef struct s_my
 	int 	space;
 	int		ambg;
 	char	*tmp;
+	int		free;
 }t_myarg;
 
 typedef struct pipes_n_redirection

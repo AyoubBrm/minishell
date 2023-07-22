@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/15 15:58:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/21 23:04:08 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/22 17:17:38 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,9 @@ char *check_valid_cmd(char *cmd, char **path)
 
 	while (path[i])
 	{
-		valid_path = ft_strjoin(path[i], "/");
+		valid_path = ft_strjoin_no_free(path[i], "/");
 		if (cmd)
-			valid_cmd = ft_strjoin(valid_path, cmd);
+			valid_cmd = ft_strjoin_no_free(valid_path, cmd);
 		if (access(valid_cmd, F_OK) == 0)
 		{
 			free(valid_path);
@@ -231,8 +231,6 @@ void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list
 		if (!pipes_n_redirection->num_pipes)
 			my_cd(current->arg[0], *my_env, pipes_n_redirection);
 	}
-	else if (current->arg[0] && ft_strncmp(current->arg[0], "*", 2) == 0)
-		wildcard_helper(pipes_n_redirection);
 	close(pipes_n_redirection->pipefds[1]); // close write end of pipe
 	if (pipes_n_redirection->in != 0)
 		close(pipes_n_redirection->in);						   // close input when it's not 0 (STDIN fd) (usually it points to read end of pipe)

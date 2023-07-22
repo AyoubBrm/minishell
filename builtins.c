@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/21 23:16:03 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/22 17:10:08 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,7 @@ t_list *get_env(char **env)
         new_env->key = ft_strdup(env_old[0]);
         new_env->value = ft_strdup(env_old[1]);
         free2d(env_old);
-        new_env->all = ft_strjoin(new_env->key, ft_strchr_inc(env[i], '='));
+        new_env->all = ft_strjoin_no_free(new_env->key, ft_strchr_inc(env[i], '='));
         new_env->next = NULL;
 
         if (current == NULL)
@@ -264,8 +264,8 @@ void myexport(char **cmd, t_list *my_env, t_pipes_n_redirection *pipes_n_redirec
                 my_export->value[k] = '"';
                 k++;
                 my_export->value[k] = '\0';
-                my_export->key_exp = ft_strjoin("declare -x ", my_export->key);
-                my_export->all = ft_strjoin(my_export->key_exp, my_export->value);
+                my_export->key_exp = ft_strjoin_no_free("declare -x ", my_export->key);
+                my_export->all = ft_strjoin_no_free(my_export->key_exp, my_export->value);
                 my_export->next = NULL;
                 printf("%s\n", my_export->all);
             }
@@ -391,14 +391,14 @@ void my_export_add(char *cmd, t_pipes_n_redirection *pipes_n_redirection, t_list
                             // free(current->value);
                             // free(current->all);
                         }
-                        current->all = ft_strjoin(key, current->value);
+                        current->all = ft_strjoin_no_free(key, current->value);
                         // printf("%s\n", current->all);
                     }
                     else
                     {
                         // free(current->value);
                         current->value = ft_strdup(ft_strchr(cmd, '='));
-                        current->all = ft_strjoin(key, current->value);
+                        current->all = ft_strjoin_no_free(key, current->value);
                     }
 
                     lol = 1;
@@ -412,7 +412,7 @@ void my_export_add(char *cmd, t_pipes_n_redirection *pipes_n_redirection, t_list
                 new_export->key = key;
                 new_export->value = value;
                 // new_export->all = malloc(ft_strlen(key) + ft_strlen(value) + 1);
-                new_export->all = ft_strjoin(key, ft_strchr_inc(cmd, '='));
+                new_export->all = ft_strjoin_no_free(key, ft_strchr_inc(cmd, '='));
                 new_export->next = NULL;
                 // printf("key %s\n", new_export->key);
                 // printf("key %s\n", new_export->key);

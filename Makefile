@@ -6,7 +6,6 @@ SRC =	minishell.c builtins.c execute.c free.c account_the_quote.c clean_expand.c
 		addition_cmd.c\
 		cmd_checks.c\
 		redirections.c\
-		wildcard.c\
 
 LIBFT = make -C ./libft
 

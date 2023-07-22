@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 16:02:29 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/21 21:47:12 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/22 16:42:09 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ void	for_null_cmd_or_arg(char **str, char **s, t_myarg *arg)
 		arg->x++;
 		while (str[arg->x] && str[arg->x][0] == '"' && str[arg->x][1] == '"')
 				arg->x++;
-		if ((!str[arg->x] )|| (str[arg->x][0] != '"' ) || (str[arg->x][0] != '\'' ))
+		if ((!str[arg->x] )|| (str[arg->x][0] != '"' )
+			|| (str[arg->x][0] != '\'' ))
 			s[arg->index] = ft_calloc(1, 1);
 	}	
 }

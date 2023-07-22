@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/21 23:24:50 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/22 17:34:58 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 				if (current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2])
 				{
 					free(pipes_n_redirection->filename);
-					pipes_n_redirection->filename = ft_strjoin("/tmp/", current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2]);
+					pipes_n_redirection->filename = ft_strjoin_no_free("/tmp/", current_heredoc->redirection->file[pipes_n_redirection->pos_redirection_v2]);
 					// pipes_n_redirection->filenames[x] = pipes_n_redirection->filename;
 				}
 				if (pipes_n_redirection->tmp)
@@ -119,7 +119,7 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 					}
 					else if (pipes_n_redirection->input && ft_strchr(pipes_n_redirection->input, '$') && arg->ex_here == 0 && current->exp_heredoc == 0)
 					{
-						pipes_n_redirection->input = ft_strjoin(pipes_n_redirection->input, "\n");
+						pipes_n_redirection->input = ft_strjoin_no_free(pipes_n_redirection->input, "\n");
 						p = ft_split_origin(pipes_n_redirection->input, '\n');
 						p = expand(p, my_env, arg->num_alloc, arg);
 						pipes_n_redirection->input = ft_strdup(p[0]);
@@ -136,10 +136,10 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 						}
 						break;
 					}
-					pipes_n_redirection->tmp_buffer = ft_strjoin(pipes_n_redirection->buffer, pipes_n_redirection->input);
-					free(pipes_n_redirection->buffer);
-					pipes_n_redirection->buffer = ft_strjoin(pipes_n_redirection->tmp_buffer, "\n");
-					free(pipes_n_redirection->tmp_buffer);
+					pipes_n_redirection->tmp_buffer = ft_strjoin_no_free(pipes_n_redirection->buffer, pipes_n_redirection->input);
+					// free(pipes_n_redirection->buffer);
+					pipes_n_redirection->buffer = ft_strjoin_no_free(pipes_n_redirection->tmp_buffer, "\n");
+					// free(pipes_n_redirection->tmp_buffer);
 					free(pipes_n_redirection->input);
 				}
 				if (global_struct.heredoc_signal == 1)
@@ -293,7 +293,6 @@ int is_builtin(char *builtin)
 {
 	char *built_ins[] = {"env", "export", "echo", "cd", "pwd", "unset", "exit"};
 	int i = 0;
-
 	while (i < 7)
 	{
 		if (ft_strncmp(builtin, built_ins[i], ft_strlen(builtin) + 1) == 0)
@@ -331,17 +330,25 @@ void parser_arg(char *input, char **env, t_list **my_env)
 		arg->space = 0;
 		arg->ambg = 0;
 		s = get_token_from_str(str, s, arg);
+		// {
+		// 	int i;
+		// 	i = -1;
+		// 	while(s[++i])
+		// 		printf("=====%s---",s[i]);
+		// }
+		// while(1);
 		arg->final_expand = expand(s, *my_env, arg->num_alloc, arg);
 		arg->final_expand = clean_expand(arg->final_expand, "\2\3\4\5\6", arg);
 		arg->x = 0;
 		final_list = final_addition(arg->final_expand, arg);
+		free(arg->p);
 		if (final_list == NULL)
 			return;
 		final_list->exp_exit = arg->exp_exit;		// *******this for expand the exit status if 1 don't (if 0 expand) *******//
 		final_list->exp_heredoc = arg->exp_heredoc; // *******this for expand inside heredoc status if 1 don't (if 0 expand)*******//
 		// printf("---%d--dasda-\n", arg->exp_exit);
 		magic(final_list, my_env, env, arg);
-		free(arg->p);
+		free_list(final_list);
 	}
 	// int x = 0;
 	// while (final_list)
@@ -358,7 +365,6 @@ void parser_arg(char *input, char **env, t_list **my_env)
 	// 	x = 0;
 	// 	while (final_list->redirection->file[x])
 	// 		printf("_____FILE_____=..%s\n\n", final_list->redirection->file[x++]);
-	// 	final_list = final_list->next;
 	// }
 }
 
@@ -385,8 +391,8 @@ int main(int ac, char **av, char **env)
 	global_struct.g_exit_status = 0;
 	while (1)
 	{
-		signal(SIGINT, sig_int);
-		signal(SIGQUIT, SIG_IGN);
+		// signal(SIGINT, sig_int);
+		// signal(SIGQUIT, SIG_IGN);
 		input = readline("minishell$ ");
 		add_history(input);
 		if (global_struct.heredoc_signal == 1)

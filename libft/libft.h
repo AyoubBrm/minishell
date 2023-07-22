@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 12:49:45 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/20 15:43:28 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/22 17:08:47 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ void	ft_lstadd_back(t_list **lst, t_list *new);
 t_list	*ft_lstlast(t_list *lst);
 void	ft_lstdelone(t_list *lst, void (*del)(void *));
 char	*ft_strjoin_new(char *s1, char *s2, int x, int j);
+char	*ft_strjoin_no_free(char *s1, char *s2);
 int 	ft_compare(char *dst, char *src);
 long	ft_atoi_origin(char *str);
 #endif
