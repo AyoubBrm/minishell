@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 10:27:32 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/23 12:52:56 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/23 19:31:48 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	my_pwd(t_list *my_env)
+void	my_pwd()
 {
 	char	pwd[PATH_MAX];
 

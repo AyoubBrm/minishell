@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 10:26:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/23 13:54:14 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/23 19:31:30 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void myexport(char **cmd, t_list *my_env,
     int offset;
     int equal;
     int flag;
-    t_list *new_export;
+    // t_list *new_export;
     t_list *current;
     t_list *my_export;
     int lol;
@@ -187,7 +187,7 @@ void myexport(char **cmd, t_list *my_env,
             j++;
         }
         if (!flag)
-            my_export_add(cmd[i], pipes_n_redirection, my_env, i);
+            my_export_add(cmd[i], my_env);
         flag = 0;
         i++;
     }
@@ -200,8 +200,7 @@ void myexport(char **cmd, t_list *my_env,
     // while(1);
 }
 
-void my_export_add(char *cmd, t_pipes_n_redirection *pipes_n_redirection,
-                   t_list *my_env, int i)
+void my_export_add(char *cmd, t_list *my_env)
 {
     int equal;
     int offset = 0;

@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 23:06:29 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/22 22:43:46 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/23 18:34:29 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,11 @@ t_table	*addition_append(char **str_new, int *i, t_table *new_addition)
 	    		str_new[(*i)++]);
 	    }
 	    else
-	    	new_addition->redirection->file = NULL;
-        }
+		{
+			free2d(new_addition->redirection->file);
+			new_addition->redirection->file = NULL;
+		}
+    }
 	return (new_addition);
 }
 t_table *addition_heredoc(char **str_new, int *i, t_table *new_addition)
@@ -64,7 +67,10 @@ t_table *addition_heredoc(char **str_new, int *i, t_table *new_addition)
 				str_new[(*i)++]);
 		}
 		else
+		{
+			free2d(new_addition->redirection->file);
 			new_addition->redirection->file = NULL;
+		}
 	}
 	return (new_addition);
 }

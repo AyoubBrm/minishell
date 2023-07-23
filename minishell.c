@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/23 01:20:25 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/23 20:07:57 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 	int x = 0;
 	int k = 0;
 	t_table *current = list;
-	int input = 0;
 	while (current)
 	{
 		/************************* Handle << redirection (Heredoc) ********************/
@@ -121,10 +120,12 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 					}
 					else if (pipes_n_redirection->input && ft_strchr(pipes_n_redirection->input, '$') && arg->ex_here == 0 && current->exp_heredoc == 0)
 					{
-						pipes_n_redirection->input = ft_strjoin_no_free(pipes_n_redirection->input, "\n");
+						pipes_n_redirection->input = ft_strjoin(pipes_n_redirection->input, "\n");
 						p = ft_split_origin(pipes_n_redirection->input, '\n');
 						p = expand(p, my_env, arg->num_alloc, arg);
+						free(pipes_n_redirection->input);
 						pipes_n_redirection->input = ft_strdup(p[0]);
+						free2d(p);
 					}
 					else if (!pipes_n_redirection->input)
 					{
@@ -164,24 +165,24 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 		{
 			ft_printf("bash: %s: ambiguous redirect\n", arg->p);
 			global_struct.g_exit_status = 1;
-			// free2d(pipes_n_redirection->env2d);
-			// free2d(pipes_n_redirection->path);
-			// free2d(pipes_n_redirection->args);
-			// free(pipes_n_redirection->pids);
-			// free(pipes_n_redirection->cmd);
-			// free(pipes_n_redirection);
+			free2d(pipes_n_redirection->env2d);
+			free2d(pipes_n_redirection->path);
+			free2d(pipes_n_redirection->args);
+			free(pipes_n_redirection->pids);
+			free(pipes_n_redirection->cmd);
+			free(pipes_n_redirection);
 			return;
 		}
 		if (current->no_file_dire)
 		{
 			ft_printf("bash: : No such file or directory\n");
 			global_struct.g_exit_status = 1;
-			// free2d(pipes_n_redirection->env2d);
-			// free2d(pipes_n_redirection->path);
-			// free2d(pipes_n_redirection->args);
-			// free(pipes_n_redirection->pids);
-			// free(pipes_n_redirection->cmd);
-			// free(pipes_n_redirection);
+			free2d(pipes_n_redirection->env2d);
+			free2d(pipes_n_redirection->path);
+			free2d(pipes_n_redirection->args);
+			free(pipes_n_redirection->pids);
+			free(pipes_n_redirection->cmd);
+			free(pipes_n_redirection);
 			return;
 		}
 
@@ -318,10 +319,9 @@ void parser_arg(char *input, char **env, t_list **my_env)
 	char **s = NULL;
 	t_myarg *arg;
 
-	arg = malloc(1 * sizeof(t_myarg));
+	arg = ft_calloc(1 , sizeof(t_myarg));
 	arg->quote = 0;
 	arg->num_alloc = 0;
-	arg->p = NULL;
 	here_doc_expaand(input, arg);
 	account_quote(input, arg);
 	arg->num_alloc = num_alloc_str(input);
@@ -333,6 +333,7 @@ void parser_arg(char *input, char **env, t_list **my_env)
 	}
 	else
 	{
+		arg->p = NULL;
 		str = ft_split(input, '\"');
 		s = ft_calloc(sizeof(char *), arg->num_alloc + 1);
 		arg->x = 0;
@@ -347,16 +348,16 @@ void parser_arg(char *input, char **env, t_list **my_env)
 		if (final_list == NULL)
 		{
 			free(arg->p);
-			free(arg);	
+			free(arg);
 			return;
 		}
 		final_list->exp_heredoc = arg->exp_heredoc;
 		final_list->exp_exit = arg->exp_exit;
 		magic(final_list, my_env, env, arg);
-		free(arg->p);
-		free(arg);
 		free_list(final_list);
+		free(arg->p);
 	}
+	free(arg);
 }
 
 void sig_int()
@@ -371,7 +372,7 @@ void sig_int()
 
 int main(int ac, char **av, char **env)
 {
-	char *input;
+	char *input = NULL;
 
 	(void)av;
 	t_list *my_env = NULL;
@@ -389,9 +390,7 @@ int main(int ac, char **av, char **env)
 		if (global_struct.heredoc_signal == 1)
 			global_struct.heredoc_signal = 0;
 		if (input)
-		{
 			parser_arg(input, env, &my_env);
-		}
 		free(input);
 		if (!input)
 			return (global_struct.g_exit_status);

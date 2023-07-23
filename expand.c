@@ -6,11 +6,12 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:29:36 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/23 00:09:12 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/23 20:15:22 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 void	skip_after_dollar(t_myarg *arg, char **s)
 {
 	if ((s[arg->x][arg->i] == '$' && ft_strchr("@*", s[arg->x][arg->i + 1]))
@@ -35,26 +36,27 @@ void	skip_after_dollar(t_myarg *arg, char **s)
 	}
 }
 
-void	expand_inside_quote(char **s, t_myarg *arg, t_list *my_env)
+void	keep_for_inside_qoute(char **s, t_myarg *arg, t_list *my_env)
 {
-	if (arg->x > 0 && s[arg->x][arg->i] != '\4'
-		&& (!ft_strncmp("<", arg->str_new[arg->x - 1], 2)
-		|| !ft_strncmp(">", arg->str_new[arg->x - 1], 1)))
+	if (arg->x > 0 && s[arg->x][arg->i] != '\4' && (!ft_strncmp("<",
+				arg->str_new[arg->x - 1], 2) || !ft_strncmp(">",
+				arg->str_new[arg->x - 1], 1)))
 	{
 		arg->temp_expand = find_in_env_and_alloced(my_env, arg->var,
-			arg->temp_expand, 0);
+				arg->temp_expand, 0);
 		if (!arg->temp_expand[0])
-		{
 			arg->p = ft_strdup(arg->var);
-			free(arg->var);
-			arg->var = NULL;
-		}
 		arg->ex_here = 1;
 	}
 	else if (arg->x > 0 && !ft_strncmp("<<", arg->str_new[arg->x - 1], 3))
 		arg->temp_expand = find_in_env_and_alloced(my_env, arg->var,
 				arg->temp_expand, 2);
-	else if (s[arg->x][arg->i] == '\4')
+}
+
+void	expand_inside_quote(char **s, t_myarg *arg, t_list *my_env)
+{
+	keep_for_inside_qoute(s, arg, my_env);
+	if (s[arg->x][arg->i] == '\4')
 	{
 		arg->temp_expand = find_in_env_and_alloced(my_env, arg->var,
 				arg->temp_expand, 4);
@@ -82,14 +84,13 @@ void	expand2(char **s, t_list *my_env, t_myarg *arg)
 	{
 		if ((ft_strchr(s[arg->x], '\3') || !ft_strchr(s[arg->x], '\3')))
 		{
-			arg->free = 1;
 			arg->star = arg->i;
 			arg->i++;
 			while ((ft_isdigit(s[arg->x][arg->i])
-				|| ft_isalpha(s[arg->x][arg->i])
-				|| s[arg->x][arg->i] == '_' || s[arg->x][arg->i] == '\1') && !ft_strchr("\3\4\5\6",
-				s[arg->x][arg->i]))
-					arg->i++;
+				|| ft_isalpha(s[arg->x][arg->i]) || s[arg->x][arg->i] == '_'
+				|| s[arg->x][arg->i] == '\1') && !ft_strchr("\3\4\5\6",
+					s[arg->x][arg->i]))
+						arg->i++;
 			if (s[arg->x][arg->i] == '?')
 				arg->i++;
 			free(arg->var);
@@ -105,7 +106,6 @@ char	**expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg)
 	arg->str_new = ft_calloc(num_alloc + 1, sizeof(char *));
 	arg->x = 0;
 	arg->ex_here = 0;
-	arg->free = 0;
 	arg->temp_expand = ft_calloc(1, 1);
 	arg->p = NULL;
 	while (s[arg->x])
@@ -119,11 +119,10 @@ char	**expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg)
 			expand2(s, my_env, arg);
 			skip_after_dollar(arg, s);
 		}
-		expand_inside_env_or_dont_expand(my_env ,arg, s);
+		expand_inside_env_or_dont_expand(my_env, arg, s);
 		ft_bzero(arg->temp_expand, ft_strlen(arg->temp_expand));
 		free(arg->var);
-		if (s[arg->x])
-			arg->x++;
+		arg->x++;
 	}
 	free(arg->temp_expand);
 	free2d(s);

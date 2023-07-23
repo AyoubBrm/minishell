@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 23:35:59 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/23 01:19:47 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/23 18:25:11 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ t_table	*final_addition(char **str_new, t_myarg *arg)
 	new_addition->redirection->type = ft_calloc(1, sizeof(char *));
 	new_addition->redirection->file = ft_calloc(1, sizeof(char *));
 	new_addition->pip = 0;
-	new_addition->arg = ft_calloc(2, sizeof(char *));
+	new_addition->arg = ft_calloc(1, sizeof(char *));
 	new_addition = addition_part(str_new, new_addition);
 	head = error(head);
 	if (head == 0)

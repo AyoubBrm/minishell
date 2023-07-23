@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:29:48 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/23 01:18:39 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/23 17:59:56 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,21 +53,21 @@ int	redirection_error(t_table *list, t_table *free, char *temp_red)
 	if (temp_red && temp_red[1] && ((temp_red[0] == '>' && temp_red[1] != '>')
 			|| (temp_red[0] == '<' && temp_red[1] != '<')))
 	{
-		printf("bash: syntax error\n");
 		free_list(free);
+		printf("bash: syntax error\n");
 		return (1);
 	}
 	else if (temp_red && ft_strncmp(">>", temp_red, 3) && ft_strncmp("<<",
 			temp_red, 3) && (ft_strlen(temp_red) - 1) > 1)
 	{
-		printf("bash: syntax error\n");
 		free_list(free);
+		printf("bash: syntax error\n");
 		return (1);
 	}
 	else if (temp_red && !list->redirection->file && list->redirection->pipe)
 	{
-		printf("bash: syntax error\n");
 		free_list(free);
+		printf("bash: syntax error\n");
 		return (1);
 	}
 	return (0);
@@ -84,8 +84,8 @@ int	error_file_pip_rid(t_table *list, t_table *free)
 	else if (list->redirection->file && file_error(list,
 			list->redirection->file))
 		return (0);
-	x = 0;
-	while (list->redirection->type[x])
+	x = -1;
+	while (list->redirection->type[++x])
 	{
 		if (list->redirection->file && !list->redirection->file[0])
 			list->redirection->file = NULL;
@@ -97,7 +97,6 @@ int	error_file_pip_rid(t_table *list, t_table *free)
 			free_list(free);
 			return (0);
 		}
-		x++;
 	}
 	return (1);
 }

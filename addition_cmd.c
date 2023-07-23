@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 23:15:07 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/18 23:47:38 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/23 18:34:46 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,16 @@ t_table	*output_rid_and_cmd(char **str_new, int *i, t_table *new_addition)
 	new_addition->redirection->out_redirection++;
 	if (str_new[*i] && str_new[*i][0] != '|')
 	{
-		// if (str_new[*i][0] == '\7')
-		// 	ft_memmove(str_new[*i], &str_new[*i][1],
-		// 		ft_strlen(str_new[*i]));
+		if (str_new[*i][0] == '\7')
+			ft_memmove(str_new[*i], &str_new[*i][1],
+				ft_strlen(str_new[*i]));
 		new_addition->redirection->file = join2d_with_arr(new_addition->redirection->file,
 			str_new[(*i)++]);
     }
+	else
+	{
+		free2d(new_addition->redirection->file);
+		new_addition->redirection->file = NULL;
+	}
 	return (new_addition);
 }

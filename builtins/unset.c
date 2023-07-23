@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 10:26:15 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/23 12:45:12 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/23 19:32:11 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	my_unset(char **to_unset, t_list **my_env)
 {
 	t_list	*current;
-	t_list	*tmp;
+	t_list	*tmp = NULL;
 	int		i;
 
 	i = 0;

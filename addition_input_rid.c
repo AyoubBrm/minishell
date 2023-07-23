@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   addition_input_rid.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 22:40:17 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/14 17:37:15 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/23 18:36:38 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,9 @@ t_table *addition_infile(char **str_new, int *i, t_table *new_addition)
 			str_new[(*i)++]);
 	}
 	else
+	{
+		free2d(new_addition->redirection->file);
 		new_addition->redirection->file = NULL;
+	}
     return (new_addition);
 }

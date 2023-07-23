@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/23 13:53:59 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/23 20:36:59 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ typedef struct s_my
 	int space;
 	int ambg;
 	char *tmp;
-	int free;
+	int		indx;
 } t_myarg;
 
 typedef struct pipes_n_redirection
@@ -132,6 +132,7 @@ typedef struct pipes_n_redirection
 } t_pipes_n_redirection;
 
 char **get_token_from_str(char **str, char **s, t_myarg *arg);
+void check_ambig(t_list *my_env, t_myarg *arg, char **s);
 void account_quote(char *input, t_myarg *arg);
 char **clean_expand(char **final_expand, char *str, t_myarg *arg);
 void token_v2(char **str, char **s, t_myarg *arg);
@@ -188,7 +189,7 @@ void wildcard_helper(t_pipes_n_redirection *pipes_n_redirection);
 
 void *my_realloc(char *ptr, int size);
 // Built-ins
-void my_pwd(t_list *my_env);
+void my_pwd();
 void my_env(char **env, char **cmd, t_env *myenv);
 t_list *get_env(char **env);
 void new_env(t_list **head);
@@ -232,7 +233,7 @@ void env_alloc(t_list **new_env, char **env_old, char *envi);
 
 /******************************** Builtins cd **************************/
 void myexport(char **cmd, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection);
-void my_export_add(char *cmd, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int i);
+void my_export_add(char *cmd, t_list *my_env);
 void my_export_alloc(t_list **my_export, t_list *current, int b, int k);
 int my_export_check2(char **cmd, t_pipes_n_redirection *pipes_n_redirection);
 
