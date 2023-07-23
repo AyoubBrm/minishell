@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 22:40:14 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/21 23:33:38 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/23 00:48:57 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void file_rid(t_table *head, t_myarg *arg)
 	int i;
 
 	i = -1;
+
+// printf("%s\n", head->redirection->file[0]);
 	while (head->redirection->file[++i])
 	{
 		if (head->redirection->file[i][0] == '\6' && arg->space == 0)
@@ -59,7 +61,7 @@ void cmd_arg(t_table *head, t_myarg *arg)
 		{
 			head->ambiguous = 1;
 			global_struct.g_exit_status = 1;
-			head->arg[i] = ft_memmove(head->arg[i],
+			ft_memmove(head->arg[i],
 				&head->arg[i][1], ft_strlen(head->arg[i]));
 		}
 		else if (head->arg[i] && head->arg[i][0] == '\6')

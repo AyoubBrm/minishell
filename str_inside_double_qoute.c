@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 21:54:57 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/22 16:56:09 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/22 20:22:33 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,11 @@ void	inside_qoute(char **str, char **s, t_myarg *arg, int star)
 	}
 	else if ((str[arg->x - 1][0] && ft_strchr2(" \t", str[arg->x
 				- 1][ft_strlen(str[arg->x - 1]) - 1], 2)))
-		s[arg->index] = ft_substr(str[arg->x], star, arg->i - 1);
+	{
+		if (s[arg->index])
+			free(s[arg->index]);
+		s[arg->index] = ft_substr(str[arg->x], star, arg->i - 1);				
+	}
 	else if (arg->x > 0 && str[arg->x - 1])
 		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
 				- 1);
@@ -86,7 +90,6 @@ void	str_inside_double_qoute(char **str, char **s, t_myarg *arg)
 			s[arg->index] = ft_strjoin(s[arg->index], "\2");
 			inside_qoute(str, s, arg, star);
 			s[arg->index] = ft_strjoin(s[arg->index], "\2");
-			// while(1);
 		}
 	}
 }

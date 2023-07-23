@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/22 17:34:58 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/23 01:20:25 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ int get_num_heredoc(t_table *list)
 }
 void sig_here()
 {
-	close (0);
-	printf ("\n");
+	close(0);
+	printf("\n");
 	rl_on_new_line();
 	// rl_replace_line("", 0);
 	global_struct.heredoc_signal = 1;
@@ -115,6 +115,8 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 						free(pipes_n_redirection->buffer);
 						pipes_n_redirection->pos_redirection++;
 						pipes_n_redirection->flag = 1;
+						close(pipes_n_redirection->in);
+						pipes_n_redirection->in = open(pipes_n_redirection->filename, O_RDONLY, 0666);
 						break;
 					}
 					else if (pipes_n_redirection->input && ft_strchr(pipes_n_redirection->input, '$') && arg->ex_here == 0 && current->exp_heredoc == 0)
@@ -133,13 +135,15 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 							free(pipes_n_redirection->buffer);
 							pipes_n_redirection->pos_redirection++;
 							pipes_n_redirection->flag = 1;
+							close(pipes_n_redirection->in);
+							pipes_n_redirection->in = open(pipes_n_redirection->filename, O_RDONLY, 0666);
 						}
 						break;
 					}
 					pipes_n_redirection->tmp_buffer = ft_strjoin_no_free(pipes_n_redirection->buffer, pipes_n_redirection->input);
-					// free(pipes_n_redirection->buffer);
+					free(pipes_n_redirection->buffer);
 					pipes_n_redirection->buffer = ft_strjoin_no_free(pipes_n_redirection->tmp_buffer, "\n");
-					// free(pipes_n_redirection->tmp_buffer);
+					free(pipes_n_redirection->tmp_buffer);
 					free(pipes_n_redirection->input);
 				}
 				if (global_struct.heredoc_signal == 1)
@@ -152,7 +156,7 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 		if (global_struct.heredoc_signal == 1)
 		{
 			open("/dev/tty", O_RDONLY);
-			break ;
+			break;
 		}
 		/************************* End << Heredoc ************************************/
 
@@ -160,33 +164,40 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 		{
 			ft_printf("bash: %s: ambiguous redirect\n", arg->p);
 			global_struct.g_exit_status = 1;
+			// free2d(pipes_n_redirection->env2d);
+			// free2d(pipes_n_redirection->path);
+			// free2d(pipes_n_redirection->args);
+			// free(pipes_n_redirection->pids);
+			// free(pipes_n_redirection->cmd);
+			// free(pipes_n_redirection);
 			return;
 		}
 		if (current->no_file_dire)
 		{
 			ft_printf("bash: : No such file or directory\n");
 			global_struct.g_exit_status = 1;
+			// free2d(pipes_n_redirection->env2d);
+			// free2d(pipes_n_redirection->path);
+			// free2d(pipes_n_redirection->args);
+			// free(pipes_n_redirection->pids);
+			// free(pipes_n_redirection->cmd);
+			// free(pipes_n_redirection);
 			return;
-		}
-		if (pipes_n_redirection->flag && current->cmd && !current->pip)
-		{
-			close(pipes_n_redirection->in);
-			pipes_n_redirection->in = open(pipes_n_redirection->filename, O_RDONLY, 0666);
 		}
 
 		/***************************** PIPING *************************/
 		pipe(pipes_n_redirection->pipefds);
-		signal (SIGINT, SIG_IGN);
+		signal(SIGINT, SIG_IGN);
 		pipes_n_redirection->pid = fork();
 		if (pipes_n_redirection->pid == 0)
 		{
-			signal (SIGQUIT, SIG_DFL);
-			signal (SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
+			signal(SIGINT, SIG_DFL);
 			child(current, pipes_n_redirection, my_env);
 		}
 		else
 		{
-			signal (SIGQUIT, SIG_IGN);
+			signal(SIGQUIT, SIG_IGN);
 			parent(current, pipes_n_redirection, my_en);
 		}
 		pipes_n_redirection->pids[k] = pipes_n_redirection->pid;
@@ -246,9 +257,8 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 	else
 		global_struct.g_exit_status = WEXITSTATUS(global_struct.g_exit_status);
 
+
 	free(pipes_n_redirection);
-	// while (1)
-	// 	;
 }
 
 int heredoc_which_redirection(char **redirection)
@@ -304,20 +314,21 @@ int is_builtin(char *builtin)
 void parser_arg(char *input, char **env, t_list **my_env)
 {
 	t_table *final_list;
-	char **str;
-	char **s;
+	char **str = NULL;
+	char **s = NULL;
 	t_myarg *arg;
 
 	arg = malloc(1 * sizeof(t_myarg));
 	arg->quote = 0;
 	arg->num_alloc = 0;
+	arg->p = NULL;
 	here_doc_expaand(input, arg);
 	account_quote(input, arg);
 	arg->num_alloc = num_alloc_str(input);
 	if (arg->quote % 2 == 1)
 	{
 		ft_printf("%s\n",
-			   "minishell: unexpected EOF while looking for matching");
+				  "minishell: unexpected EOF while looking for matching");
 		global_struct.g_exit_status = 2;
 	}
 	else
@@ -330,42 +341,22 @@ void parser_arg(char *input, char **env, t_list **my_env)
 		arg->space = 0;
 		arg->ambg = 0;
 		s = get_token_from_str(str, s, arg);
-		// {
-		// 	int i;
-		// 	i = -1;
-		// 	while(s[++i])
-		// 		printf("=====%s---",s[i]);
-		// }
-		// while(1);
 		arg->final_expand = expand(s, *my_env, arg->num_alloc, arg);
 		arg->final_expand = clean_expand(arg->final_expand, "\2\3\4\5\6", arg);
-		arg->x = 0;
 		final_list = final_addition(arg->final_expand, arg);
-		free(arg->p);
 		if (final_list == NULL)
+		{
+			free(arg->p);
+			free(arg);	
 			return;
-		final_list->exp_exit = arg->exp_exit;		// *******this for expand the exit status if 1 don't (if 0 expand) *******//
-		final_list->exp_heredoc = arg->exp_heredoc; // *******this for expand inside heredoc status if 1 don't (if 0 expand)*******//
-		// printf("---%d--dasda-\n", arg->exp_exit);
+		}
+		final_list->exp_heredoc = arg->exp_heredoc;
+		final_list->exp_exit = arg->exp_exit;
 		magic(final_list, my_env, env, arg);
+		free(arg->p);
+		free(arg);
 		free_list(final_list);
 	}
-	// int x = 0;
-	// while (final_list)
-	// {
-	// 	printf("********************* BEGIN ***************************\n");
-	// 	printf("_____CMD_____=..%s\n\n", final_list->cmd);
-	// 	x = 0;
-	// 	while (final_list->arg[x])
-	// 		printf("_____ARG_____=..%s\n\n", final_list->arg[x++]);
-	// 	printf("_____PIPE_____=..%s\n\n", final_list->redirection->pipe);
-	// 	x = 0;
-	// 	while (final_list->redirection->type[x])
-	// 		printf("_____TYPE_REDI_____=..%s\n\n", final_list->redirection->type[x++]);
-	// 	x = 0;
-	// 	while (final_list->redirection->file[x])
-	// 		printf("_____FILE_____=..%s\n\n", final_list->redirection->file[x++]);
-	// }
 }
 
 void sig_int()
@@ -398,7 +389,9 @@ int main(int ac, char **av, char **env)
 		if (global_struct.heredoc_signal == 1)
 			global_struct.heredoc_signal = 0;
 		if (input)
+		{
 			parser_arg(input, env, &my_env);
+		}
 		free(input);
 		if (!input)
 			return (global_struct.g_exit_status);

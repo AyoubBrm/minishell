@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:23:50 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/22 17:29:18 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/22 23:57:41 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,19 @@ void	space_var(t_myarg *arg)
 			if (arg->temp_expand[arg->index - 1] && !ft_strchr(" \t",
 					arg->temp_expand[0]))
 				arg->temp_str = ft_strjoin_new(arg->temp_str, "\7", 0, 0);
-			arg->p = ft_strdup(arg->var);
+				if (arg->p)
+				{
+					free(arg->p);
+					arg->p = NULL;
+				}
+				arg->p = ft_strdup(arg->var);
+				free(arg->var);
+				arg->var = NULL;
+				
 		}
 		else if (arg->temp_expand[arg->index])
-		{
 			arg->temp_str = ft_strjoin_new(arg->temp_str, arg->temp_expand,
 					arg->index, arg->index);
-		}
 		arg->index++;
 	}
 }
@@ -72,14 +78,27 @@ void expand_inside_env_or_dont_expand(t_list *my_env,t_myarg *arg, char **s)
 			if (arg->tmp && arg->tmp[0] == ' ' && arg->space == 1)
 			{
 				arg->ambg = 2;
+				if (arg->p)
+				{
+					free(arg->p);
+					arg->p = NULL;
+				}
 				arg->p = ft_strdup(arg->var);
+				free(arg->var);
+				arg->var = NULL;
 				global_struct.g_exit_status = 1;
 			}
 			if (arg->tmp && arg->tmp[ft_strlen(arg->tmp) - 1] == ' ' && arg->space == 2)
 			{
 				arg->ambg = 2;
+				if (arg->p)
+				{
+					free(arg->p);
+					arg->p = NULL;
+				}
 				arg->p = ft_strdup(arg->var);
 				free(arg->var);
+				arg->var = NULL;
 				global_struct.g_exit_status = 1;
 			}
 			else
@@ -98,7 +117,14 @@ void expand_inside_env_or_dont_expand(t_list *my_env,t_myarg *arg, char **s)
 								if (arg->tmp[i] && arg->tmp[i] != ' ')
 								{
 									arg->ambg = 2;
+									if (arg->p)
+									{
+										free(arg->p);
+										arg->p = NULL;
+									}
 									arg->p = ft_strdup(arg->var);
+									free(arg->var);
+									arg->var = NULL;
 								}
 							}
 							i++;
@@ -114,6 +140,8 @@ void expand_inside_env_or_dont_expand(t_list *my_env,t_myarg *arg, char **s)
 			|| ft_strchr(arg->temp_expand, '\t')))))
 		{
 			space_var(arg);
+			free(arg->temp_expand);
+			arg->temp_expand = NULL;
 			arg->temp_expand = ft_strdup(arg->temp_str);
 			free(arg->temp_str);
 			arg->temp_str = NULL;
@@ -125,7 +153,7 @@ void expand_inside_env_or_dont_expand(t_list *my_env,t_myarg *arg, char **s)
 				if ((arg->str_new[i][0] == '\7' && arg->str_new[i][1] == '\6'
 					&& arg->str_new[i][2] == '\0') || (arg->str_new[i][0] == '\7'
 					&& arg->str_new[i][1] == '\5' && arg->str_new[i][2] == '\0'))
-					arg->str_new[i] = 0;
+							arg->str_new[i] = 0;
 			}
 			free2d(arg->ex_env);
 		}

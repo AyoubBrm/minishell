@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 16:02:29 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/22 16:42:09 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/22 20:25:53 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ void	for_null_cmd_or_arg(char **str, char **s, t_myarg *arg)
 char	**get_token_from_str(char **str, char **s, t_myarg *arg)
 {
 	arg->exp_exit = 0;
-
 	while (str[arg->x])
 	{
 		for_null_cmd_or_arg(str, s, arg);
@@ -59,7 +58,7 @@ char	**get_token_from_str(char **str, char **s, t_myarg *arg)
 		}
 		if (str[arg->x])
 		{
-			str_inside_double_qoute(str, s, arg);
+			str_inside_double_qoute(str, s, arg); 
 			str_inside_single_qoute(str, s, arg);
 		}
 		arg->x++;

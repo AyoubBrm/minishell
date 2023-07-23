@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/03 19:15:35 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/26 15:38:34 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/22 23:20:01 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,7 @@ void	free_list(t_table *head)
 		free2d(head->redirection->type);
 		free(head->redirection->pipe);
 		free2d(head->arg);
-		if (head->redirection->file && head->redirection->file[0])
-			free2d(head->redirection->file);
+		free2d(head->redirection->file);
 		free(head->redirection);
 		new_addition = head->next;
 		free(head);

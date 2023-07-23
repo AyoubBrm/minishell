@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:36:30 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/21 21:51:58 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/22 21:09:37 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,10 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
 		return (temp_expand);
 	}
 	if (flags == 2)
+	{
+		free(temp_expand);
 		return (temp_expand = ft_substr(var, 0, ft_strlen(var)));
+	}
 	if (flags == 4)
 		return (ft_strjoin(temp_expand, var));	
 	else if (var[0] == '$' && ft_isdigit(var[1]))

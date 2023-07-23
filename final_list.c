@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 23:35:59 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/18 19:43:35 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/23 01:19:47 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,10 @@ t_table	*final_addition(char **str_new, t_myarg *arg)
 	new_addition = addition_part(str_new, new_addition);
 	head = error(head);
 	if (head == 0)
+	{
+		free2d(str_new);
 		return (NULL);
+	}
 	new_addition->next = NULL;
 	free2d(str_new);
 	ambiguous_no_file(head2, arg);
