@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   find_var_in_env.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:36:30 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/22 21:09:37 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/23 12:50:16 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,15 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
 	t_list	*env;
 
 	env = my_env;
+	if (!my_env)
+	{
+		my_env = malloc(sizeof(t_list));
+		my_env->all = NULL;
+		my_env->key = NULL;
+		my_env->key_exp = NULL;
+		my_env->value = NULL;
+		my_env->next = NULL;
+	}
 	while (env != NULL)
 	{
 		if (ft_strncmp(&var[1], env->key, ft_strlen(var) + 1) == 0)
@@ -53,10 +62,7 @@ char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
 		return (temp_expand);
 	}
 	if (flags == 2)
-	{
-		free(temp_expand);
 		return (temp_expand = ft_substr(var, 0, ft_strlen(var)));
-	}
 	if (flags == 4)
 		return (ft_strjoin(temp_expand, var));	
 	else if (var[0] == '$' && ft_isdigit(var[1]))

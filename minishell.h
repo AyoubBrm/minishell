@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/22 17:33:06 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/23 13:09:18 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,29 +26,28 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-
 typedef struct s_gl
 {
 	int g_exit_status;
 	int heredoc_signal;
-}t_global;
+} t_global;
 
-t_global global_struct; 
+t_global global_struct;
 
 typedef struct s_myenv
 {
-    char *key;
-    char *value;
-    struct s_myenv *next;
-}   t_myenv;
+	char *key;
+	char *value;
+	struct s_myenv *next;
+} t_myenv;
 
 typedef struct s_env
 {
-    char *pwd;
-    // char **myenv;
-}   t_env;
+	char *pwd;
+	// char **myenv;
+} t_env;
 
-//barssing
+// barssing
 
 typedef struct s_addition
 {
@@ -60,8 +59,8 @@ typedef struct s_addition
 	char **type;
 	char **file;
 	char *pipe;
-	
-}t_redirection;
+
+} t_redirection;
 
 typedef struct s_tab
 {
@@ -75,33 +74,33 @@ typedef struct s_tab
 	int no_file_dire;
 	int exp_exit;
 	int exp_heredoc;
-	int	x;
-}t_table;
+	int x;
+} t_table;
 
 typedef struct s_my
 {
-	int		x;
-	int		i;
-	int		index;
-	int		num_alloc;
-	int		quote;
-	int		exp_heredoc;
-	int		exp_exit;
-	char	**final_expand;
-	char	**str_new;
-	int		star;
-	char	*var;
-	char	*temp_expand;
-	char	**ex_env;
-	char	*temp_str;
-	char	*temp;
-	char	*p;
-	int		ex_here;
-	int 	space;
-	int		ambg;
-	char	*tmp;
-	int		free;
-}t_myarg;
+	int x;
+	int i;
+	int index;
+	int num_alloc;
+	int quote;
+	int exp_heredoc;
+	int exp_exit;
+	char **final_expand;
+	char **str_new;
+	int star;
+	char *var;
+	char *temp_expand;
+	char **ex_env;
+	char *temp_str;
+	char *temp;
+	char *p;
+	int ex_here;
+	int space;
+	int ambg;
+	char *tmp;
+	int free;
+} t_myarg;
 
 typedef struct pipes_n_redirection
 {
@@ -130,44 +129,42 @@ typedef struct pipes_n_redirection
 	int is_redirected;
 	int exit_builtin;
 	char wildcard[200];
-}	t_pipes_n_redirection;
+} t_pipes_n_redirection;
 
-
-char	**get_token_from_str(char **str, char **s, t_myarg *arg);
-void	account_quote(char *input, t_myarg *arg);
-char	**clean_expand(char **final_expand, char *str, t_myarg *arg);
-void	token_v2(char **str, char **s, t_myarg *arg);
-void	free_list(t_table *head);
-void	str_and_dollar_with_out_quote(char **str, char**s, t_myarg *arg);
-char	**join2d_with_arr(char **str1, char *str2);
-void	free_list(t_table *head);
-t_table	*error(t_table *list);
-void	ambiguous_no_file(t_table *head, t_myarg *arg);
-int		num_alloc_str(char *input);
-char	**join_2d_arr(char **str1, char **str2);
-void	here_doc_expaand(char *input, t_myarg *arg);
-void	str_inside_double_qoute(char **str, char **s, t_myarg *arg);
-void	str_inside_single_qoute(char **str, char **s, t_myarg *arg);
-char 	**get_path(char **env);
+char **get_token_from_str(char **str, char **s, t_myarg *arg);
+void account_quote(char *input, t_myarg *arg);
+char **clean_expand(char **final_expand, char *str, t_myarg *arg);
+void token_v2(char **str, char **s, t_myarg *arg);
+void free_list(t_table *head);
+void str_and_dollar_with_out_quote(char **str, char **s, t_myarg *arg);
+char **join2d_with_arr(char **str1, char *str2);
+void free_list(t_table *head);
+t_table *error(t_table *list);
+void ambiguous_no_file(t_table *head, t_myarg *arg);
+int num_alloc_str(char *input);
+char **join_2d_arr(char **str1, char **str2);
+void here_doc_expaand(char *input, t_myarg *arg);
+void str_inside_double_qoute(char **str, char **s, t_myarg *arg);
+void str_inside_single_qoute(char **str, char **s, t_myarg *arg);
+char **get_path(char **env);
 char **list_to_double_pointer(t_list *my_env);
-char 	*check_valid_cmd(char *cmd, char **path);
-char 	**copy_args_to_2d(char *cmd_path, char **args);
-void 	pipes(t_table *list, char **args, char **env2d, char *cmd);
-int 	is_builtin(char *builtin);
-char 	**copy_args_to_2d_redirection(char *filename, char *cmd_path);
-int 	get_pos_redirection(char **redirection, char *redirection_type);
-char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
-		int flags);
-int 	get_pos_redirection_v2(int start, char **redirection, char *redirection_type);
-char	**expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg);
-void 	expand_inside_env_or_dont_expand(t_list *my_env,t_myarg *arg, char **s);
-t_table	*final_addition(char **str_new, t_myarg *arg);
+char *check_valid_cmd(char *cmd, char **path);
+char **copy_args_to_2d(char *cmd_path, char **args);
+void pipes(t_table *list, char **args, char **env2d, char *cmd);
+int is_builtin(char *builtin);
+char **copy_args_to_2d_redirection(char *filename, char *cmd_path);
+int get_pos_redirection(char **redirection, char *redirection_type);
+char *find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
+							  int flags);
+int get_pos_redirection_v2(int start, char **redirection, char *redirection_type);
+char **expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg);
+void expand_inside_env_or_dont_expand(t_list *my_env, t_myarg *arg, char **s);
+t_table *final_addition(char **str_new, t_myarg *arg);
 t_table *addition_infile(char **str_new, int *i, t_table *new_addition);
 t_table *addition_part(char **str_new, t_table *new_addition);
-t_table	*output_rid_and_cmd(char **str_new, int *i, t_table *new_addition);
+t_table *output_rid_and_cmd(char **str_new, int *i, t_table *new_addition);
 
-
-//Redirection
+// Redirection
 int get_pos_redirection(char **redirection, char *redirection_type);
 int get_pos_redirection_v2(int start, char **redirection, char *redirection_type);
 // void out_redirection(t_table *current, int out, int is_redirected);
@@ -179,37 +176,62 @@ void in_redirection(t_table *current, t_pipes_n_redirection *pipes_n_redirection
 void no_such_file(t_table *current, t_pipes_n_redirection *pipes_n_redirection, int i);
 void all_redirections(t_table *current, t_pipes_n_redirection *pipes_n_redirection);
 int get_num_heredoc(t_table *list);
-int	heredoc_which_redirection(char **redirection);
-//Execution
+int heredoc_which_redirection(char **redirection);
+// Execution
 void execute_cmds(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env);
 void child(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env);
 void parent(t_table *current, t_pipes_n_redirection *pipes_n_redirection, t_list **my_env);
 
-//Wildcard
+// Wildcard
 void wildcard(char *path);
 void wildcard_helper(t_pipes_n_redirection *pipes_n_redirection);
 
-
-
 void *my_realloc(char *ptr, int size);
 // Built-ins
-void 	my_echo(char **cmd);
-int 	handle_n(char *args);
-int		my_cd(char *path, t_list *myenv, t_pipes_n_redirection *pipes_n_redirection);
-void	my_pwd(t_list *my_env);
-void	my_env(char **env, char **cmd, t_env *myenv);
-t_list	*get_env(char **env);
-void	new_env(t_list **head);
-int		my_exit(char **args, t_pipes_n_redirection *pipes_n_redirection);
-void	myexport(char **cmd, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection);
-void	my_export_add(char *cmd, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int i);
+void my_pwd(t_list *my_env);
+void my_env(char **env, char **cmd, t_env *myenv);
+t_list *get_env(char **env);
+void new_env(t_list **head);
 
-void	my_unset(char **to_unset, t_list **my_env);
-void	sig_int();
+void myexport(char **cmd, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection);
+void my_export_add(char *cmd, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int i);
+
+void my_unset(char **to_unset, t_list **my_env);
+void sig_int();
 
 // Free
 void free2d(char **arg);
 void free_env(void *env);
 void freenode(t_list **lst, t_list *node);
+
+
+
+
+/******************************** Builtins echo **************************/
+void my_echo(char **cmd);
+int handle_n(char *args);
+void handle_n_helper(int i, char **cmd, int *flag);
+void echo_check(char **cmd, int i, int *flag, int *blank);
+
+/******************************** Builtins cd **************************/
+int my_cd(char *path, t_list *myenv, t_pipes_n_redirection *pipes_n_redirection);
+int cd_check(char *path, int *home_found, t_list *current);
+void cd_find_home(t_list *current);
+
+/******************************** Builtins cd **************************/
+int my_exit(char **args, t_pipes_n_redirection *pipes_n_redirection);
+void exit_check(char **args, int i, int j);
+int exit_check2(char **args, int overflow);
+
+/******************************** Builtins cd **************************/
+void my_unset(char **to_unset, t_list **my_env);
+void unset_helper(t_list **my_env, t_list *current, t_list *tmp, char *to_unset);
+
+/******************************** Builtins cd **************************/
+t_list *get_env(char **env);
+void new_env(t_list **head);
+void env_alloc(t_list **new_env, char **env_old, char *envi);
+
+
 
 #endif
