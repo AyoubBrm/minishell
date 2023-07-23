@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/23 13:09:18 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/23 13:53:59 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,8 +193,6 @@ void my_env(char **env, char **cmd, t_env *myenv);
 t_list *get_env(char **env);
 void new_env(t_list **head);
 
-void myexport(char **cmd, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection);
-void my_export_add(char *cmd, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int i);
 
 void my_unset(char **to_unset, t_list **my_env);
 void sig_int();
@@ -232,6 +230,11 @@ t_list *get_env(char **env);
 void new_env(t_list **head);
 void env_alloc(t_list **new_env, char **env_old, char *envi);
 
+/******************************** Builtins cd **************************/
+void myexport(char **cmd, t_list *my_env, t_pipes_n_redirection *pipes_n_redirection);
+void my_export_add(char *cmd, t_pipes_n_redirection *pipes_n_redirection, t_list *my_env, int i);
+void my_export_alloc(t_list **my_export, t_list *current, int b, int k);
+int my_export_check2(char **cmd, t_pipes_n_redirection *pipes_n_redirection);
 
 
 #endif
