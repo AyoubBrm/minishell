@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 21:28:09 by abouram           #+#    #+#             */
-/*   Updated: 2023/06/03 20:20:39 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/24 01:17:30 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,20 @@ int	ft_strncmp(char *s1, char *s2, size_t n)
 	return (0);
 }
 
-int ft_compare(char *dst, char *src)
+int	ft_compare(char *dst, char *src)
 {
-	int i = 0;
+	int	i;
 
-	while(dst[i])
+	i = 0;
+	while (dst[i])
 	{
-		while(src[i])
+		while (src[i])
 		{
 			if (src[i] == dst[i])
 				i++;
 			else
-				return 0;
+				return (0);
 		}
 	}
-	return 1;
+	return (1);
 }

@@ -1,33 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strdup.c                                        :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/03 13:15:31 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/08 01:36:33 by shmimi           ###   ########.fr       */
+/*   Created: 2023/04/30 20:11:20 by shmimi            #+#    #+#             */
+/*   Updated: 2023/07/24 01:44:02 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../minishell.h"
 
-char	*ft_strdup(char *s1)
+void	free2d(char **arg)
 {
-	char	*s2;
-	int		i;
+	int	i;
 
-	if (!s1)
-		return (NULL);
-	s2 = (char *)malloc(ft_strlen(s1) + 1 * sizeof(char));
+	if (!arg)
+		return ;
 	i = 0;
-	if (s2 == NULL)
-		return (NULL);
-	while (s1[i])
+	while (arg[i])
 	{
-		s2[i] = s1[i];
+		free(arg[i]);
+		arg[i] = NULL;
 		i++;
 	}
-	s2[i] = '\0';
-	return (s2);
+	free(arg);
+	arg = NULL;
+}
+
+void	double_free2d(char **arg1, char **arg2)
+{
+	free2d(arg1);
+	free2d(arg2);
 }

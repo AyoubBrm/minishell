@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/23 20:36:59 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/24 00:14:00 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ typedef struct s_my
 	int ambg;
 	char *tmp;
 	int		indx;
+	char	*input;
 } t_myarg;
 
 typedef struct pipes_n_redirection
@@ -157,6 +158,7 @@ char **copy_args_to_2d_redirection(char *filename, char *cmd_path);
 int get_pos_redirection(char **redirection, char *redirection_type);
 char *find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
 							  int flags);
+void addition_cmd(char **str_new, int *i, t_table *new_addition);
 int get_pos_redirection_v2(int start, char **redirection, char *redirection_type);
 char **expand(char **s, t_list *my_env, int num_alloc, t_myarg *arg);
 void expand_inside_env_or_dont_expand(t_list *my_env, t_myarg *arg, char **s);
@@ -164,6 +166,7 @@ t_table *final_addition(char **str_new, t_myarg *arg);
 t_table *addition_infile(char **str_new, int *i, t_table *new_addition);
 t_table *addition_part(char **str_new, t_table *new_addition);
 t_table *output_rid_and_cmd(char **str_new, int *i, t_table *new_addition);
+void	token_without_quotev2(char **str, char **s, t_myarg *arg, int star);
 
 // Redirection
 int get_pos_redirection(char **redirection, char *redirection_type);

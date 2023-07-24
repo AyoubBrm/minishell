@@ -1,41 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin_new.c                                   :+:      :+:    :+:   */
+/*   free_link_list.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/09 18:05:06 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/24 01:16:43 by abouram          ###   ########.fr       */
+/*   Created: 2023/06/03 19:15:35 by abouram           #+#    #+#             */
+/*   Updated: 2023/07/24 01:43:59 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../minishell.h"
 
-char	*ft_strjoin_new(char *s1, char *s2, int x, int j)
+void	free_list(t_table *head)
 {
-	char	*p;
-	int		i;
-	char	*tmp;
+	t_table	*new_addition;
 
-	if (!s1 && !s2)
-		return (NULL);
-	tmp = s1;
-	i = 0;
-	p = (char *)malloc((ft_strlen(s2) + ft_strlen(s1) + 1) * sizeof(char));
-	if (!p)
-		return (NULL);
-	while (*s1)
+	while (head)
 	{
-		p[i] = *s1++;
-		i++;
+		free(head->cmd);
+		free2d(head->redirection->type);
+		free(head->redirection->pipe);
+		free2d(head->arg);
+		free2d(head->redirection->file);
+		free(head->redirection);
+		new_addition = head->next;
+		free(head);
+		head = new_addition;
 	}
-	while (s2[x] && x <= j)
-	{
-		p[i] = s2[x++];
-		i++;
-	}
-	p[i] = '\0';
-	free(tmp);
-	return (p);
+	free(head);
 }

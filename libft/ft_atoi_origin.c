@@ -17,17 +17,17 @@ static int	check_test(long *result, int i, int *sign, char *nb)
 	if (*result == 214748364 && (nb[i] - '0') == 8 && *sign == -1)
 	{
 		*result = 2147483648;
-		return 1;
+		return (1);
 	}
 	else if ((*result > 2147483647 / 10) || (*result == 2147483647 / 10
 			&& (nb[i] - '0') > 7))
 	{
-		return 255;
+		return (255);
 	}
 	*result *= 10;
 	if ((nb[i] >= '0' && nb[i] <= '9'))
 		*result += nb[i] - '0';
-	return 0;
+	return (0);
 }
 
 static void	check(char *nb, int i, long *result, int *sign)

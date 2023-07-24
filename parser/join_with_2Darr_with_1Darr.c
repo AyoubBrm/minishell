@@ -1,41 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin_new.c                                   :+:      :+:    :+:   */
+/*   join_with_2Darr_with_1Darr.c                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/09 18:05:06 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/24 01:16:43 by abouram          ###   ########.fr       */
+/*   Created: 2023/06/18 21:31:30 by abouram           #+#    #+#             */
+/*   Updated: 2023/07/24 01:44:12 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../minishell.h"
 
-char	*ft_strjoin_new(char *s1, char *s2, int x, int j)
+char	**join2d_with_arr(char **str1, char *str2)
 {
-	char	*p;
+	char	**new_expand;
 	int		i;
-	char	*tmp;
 
-	if (!s1 && !s2)
-		return (NULL);
-	tmp = s1;
 	i = 0;
-	p = (char *)malloc((ft_strlen(s2) + ft_strlen(s1) + 1) * sizeof(char));
-	if (!p)
+	if (!str1 && !str2)
 		return (NULL);
-	while (*s1)
-	{
-		p[i] = *s1++;
+	while (str1[i])
 		i++;
-	}
-	while (s2[x] && x <= j)
-	{
-		p[i] = s2[x++];
-		i++;
-	}
-	p[i] = '\0';
-	free(tmp);
-	return (p);
+	new_expand = ft_calloc((i + 1) + 1, sizeof(char *));
+	if (!new_expand)
+		return (NULL);
+	i = -1;
+	while (str1[++i])
+		new_expand[i] = ft_strdup(str1[i]);
+	new_expand[i] = ft_strdup(str2);
+	free2d(str1);
+	return (new_expand);
 }

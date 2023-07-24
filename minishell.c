@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/23 20:07:57 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/24 00:38:25 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -312,14 +312,26 @@ int is_builtin(char *builtin)
 	}
 	return 0;
 }
-void parser_arg(char *input, char **env, t_list **my_env)
-{
-	t_table *final_list;
-	char **str = NULL;
-	char **s = NULL;
-	t_myarg *arg;
 
-	arg = ft_calloc(1 , sizeof(t_myarg));
+char	**parser_argv3(t_myarg *arg, char *input)
+{
+	char **str;
+	char **s;
+	
+	arg->p = NULL;
+	str = ft_split(input, '\"');
+	s = ft_calloc(sizeof(char *), arg->num_alloc + 1);
+	arg->x = 0;
+	arg->i = 0;
+	arg->index = 0;
+	arg->space = 0;
+	arg->ambg = 0;
+	s = get_token_from_str(str, s, arg);
+	return (s);
+}
+
+void parser_argv2(t_myarg *arg, char *input)
+{
 	arg->quote = 0;
 	arg->num_alloc = 0;
 	here_doc_expaand(input, arg);
@@ -331,17 +343,18 @@ void parser_arg(char *input, char **env, t_list **my_env)
 				  "minishell: unexpected EOF while looking for matching");
 		global_struct.g_exit_status = 2;
 	}
-	else
+}
+void parser_arg(char *input, char **env, t_list **my_env)
+{
+	t_table *final_list;
+	char	**s;
+	t_myarg *arg;
+
+	arg = ft_calloc(1 , sizeof(t_myarg));
+	parser_argv2(arg, input);
+	if (arg->quote % 2 == 0)
 	{
-		arg->p = NULL;
-		str = ft_split(input, '\"');
-		s = ft_calloc(sizeof(char *), arg->num_alloc + 1);
-		arg->x = 0;
-		arg->i = 0;
-		arg->index = 0;
-		arg->space = 0;
-		arg->ambg = 0;
-		s = get_token_from_str(str, s, arg);
+		s = parser_argv3(arg, input);
 		arg->final_expand = expand(s, *my_env, arg->num_alloc, arg);
 		arg->final_expand = clean_expand(arg->final_expand, "\2\3\4\5\6", arg);
 		final_list = final_addition(arg->final_expand, arg);
@@ -352,7 +365,6 @@ void parser_arg(char *input, char **env, t_list **my_env)
 			return;
 		}
 		final_list->exp_heredoc = arg->exp_heredoc;
-		final_list->exp_exit = arg->exp_exit;
 		magic(final_list, my_env, env, arg);
 		free_list(final_list);
 		free(arg->p);
@@ -383,8 +395,8 @@ int main(int ac, char **av, char **env)
 	global_struct.g_exit_status = 0;
 	while (1)
 	{
-		// signal(SIGINT, sig_int);
-		// signal(SIGQUIT, SIG_IGN);
+		signal(SIGINT, sig_int);
+		signal(SIGQUIT, SIG_IGN);
 		input = readline("minishell$ ");
 		add_history(input);
 		if (global_struct.heredoc_signal == 1)
