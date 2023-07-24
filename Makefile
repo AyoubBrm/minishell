@@ -21,7 +21,7 @@ all : ${NAME}
 ${NAME} : $(SRC_BARSER) ${SRC} $(SRC_BUILTINS)
 	make bonus -C ./libft
 	$(FT_PRINTF)
-	${CC} $(FLAGS) $(SRC_BARSER) $(SRC_BUILTINS) ${SRC} -lreadline ./libft/libft.a ./ft_printf/libftprintf.a -o ${NAME}
+	${CC} $(FLAGS) $(SRC_BARSER) $(SRC_BUILTINS) ${SRC}-L/Users/abouram/goinfre/homebrew/opt/readline/lib -I/Users/abouram/goinfre/homebrew/opt/readline/include -lreadline ./libft/libft.a ./ft_printf/libftprintf.a -o ${NAME}
 
 clean : 
 	rm -rf $(OBJ)

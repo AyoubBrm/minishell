@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 22:59:20 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/24 00:38:25 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/24 19:27:58 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,11 @@ int get_num_heredoc(t_table *list)
 }
 void sig_here()
 {
-	close(0);
+	global_struct.fd = ttyname(0);
 	printf("\n");
+	close(0);
+	rl_replace_line("", 0);
 	rl_on_new_line();
-	// rl_replace_line("", 0);
 	global_struct.heredoc_signal = 1;
 }
 void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
@@ -148,7 +149,11 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 					free(pipes_n_redirection->input);
 				}
 				if (global_struct.heredoc_signal == 1)
+				{
+					global_struct.i = open(global_struct.fd, O_RDONLY);
+					dup2(global_struct.i, 0);
 					break;
+				}
 				x++;
 			}
 			x = 0;
@@ -156,7 +161,8 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 		}
 		if (global_struct.heredoc_signal == 1)
 		{
-			open("/dev/tty", O_RDONLY);
+			global_struct.i = open(global_struct.fd, O_RDONLY);
+			dup2(global_struct.i, 0);
 			break;
 		}
 		/************************* End << Heredoc ************************************/
@@ -206,7 +212,6 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 
 		current = current->next;
 	}
-
 	if (pipes_n_redirection->tmp)
 		close(pipes_n_redirection->tmp);
 	if (pipes_n_redirection->in)
@@ -257,8 +262,6 @@ void magic(t_table *list, t_list **my_en, char **env, t_myarg *arg)
 		global_struct.g_exit_status = 1;
 	else
 		global_struct.g_exit_status = WEXITSTATUS(global_struct.g_exit_status);
-
-
 	free(pipes_n_redirection);
 }
 
@@ -376,8 +379,8 @@ void sig_int()
 {
 	if (global_struct.heredoc_signal == 0)
 		printf("\n");
+	rl_replace_line("", 0);
 	rl_on_new_line();
-	// rl_replace_line("", 0);
 	rl_redisplay();
 	return;
 }
@@ -398,9 +401,9 @@ int main(int ac, char **av, char **env)
 		signal(SIGINT, sig_int);
 		signal(SIGQUIT, SIG_IGN);
 		input = readline("minishell$ ");
-		add_history(input);
 		if (global_struct.heredoc_signal == 1)
 			global_struct.heredoc_signal = 0;
+		add_history(input);
 		if (input)
 			parser_arg(input, env, &my_env);
 		free(input);

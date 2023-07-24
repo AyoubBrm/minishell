@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/24 00:14:00 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/24 19:10:51 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ typedef struct s_gl
 {
 	int g_exit_status;
 	int heredoc_signal;
+	char *fd;
+	int	i;
 } t_global;
 
 t_global global_struct;
