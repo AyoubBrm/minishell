@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 20:33:28 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/25 06:02:47 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 09:26:04 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	find_space(t_myarg *arg)
 		if (arg->p)
 			free(arg->p);
 		arg->p = ft_strdup(arg->var);
-		global_struct.g_exit_status = 1;
+		g_global_struct.g_exit_status = 1;
 	}
 	else if (arg->tmp && ft_strchr(" \t", arg->tmp[ft_strlen(arg->tmp) - 1])
 		&& arg->space == 2)
@@ -58,7 +58,7 @@ void	find_space(t_myarg *arg)
 		if (arg->p)
 			free(arg->p);
 		arg->p = ft_strdup(arg->var);
-		global_struct.g_exit_status = 1;
+		g_global_struct.g_exit_status = 1;
 	}
 	else
 	{

@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 10:26:33 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/23 12:39:36 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 09:26:04 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	my_exit(char **args, t_pipes_n_redirection *pipes_n_redirection)
 	}
 	if (exit_check2(args, overflow))
 		return (1);
-	exit(global_struct.g_exit_status);
+	exit(g_global_struct.g_exit_status);
 }
 
 void	exit_check(char **args, int i, int j)
@@ -71,7 +71,7 @@ int	exit_check2(char **args, int overflow)
 	if (args[0] && args[1])
 	{
 		printf("minishell: exit: too many arguments\n");
-		global_struct.g_exit_status = 1;
+		g_global_struct.g_exit_status = 1;
 		return (1);
 	}
 	else if (args[0])
@@ -80,9 +80,9 @@ int	exit_check2(char **args, int overflow)
 			overflow = ft_atoi_origin(args[0]) - 256;
 		else
 			overflow = ft_atoi_origin(args[0]);
-		global_struct.g_exit_status = overflow;
+		g_global_struct.g_exit_status = overflow;
 		exit(overflow);
 	}
 	else
-		exit(global_struct.g_exit_status);
+		exit(g_global_struct.g_exit_status);
 }

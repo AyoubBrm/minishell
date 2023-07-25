@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ambiguous_no_dirc.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 22:40:14 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/24 01:43:33 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/25 09:26:04 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	file_rid(t_table *head, t_myarg *arg)
 		{
 			head->ambiguous = 1;
 			head->redirection->file[i][0] = '\0';
-			global_struct.g_exit_status = 1;
+			g_global_struct.g_exit_status = 1;
 		}
 		else if (head->redirection->file[i][0] == '\3'
 			|| head->redirection->file[i][0] == '\5'
@@ -48,7 +48,7 @@ void	cmd_arg(t_table *head, t_myarg *arg)
 	else if (head->cmd && head->cmd[0] == '\7' && arg->space == 0)
 	{
 		head->ambiguous = 1;
-		global_struct.g_exit_status = 1;
+		g_global_struct.g_exit_status = 1;
 	}
 	else if (head->cmd && head->cmd[0] == '\6')
 		head->cmd = NULL;
@@ -60,7 +60,7 @@ void	cmd_arg(t_table *head, t_myarg *arg)
 		if (head->arg[i] && head->arg[i][0] == '\7' && arg->space == 0)
 		{
 			head->ambiguous = 1;
-			global_struct.g_exit_status = 1;
+			g_global_struct.g_exit_status = 1;
 			ft_memmove(head->arg[i], &head->arg[i][1], ft_strlen(head->arg[i]));
 		}
 		else if (head->arg[i] && head->arg[i][0] == '\6')

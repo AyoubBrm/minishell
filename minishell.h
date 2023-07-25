@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/25 08:35:50 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 09:25:44 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ typedef struct g_gl
 	int				i;
 }					t_global;
 
-t_global			global_struct;
+t_global			g_global_struct;
 
 typedef struct s_myenv
 {
@@ -148,6 +148,7 @@ typedef struct s_my_export
 int		init(char *input, t_list *my_env);
 
 void	parser_arg(char *input, t_list **my_env);
+void	pars_pipe_and_rid(char **str, char **s, t_myarg *arg);
 char	**get_token_from_str(char **str, char **s, t_myarg *arg);
 void	check_ambig(t_list *my_env, t_myarg *arg, char **s);
 void	account_quote(char *input, t_myarg *arg);

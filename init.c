@@ -6,11 +6,11 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/25 05:31:04 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/25 05:55:44 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 09:40:12 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "minishell.h"
 
 int	main(int ac, char **av, char **env)
 {
@@ -22,11 +22,11 @@ int	main(int ac, char **av, char **env)
 		return (1);
 	input = NULL;
 	my_env = get_env(env);
-	global_struct.heredoc_signal = 0;
-	global_struct.g_exit_status = 0;
+	g_global_struct.heredoc_signal = 0;
+	g_global_struct.g_exit_status = 0;
 	init(input, my_env);
 	if (!input)
-		return (global_struct.g_exit_status);
+		return (g_global_struct.g_exit_status);
 	return (0);
 }
 
@@ -37,17 +37,17 @@ int	init(char *input, t_list	*my_env)
 		signal(SIGINT, sig_int);
 		signal(SIGQUIT, SIG_IGN);
 		input = readline("minishell$ ");
-		if (global_struct.heredoc_signal == 1)
+		if (g_global_struct.heredoc_signal == 1)
 		{
-			global_struct.g_exit_status = 1;
-			global_struct.heredoc_signal = 0;
+			g_global_struct.g_exit_status = 1;
+			g_global_struct.heredoc_signal = 0;
 		}
 		add_history(input);
 		if (input)
 			parser_arg(input, &my_env);
 		free(input);
 		if (!input)
-			return (global_struct.g_exit_status);
+			return (g_global_struct.g_exit_status);
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 10:25:12 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/23 12:32:55 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 09:26:04 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	my_cd(char *path, t_list *my_env,
 	}
 	current = my_env;
 	cd_check(path, &home_found, current);
-	return (global_struct.g_exit_status);
+	return (g_global_struct.g_exit_status);
 }
 
 int	cd_check(char *path, int *home_found, t_list *current)
@@ -42,7 +42,7 @@ int	cd_check(char *path, int *home_found, t_list *current)
 		if (chdir(path) != 0)
 		{
 			ft_printf("bash: cd: %s: No such file or directory\n", path);
-			return (global_struct.g_exit_status = 1);
+			return (g_global_struct.g_exit_status = 1);
 		}
 	}
 	else if (!path && *home_found)
@@ -50,9 +50,9 @@ int	cd_check(char *path, int *home_found, t_list *current)
 	else
 	{
 		ft_printf("bash: cd: HOME not set\n");
-		return (global_struct.g_exit_status = 1);
+		return (g_global_struct.g_exit_status = 1);
 	}
-	return (global_struct.g_exit_status = 0);
+	return (g_global_struct.g_exit_status = 0);
 }
 
 void	cd_find_home(t_list *current)

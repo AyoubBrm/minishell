@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 10:26:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/24 18:36:01 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 09:26:04 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	my_export_check2(char *cmd, t_pipes_n_redirection *pipes_n_redirection)
 		if (check_myexport(key, j))
 		{
 			ft_printf("bash: not a valid identifiers\n");
-			global_struct.g_exit_status = 1;
+			g_global_struct.g_exit_status = 1;
 			pipes_n_redirection->exit_builtin = 1;
 			return (1);
 		}
@@ -125,7 +125,7 @@ int	my_export_check3(t_pipes_n_redirection *pipes_n_redirection, char *cmd,
 		if (cmd[0] == '_')
 			return (1);
 		ft_printf("bash: not a valid identifierss\n");
-		global_struct.g_exit_status = 1;
+		g_global_struct.g_exit_status = 1;
 		pipes_n_redirection->exit_builtin = 1;
 		*flag = 1;
 		return (1);
@@ -133,7 +133,7 @@ int	my_export_check3(t_pipes_n_redirection *pipes_n_redirection, char *cmd,
 	if ((cmd[j] == '+' && cmd[j + 1] == '+'))
 	{
 		ft_printf("bash: not a valid identifier\n");
-		global_struct.g_exit_status = 1;
+		g_global_struct.g_exit_status = 1;
 		pipes_n_redirection->exit_builtin = 1;
 		*flag = 1;
 		return (1);

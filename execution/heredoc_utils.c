@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/25 05:14:47 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/25 05:55:40 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 09:26:04 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void	heredoc_loop(t_pipes_n_redirection *pipes_n_redirection,
 	while (1)
 	{
 		signal(SIGINT, sig_here);
-		if (global_struct.heredoc_signal == 1)
+		if (g_global_struct.heredoc_signal == 1)
 			break ;
 		pipes_n_redirection->input = readline("> ");
 		if (heredoc_utils(pipes_n_redirection, current_heredoc))

@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 10:27:32 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/24 18:38:22 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 09:26:04 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	my_pwd(void)
 	if (getcwd(pwd, sizeof(pwd)) == NULL)
 	{
 		perror("getcwd");
-		global_struct.g_exit_status = 1;
+		g_global_struct.g_exit_status = 1;
 		return ;
 	}
 	printf("%s\n", pwd);

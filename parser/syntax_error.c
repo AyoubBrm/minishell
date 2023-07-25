@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_error.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:29:48 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/24 01:44:47 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/25 09:26:04 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ t_table	*error(t_table *list)
 	{
 		if (error_file_pip_rid(list, free) == 0)
 		{
-			global_struct.g_exit_status = 2;
+			g_global_struct.g_exit_status = 2;
 			return (0);
 		}
 		list = list->next;

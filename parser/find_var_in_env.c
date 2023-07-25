@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   find_var_in_env.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:36:30 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/24 01:43:56 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/25 09:26:04 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ char	*return_expand(t_list *my_env, char *var, char *temp_expand, int flags)
 {
 	if (ft_strncmp(var, "$?", 3) == 0)
 	{
-		my_env->ex_status = ft_itoa(global_struct.g_exit_status);
+		my_env->ex_status = ft_itoa(g_global_struct.g_exit_status);
 		temp_expand = ft_strjoin(temp_expand, my_env->ex_status);
 		free(my_env->ex_status);
 		return (temp_expand);

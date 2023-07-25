@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 22:46:51 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/25 05:55:50 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 09:26:04 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ void	out_redirection(t_table *current,
 	{
 		ft_printf("bash: %s: Permission denied\n",
 			current->redirection->file[i]);
-		global_struct.g_exit_status = 1;
-		exit(global_struct.g_exit_status);
+		g_global_struct.g_exit_status = 1;
+		exit(g_global_struct.g_exit_status);
 	}
 	dup2(pipes_n_redirection->trunc_redirect, 1);
 	close(pipes_n_redirection->trunc_redirect);
@@ -44,8 +44,8 @@ void	app_redirection(t_table *current,
 	{
 		ft_printf("bash: %s: Permission denied\n",
 			current->redirection->file[i]);
-		global_struct.g_exit_status = 1;
-		exit(global_struct.g_exit_status);
+		g_global_struct.g_exit_status = 1;
+		exit(g_global_struct.g_exit_status);
 	}
 	dup2(pipes_n_redirection->append_redirection, 1);
 	close(pipes_n_redirection->append_redirection);

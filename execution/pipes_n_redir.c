@@ -6,7 +6,7 @@
 /*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/24 19:57:23 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/25 05:55:45 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 09:26:49 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ void	wait_for_children(t_pipes_n_redirection *pipes_n_redirection)
 	i = 0;
 	while (i < pipes_n_redirection->num_pipes + 1)
 	{
-		waitpid(pipes_n_redirection->pids[i], &global_struct.g_exit_status, 0);
+		waitpid(pipes_n_redirection->pids[i],
+			&g_global_struct.g_exit_status, 0);
 		i++;
 	}
 }
@@ -104,10 +105,10 @@ int	heredoc_main(t_pipes_n_redirection *pipes_n_redirection,
 			O_CREAT | O_RDWR,
 			0666);
 	heredoc_loop(pipes_n_redirection, current_heredoc, arg, my_env);
-	if (global_struct.heredoc_signal == 1)
+	if (g_global_struct.heredoc_signal == 1)
 	{
-		global_struct.i = open(global_struct.fd, O_RDONLY);
-		dup2(global_struct.i, 0);
+		g_global_struct.i = open(g_global_struct.fd, O_RDONLY);
+		dup2(g_global_struct.i, 0);
 		return (1);
 	}
 	return (0);
