@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 22:40:14 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/25 11:46:03 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/25 16:56:59 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,24 @@ void	file_rid(t_table *head, t_myarg *arg)
 	}
 }
 
+void	check_arg(t_table *head, t_myarg *arg)
+{
+	int	i;
+
+	i = -1;
+	while (head->arg[++i])
+	{
+		if (head->arg[i] && head->arg[i][0] == '\7' && arg->space == 0)
+		{
+			head->ambiguous = 1;
+			g_global_struct.g_exit_status = 1;
+			ft_memmove(head->arg[i], &head->arg[i][1], ft_strlen(head->arg[i]));
+		}
+		else if (head->arg[i] && head->arg[i][0] == '\6')
+			head->arg[i][0] = '\0';
+	}
+}
+
 void	cmd_arg(t_table *head, t_myarg *arg)
 {
 	int	i;
@@ -57,18 +75,7 @@ void	cmd_arg(t_table *head, t_myarg *arg)
 	}
 	else if (head->cmd && (head->cmd[0] == '\3' || head->cmd[0] == '\5'))
 		head->cmd[0] = '\0';
-	i = -1;
-	while (head->arg[++i])
-	{
-		if (head->arg[i] && head->arg[i][0] == '\7' && arg->space == 0)
-		{
-			head->ambiguous = 1;
-			g_global_struct.g_exit_status = 1;
-			ft_memmove(head->arg[i], &head->arg[i][1], ft_strlen(head->arg[i]));
-		}
-		else if (head->arg[i] && head->arg[i][0] == '\6')
-			head->arg[i][0] = '\0';
-	}
+	check_arg(head, arg);
 }
 
 void	ambiguous_no_file(t_table *head, t_myarg *arg)

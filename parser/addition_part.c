@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 23:06:29 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/25 12:04:29 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/25 16:51:13 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ t_table	*addition_heredoc(char **str_new, int *i, t_table *new_addition)
 
 t_table	*addition_pip(char *str_new, int *i, t_table *new_addition)
 {
-	if (str_new && ft_strncmp("|", str_new, 1) == 0)
+	if (str_new && ft_strncmp("|", str_new, 2) == 0)
 	{
 		new_addition->pip++;
 		new_addition->redirection->pipe = ft_strdup(str_new);
@@ -113,7 +113,7 @@ t_table	*addition_part(char **str_new, t_table *new_addition)
 		else if (str_new[i] && ft_strncmp(str_new[i], "<", 1) == 0
 			&& str_new[i][1] != '<')
 			new_addition = addition_infile(str_new, &i, new_addition);
-		if (str_new[i] && ft_strncmp(str_new[i], "<<", 3) != 0)
+		else if (str_new[i] && ft_strncmp(str_new[i], "<<", 3) != 0)
 			addition_cmd(str_new, &i, new_addition);
 		clean_cmd_and_put_arg(str_new, &i, new_addition);
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes_n_redir.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/24 19:57:23 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/25 09:26:49 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 18:49:17 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,7 @@ void	close_fds(t_pipes_n_redirection *pipes_n_redirection)
 		close(pipes_n_redirection->pipefds[1]);
 	}
 	if (pipes_n_redirection->flag)
-	{
 		unlink(pipes_n_redirection->filename);
-		free(pipes_n_redirection->filename);
-	}
 }
 
 void	heredoc(t_table *list, t_list *my_env, t_myarg *arg,

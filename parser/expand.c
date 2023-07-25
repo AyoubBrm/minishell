@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:29:36 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/25 12:29:34 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/25 18:49:57 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	skip_after_dollar(t_myarg *arg, char **s)
 	}
 }
 
-void	keep_for_inside_qoute(char **s, t_myarg *arg, t_list *my_env)
+int	keep_for_inside_qoute(char **s, t_myarg *arg, t_list *my_env)
 {
 	if (arg->x > 0 && s[arg->x][arg->i] != '\4' && (!ft_strncmp("<",
 				arg->str_new[arg->x - 1], 2) || !ft_strncmp(">",
@@ -47,15 +47,21 @@ void	keep_for_inside_qoute(char **s, t_myarg *arg, t_list *my_env)
 		if (!arg->temp_expand[0])
 			arg->p = ft_strdup(arg->var);
 		arg->ex_here = 1;
+		return (1);
 	}
 	else if (arg->x > 0 && !ft_strncmp("<<", arg->str_new[arg->x - 1], 3))
+	{
 		arg->temp_expand = find_in_env_and_alloced(my_env, arg->var,
 				arg->temp_expand, 2);
+		return (1);
+	}
+	return (0);
 }
 
 void	expand_inside_quote(char **s, t_myarg *arg, t_list *my_env)
 {
-	keep_for_inside_qoute(s, arg, my_env);
+	if (keep_for_inside_qoute(s, arg, my_env))
+		return ;
 	if (s[arg->x][arg->i] == '\4')
 	{
 		arg->temp_expand = find_in_env_and_alloced(my_env, arg->var,

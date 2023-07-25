@@ -6,7 +6,7 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 19:36:30 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/25 11:51:16 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/25 18:47:53 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,10 @@ char	*return_expand(t_list *my_env, char *var, char *temp_expand, int flags)
 		return (temp_expand);
 	}
 	if (flags == 2)
+	{
+		free(temp_expand);
 		return (temp_expand = ft_substr(var, 0, ft_strlen(var)));
+	}
 	if (flags == 4)
 		return (ft_strjoin(temp_expand, var));
 	else if (var[0] == '$' && ft_isdigit(var[1]))
@@ -35,11 +38,14 @@ char	*return_expand(t_list *my_env, char *var, char *temp_expand, int flags)
 char	*expand_status(t_list *env, char *var, char *temp_expand, int flags)
 {
 	if (flags == 2)
-		return (temp_expand = ft_strjoin_new(temp_expand,
-				var, 0, ft_strlen(var)));
-	else if (flags == 4)
+	{
+		return (temp_expand = ft_strjoin(temp_expand, var));
+	}
+	if (flags == 4)
+	{
 		return (temp_expand = ft_strjoin_new(temp_expand, var, 0,
 				ft_strlen(var)));
+	}
 	if (flags != 4 && env->value && (ft_strchr(env->value, '>')
 			|| ft_strchr(env->value, '|') || ft_strchr(env->value,
 				'<')))

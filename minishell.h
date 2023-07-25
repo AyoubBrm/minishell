@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/01 18:35:39 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/25 09:25:44 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 16:40:27 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,6 +165,7 @@ char	**join_2d_arr(char **str1, char **str2);
 void	here_doc_expaand(char *input, t_myarg *arg);
 void	str_inside_double_qoute(char **str, char **s, t_myarg *arg);
 void	str_inside_single_qoute(char **str, char **s, t_myarg *arg);
+void	pars_pipe_and_rid(char **str, char **s, t_myarg *arg);
 
 char	*find_in_env_and_alloced(t_list *my_env, char *var, char *temp_expand,
 			int flags);

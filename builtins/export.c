@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 10:26:01 by shmimi            #+#    #+#             */
-/*   Updated: 2023/07/25 09:26:04 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 18:51:08 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ int	my_export_check2(char *cmd, t_pipes_n_redirection *pipes_n_redirection)
 			ft_printf("bash: not a valid identifiers\n");
 			g_global_struct.g_exit_status = 1;
 			pipes_n_redirection->exit_builtin = 1;
+			free(key);
 			return (1);
 		}
 		j++;

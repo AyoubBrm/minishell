@@ -6,15 +6,19 @@
 /*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 17:00:18 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/24 01:44:42 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/25 16:53:41 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+#include "../minishell.h"
+
 void	token2(char **str, char **s, t_myarg *arg, int star)
 {
-	if (str[arg->x][arg->i] && ft_strchr2("<>|", str[arg->x][arg->i], 3))
+	if (str[arg->x][arg->i] && ft_strchr2("|", str[arg->x][arg->i], 1))
+		pars_pipe_and_rid(str, s, arg);
+	else if (str[arg->x][arg->i] && ft_strchr2("<>", str[arg->x][arg->i], 3))
 	{
 		if ((arg->i > 0 && !ft_strchr2(&str[arg->x][0], ' ', arg->i)
 			&& !ft_strchr2(&str[arg->x][0], '\t', arg->i)) || (arg->x > 0
@@ -26,7 +30,7 @@ void	token2(char **str, char **s, t_myarg *arg, int star)
 		star = arg->i;
 		if (!s[arg->index])
 			s[arg->index] = ft_calloc(1, 1);
-		while (str[arg->x][arg->i] && ft_strchr2("<>|", str[arg->x][arg->i], 3))
+		while (str[arg->x][arg->i] && ft_strchr2("<>", str[arg->x][arg->i], 3))
 			arg->i++;
 		s[arg->index] = ft_strjoin_new(s[arg->index], str[arg->x], star, arg->i
 				- 1);
