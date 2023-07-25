@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   addition_part.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 23:06:29 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/24 21:48:38 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 12:04:29 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ t_table	*addition_part(char **str_new, t_table *new_addition)
 		else if (str_new[i] && ft_strncmp(str_new[i], "<", 1) == 0
 			&& str_new[i][1] != '<')
 			new_addition = addition_infile(str_new, &i, new_addition);
-		else if (str_new[i] && ft_strncmp(str_new[i], "<<", 3) != 0)
+		if (str_new[i] && ft_strncmp(str_new[i], "<<", 3) != 0)
 			addition_cmd(str_new, &i, new_addition);
 		clean_cmd_and_put_arg(str_new, &i, new_addition);
 	}

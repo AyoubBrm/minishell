@@ -1,6 +1,6 @@
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
-LDFLAGS = -L/Users/shmimi/goinfre/homebrew/opt/readline/lib -I/Users/shmimi/goinfre/homebrew/opt/readline/include -lreadline
+LDFLAGS = -L/Users/abouram/goinfre/homebrew/opt/readline/lib -I/Users/abouram/goinfre/homebrew/opt/readline/include -lreadline
 
 SRC = minishell.c
 SRC_BUILTINS = $(addprefix ./builtins/, echo.c exit.c export.c export_utils.c myexport_utils2.c env.c cd.c pwd.c unset.c)

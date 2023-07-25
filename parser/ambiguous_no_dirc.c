@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ambiguous_no_dirc.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 22:40:14 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/25 09:26:04 by shmimi           ###   ########.fr       */
+/*   Updated: 2023/07/25 11:46:03 by abouram          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,10 @@ void	cmd_arg(t_table *head, t_myarg *arg)
 		g_global_struct.g_exit_status = 1;
 	}
 	else if (head->cmd && head->cmd[0] == '\6')
+	{
+		free(head->cmd);
 		head->cmd = NULL;
+	}
 	else if (head->cmd && (head->cmd[0] == '\3' || head->cmd[0] == '\5'))
 		head->cmd[0] = '\0';
 	i = -1;
