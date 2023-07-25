@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   addition_cmd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abouram < abouram@student.1337.ma>         +#+  +:+       +#+        */
+/*   By: shmimi <shmimi@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 23:15:07 by abouram           #+#    #+#             */
-/*   Updated: 2023/07/24 01:43:19 by abouram          ###   ########.fr       */
+/*   Updated: 2023/07/24 21:48:18 by shmimi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,13 @@
 
 void	addition_cmd(char **str_new, int *i, t_table *new_addition)
 {
-	if (str_new[*i] && ft_strncmp(str_new[*i], "<<", 3) != 0)
-	{
-		if (str_new[*i] && !new_addition->cmd && str_new[*i][0] != '|')
-			new_addition->cmd = ft_strdup(str_new[(*i)++]);
-		if (str_new[*i] && str_new[*i][0] && str_new[*i][0] != '\6'
-			&& !new_addition->cmd && str_new[*i][0] != '|')
-			new_addition->cmd = ft_strdup(str_new[(*i)++]);
-		if (str_new[*i] && str_new[*i][0] && str_new[*i][0] == '\6')
-			(*i)++;
-	}
+	if (str_new[*i] && !new_addition->cmd && str_new[*i][0] != '|')
+		new_addition->cmd = ft_strdup(str_new[(*i)++]);
+	if (str_new[*i] && str_new[*i][0] && str_new[*i][0] != '\6'
+		&& !new_addition->cmd && str_new[*i][0] != '|')
+		new_addition->cmd = ft_strdup(str_new[(*i)++]);
+	if (str_new[*i] && str_new[*i][0] && str_new[*i][0] == '\6')
+		(*i)++;
 }
 
 t_table	*output_rid_and_cmd(char **str_new, int *i, t_table *new_addition)

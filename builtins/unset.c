@@ -15,9 +15,10 @@
 void	my_unset(char **to_unset, t_list **my_env)
 {
 	t_list	*current;
-	t_list	*tmp = NULL;
+	t_list	*tmp;
 	int		i;
 
+	tmp = NULL;
 	i = 0;
 	current = *my_env;
 	while (to_unset[i])
